@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">TaskAppPhincon</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="wrong_email_format">Wrong email format</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="name">Name</string>
+    <string name="phone">Phone</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="home">Home</string>
+    <string name="user">User</string>
+    <string name="favorite">Favorite</string>
+    <string name="select_image">Select Image</string>
+    <string name="camera">Camera</string>
+    <string name="galery">Galery</string>
+    <string name="register_success">Register Success</string>
+    <string name="register_is_successfully">Register is successfully</string>
+    <string name="ok">Ok</string>
+    <string name="logout">logout</string>
+</resources>
