@@ -8,7 +8,7 @@ import retrofit2.http.*
 interface ApiService {
     @FormUrlEncoded
     @Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
-    @POST("ecommerce/authentication")
+    @POST("authentication")
     suspend fun login(
         @Field("email") email: String,
         @Field("password") password: String
@@ -16,7 +16,7 @@ interface ApiService {
 
     @Multipart
     @Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
-    @POST("ecommerce/registration")
+    @POST("registration")
     suspend fun register(
         @Part image: MultipartBody.Part,
         @Part("email") email: RequestBody,

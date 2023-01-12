@@ -82,9 +82,13 @@ class LoginFragment : Fragment() {
             when(it) {
                 is Resource.Loading -> {
                     binding.progressbar.visibility = View.VISIBLE
+                    binding.cardProgressbar.visibility =View.VISIBLE
+                    binding.tvWaiting.visibility =View.VISIBLE
                 }
                 is Resource.Success -> {
                     binding.progressbar.visibility = View.GONE
+                    binding.cardProgressbar.visibility =View.GONE
+                    binding.tvWaiting.visibility =View.GONE
                     saveUserData(it.data!!.success, email)
                     val intent = Intent(context , MainActivity::class.java)
                     startActivity(intent)
@@ -92,6 +96,8 @@ class LoginFragment : Fragment() {
                 }
                 is Resource.Error -> {
                     binding.progressbar.visibility = View.GONE
+                    binding.cardProgressbar.visibility =View.GONE
+                    binding.tvWaiting.visibility =View.GONE
                     val errors = it.message
                     Toast.makeText(context, "Email or password not match ! $errors" , Toast.LENGTH_LONG).show()
                 }

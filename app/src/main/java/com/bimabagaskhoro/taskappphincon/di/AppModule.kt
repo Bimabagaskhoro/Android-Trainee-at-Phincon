@@ -32,7 +32,7 @@ object AppModule {
             .addInterceptor(loggingInterceptor)
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://172.17.20.238/training_android/public/api/")
+            .baseUrl("http://172.17.20.238/training_android/public/api/ecommerce/")
             .addConverterFactory(MoshiConverterFactory.create())
             .client(client)
             .build()

@@ -3,6 +3,7 @@ package com.bimabagaskhoro.taskappphincon.ui.auth
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -17,6 +18,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -120,41 +122,16 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    private fun initDialog() {
-        val dialogBinding = layoutInflater.inflate(R.layout.fragment_dialog_camera, null)
-        val mDialog = Dialog(requireActivity())
-        mDialog.setContentView(dialogBinding)
-
-        mDialog.setCancelable(true)
-        mDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        mDialog.show()
-
-        val btnCam = dialogBinding.findViewById<TextView>(R.id.tv_camera)
-        val btnGal = dialogBinding.findViewById<TextView>(R.id.tv_galery)
-        btnCam.setOnClickListener { openCameraX() }
-        btnGal.setOnClickListener { openGallery() }
-    }
-
     private fun onButtonPressed() {
         val name = binding.edtName.text.toString().trim()
         val email = binding.edtEmail.text.toString().trim()
         val password = binding.edtPassword.text.toString().trim()
         val matchPassword = binding.edtConfirmPassword.text.toString().trim()
         val phone = binding.edtPhone.text.toString().trim()
-        val gender =
-            if (binding.rdFemale.isChecked)
-                isGender(binding.rdFemale.isChecked)
-            else
-                isGender(binding.rdMale.isChecked)
-
+        val gender = if (binding.rdFemale.isChecked) isGender(binding.rdFemale.isChecked) else isGender(binding.rdMale.isChecked)
         checkEmail()
         checkMatchPassword()
-
         when {
-            name.isEmpty() -> {
-                binding.edtName.error = "Masukan email terlebih dahulu"
-                binding.edtName.requestFocus()
-            }
             email.isEmpty() -> {
                 binding.edtEmail.error = "Masukan email terlebih dahulu"
                 binding.edtEmail.requestFocus()
@@ -166,6 +143,10 @@ class RegisterFragment : Fragment() {
             matchPassword.isEmpty() -> {
                 binding.edtConfirmPassword.error = "Masukan konfirmasi password terlebih dahulu"
                 binding.edtConfirmPassword.requestFocus()
+            }
+            name.isEmpty() -> {
+                binding.edtName.error = "Masukan nama terlebih dahulu"
+                binding.edtName.requestFocus()
             }
             phone.isEmpty() -> {
                 binding.edtPhone.error = "Masukan nomer terlebih dahulu"
@@ -181,14 +162,7 @@ class RegisterFragment : Fragment() {
             }
         }
     }
-    private fun isGender(isChecked: Boolean): Int {
-        val female = binding.rdFemale.isChecked
-        return if (isChecked == female) {
-            1
-        } else {
-            0
-        }
-    }
+
     private fun initData(name: String, email: String, password: String, phone: String, gender: Int) {
         if (getFile != null) {
             val file = reduceFileImage(getFile as File)
@@ -204,9 +178,13 @@ class RegisterFragment : Fragment() {
                 when(it) {
                     is Resource.Loading -> {
                         binding.progressbar.visibility = View.VISIBLE
+                        binding.cardProgressbar.visibility =View.VISIBLE
+                        binding.tvWaiting.visibility =View.VISIBLE
                     }
                     is Resource.Success -> {
                         binding.progressbar.visibility = View.GONE
+                        binding.cardProgressbar.visibility =View.GONE
+                        binding.tvWaiting.visibility =View.GONE
                         val dataMessages = it.data!!.success.message
                         AlertDialog.Builder(requireActivity())
                             .setTitle("Register Success")
@@ -218,10 +196,36 @@ class RegisterFragment : Fragment() {
                     }
                     is Resource.Error -> {
                         binding.progressbar.visibility = View.GONE
+                        binding.cardProgressbar.visibility =View.GONE
+                        binding.tvWaiting.visibility =View.GONE
                         Toast.makeText(context, "Register Gagal", Toast.LENGTH_LONG).show()
                     }
                 }
             }
+        }
+    }
+
+    private fun initDialog() {
+        val dialogBinding = layoutInflater.inflate(R.layout.fragment_dialog_camera, null)
+        val mDialog = Dialog(requireActivity())
+        mDialog.setContentView(dialogBinding)
+
+        mDialog.setCancelable(true)
+        mDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        mDialog.show()
+
+        val btnCam = dialogBinding.findViewById<TextView>(R.id.tv_camera)
+        val btnGal = dialogBinding.findViewById<TextView>(R.id.tv_galery)
+        btnCam.setOnClickListener { openCameraX() }
+        btnGal.setOnClickListener { openGallery() }
+    }
+
+    private fun isGender(isChecked: Boolean): Int {
+        val female = binding.rdFemale.isChecked
+        return if (isChecked == female) {
+            1
+        } else {
+            0
         }
     }
 
