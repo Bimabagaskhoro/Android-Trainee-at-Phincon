@@ -2,10 +2,7 @@ package com.bimabagaskhoro.taskappphincon.data.pref
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.asLiveData
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -14,43 +11,46 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val USER_TOKEN = stringPreferencesKey("user_token")
-private val USER_NAME = stringPreferencesKey("user_name")
-private val USER_EMAIL = stringPreferencesKey("user_email")
+private val ACCESS_TOKEN = stringPreferencesKey("access_token")
+private val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
+private val USER_ID = intPreferencesKey("id")
+private val USER_NAME= stringPreferencesKey("name")
+private val USER_EMAIL = stringPreferencesKey("email")
 private val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "application")
 
 @Singleton
 class AuthPreference @Inject constructor(@ApplicationContext context: Context) {
     private val dataStore = context.dataStore
 
     val userToken = dataStore.data.map { preferences ->
-        preferences[USER_TOKEN] ?: ""
+        preferences[ACCESS_TOKEN] ?: ""
     }.distinctUntilChanged().asLiveData()
 
     suspend fun saveUserToken(token: String) {
         dataStore.edit { preferences ->
-            preferences[USER_TOKEN] = token
+            preferences[ACCESS_TOKEN] = token
         }
     }
 
-    val userName = dataStore.data.map { preferences ->
-        preferences[USER_NAME] ?: ""
+    val refreshToken = dataStore.data.map { preferences ->
+        preferences[REFRESH_TOKEN] ?: ""
     }.distinctUntilChanged().asLiveData()
 
-    suspend fun saveUserName(name: String) {
+    suspend fun saveRefreshToken(token: String) {
         dataStore.edit { preferences ->
-            preferences[USER_NAME] = name
+            preferences[REFRESH_TOKEN] = token
         }
     }
 
-    val userEmail = dataStore.data.map { preferences ->
-        preferences[USER_EMAIL] ?: ""
+    val userId = dataStore.data.map { preferences ->
+        preferences[USER_ID] ?: 0
     }.distinctUntilChanged().asLiveData()
 
-    suspend fun saveUserEmail(email: String) {
+    suspend fun saveUserId(id: Int) {
         dataStore.edit { preferences ->
-            preferences[USER_EMAIL] = email
+            preferences[USER_ID] = id
         }
     }
 
@@ -70,4 +70,9 @@ class AuthPreference @Inject constructor(@ApplicationContext context: Context) {
         }
     }
 
+
+
+    companion object {
+
+    }
 }

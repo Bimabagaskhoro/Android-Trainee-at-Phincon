@@ -2,10 +2,12 @@ package com.bimabagaskhoro.taskappphincon.data.source.response
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.RawValue
+import org.json.JSONObject
 
 @Parcelize
 data class ResponseLogin(
-	val success: SuccessResponse
+	val success: SuccessResponse,
 ) : Parcelable
 
 @Parcelize

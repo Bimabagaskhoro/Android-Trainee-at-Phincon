@@ -24,4 +24,16 @@
     <string name="ok">Ok</string>
     <string name="logout">logout</string>
     <string name="waiting">Waiting...</string>
+    <string name="username">username</string>
+    <string name="change_language">Change Language</string>
+    <string name="change_password">Change Password</string>
+    <string name="old_password">Old password</string>
+    <string name="new_password">New password</string>
+    <string name="confirm_new_password">Confirm new password</string>
+    <string name="password_harus_sama">password harus sama</string>
+
+    <string-array name="Languages">
+        <item>EN</item>
+        <item>ID</item>
+    </string-array>
 </resources>

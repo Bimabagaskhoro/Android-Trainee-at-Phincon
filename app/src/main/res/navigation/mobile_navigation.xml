@@ -18,5 +18,18 @@
         android:id="@+id/navigation_user"
         android:name="com.bimabagaskhoro.taskappphincon.ui.user.UserFragment"
         android:label="fragment_user"
-        tools:layout="@layout/fragment_user" />
+        tools:layout="@layout/fragment_user" >
+        <action
+            android:id="@+id/action_navigation_user_to_passwordFragment"
+            app:destination="@id/passwordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/passwordFragment"
+        android:name="com.bimabagaskhoro.taskappphincon.ui.user.PasswordFragment"
+        android:label="fragment_password"
+        tools:layout="@layout/fragment_password" >
+        <action
+            android:id="@+id/action_passwordFragment_to_navigation_user"
+            app:destination="@id/navigation_user" />
+    </fragment>
 </navigation>

@@ -1,6 +1,9 @@
 package com.bimabagaskhoro.taskappphincon.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.bimabagaskhoro.taskappphincon.BuildConfig
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreference
 import com.bimabagaskhoro.taskappphincon.data.source.network.ApiService
@@ -17,6 +20,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -28,11 +33,12 @@ object AppModule {
         if (!BuildConfig.DEBUG) {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE)
         }
+
         val client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://172.17.20.238/training_android/public/api/ecommerce/")
+            .baseUrl("http://172.17.20.201/training_android/public/api/ecommerce/")
             .addConverterFactory(MoshiConverterFactory.create())
             .client(client)
             .build()

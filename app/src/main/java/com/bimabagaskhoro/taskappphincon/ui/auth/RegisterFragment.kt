@@ -29,18 +29,22 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.Resource
+import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseLoginError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentRegisterBinding
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
 import com.bimabagaskhoro.taskappphincon.utils.reduceFileImage
 import com.bimabagaskhoro.taskappphincon.utils.rotateBitmap
 import com.bimabagaskhoro.taskappphincon.utils.uriToFile
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import org.w3c.dom.Text
 import java.io.File
 
@@ -164,10 +168,17 @@ class RegisterFragment : Fragment() {
     }
 
     private fun initData(name: String, email: String, password: String, phone: String, gender: Int) {
+
         if (getFile != null) {
-            val file = reduceFileImage(getFile as File)
+            val file = getFile as File
             val reqBodyImage = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-            val multipartImage = MultipartBody.Part.createFormData("photo", file.name, reqBodyImage)
+            val multipartImage: MultipartBody.Part = MultipartBody.Part.createFormData(
+                "photo",
+                file.name,
+                reqBodyImage
+            )
+
+            //val multipartImage = MultipartBody.Part.createFormData("photo", file.name, reqBodyImage)
 
             val emailBody = email.toRequestBody("text/plain".toMediaType())
             val passwordBody = password.toRequestBody("text/plain".toMediaType())
@@ -198,7 +209,21 @@ class RegisterFragment : Fragment() {
                         binding.progressbar.visibility = View.GONE
                         binding.cardProgressbar.visibility =View.GONE
                         binding.tvWaiting.visibility =View.GONE
-                        Toast.makeText(context, "Register Gagal", Toast.LENGTH_LONG).show()
+                        val err = it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                        val gson = Gson()
+                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                        val errorResponse = gson.fromJson(jsonObject, ResponseLoginError::class.java)
+                        val messageErr = errorResponse.error.message
+                        AlertDialog.Builder(requireActivity())
+                            .setTitle("Gagal")
+                            .setMessage(messageErr)
+                            .setPositiveButton("Ok") { _, _ ->
+                            }
+                            .show()
+                        val errCode = it.errorCode!!.toInt()
+                        Log.d("errorCode", "$errCode")
+
+                        //Toast.makeText(requireActivity(), errorResponse.error.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
