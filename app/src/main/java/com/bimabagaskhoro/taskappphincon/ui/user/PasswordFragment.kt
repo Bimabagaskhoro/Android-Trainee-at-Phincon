@@ -8,22 +8,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreference
 import com.bimabagaskhoro.taskappphincon.data.source.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseLoginError
+import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentPasswordBinding
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class PasswordFragment : Fragment() {
     private var _binding: FragmentPasswordBinding? = null
     private val binding get() = _binding!!
     private val viewModel: AuthViewModel by viewModels()
-    private lateinit var authPreference: AuthPreference
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,7 +39,6 @@ class PasswordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        authPreference = AuthPreference(requireContext())
 
         binding.apply {
             btnChangePassword.setOnClickListener { onButtonPressed() }
@@ -83,19 +85,29 @@ class PasswordFragment : Fragment() {
     }
 
     private fun initData(oldPassword: String, newPassword: String, confirmPassword: String) {
-        val userId = authPreference.userId
-        userId.observe(viewLifecycleOwner) {
-            viewModel.changePassword(it, oldPassword, newPassword,confirmPassword).observe(viewLifecycleOwner) { result->
-                when(result) {
+        var userToken = ""
+        var userId = 0
+        dataStoreViewModel.apply {
+            getToken.observe(viewLifecycleOwner) {
+                userToken = it
+            }
+            getUserId.observe(viewLifecycleOwner) {
+                userId = it
+            }
+        }
+
+        viewModel.changePassword(userToken, userId, oldPassword, newPassword, confirmPassword)
+            .observe(viewLifecycleOwner) { result ->
+                when (result) {
                     is Resource.Loading -> {
                         binding.progressbar.visibility = View.VISIBLE
-                        binding.cardProgressbar.visibility =View.VISIBLE
-                        binding.tvWaiting.visibility =View.VISIBLE
+                        binding.cardProgressbar.visibility = View.VISIBLE
+                        binding.tvWaiting.visibility = View.VISIBLE
                     }
                     is Resource.Success -> {
                         binding.progressbar.visibility = View.GONE
-                        binding.cardProgressbar.visibility =View.GONE
-                        binding.tvWaiting.visibility =View.GONE
+                        binding.cardProgressbar.visibility = View.GONE
+                        binding.tvWaiting.visibility = View.GONE
                         val dataMessages = result.data!!.success.message
                         AlertDialog.Builder(requireActivity())
                             .setTitle("Change Password Success")
@@ -107,12 +119,14 @@ class PasswordFragment : Fragment() {
                     }
                     is Resource.Error -> {
                         binding.progressbar.visibility = View.GONE
-                        binding.cardProgressbar.visibility =View.GONE
-                        binding.tvWaiting.visibility =View.GONE
-                        val err = result.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                        binding.cardProgressbar.visibility = View.GONE
+                        binding.tvWaiting.visibility = View.GONE
+                        val err = result.errorBody?.string()
+                            ?.let { it1 -> JSONObject(it1).toString() }
                         val gson = Gson()
                         val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                        val errorResponse = gson.fromJson(jsonObject, ResponseLoginError::class.java)
+                        val errorResponse =
+                            gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
                         AlertDialog.Builder(requireActivity())
                             .setTitle("Change Password Failed")
@@ -123,6 +137,7 @@ class PasswordFragment : Fragment() {
                     }
                 }
             }
+
         }
-    }
+
 }

@@ -29,7 +29,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseLoginError
+import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentRegisterBinding
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
 import com.bimabagaskhoro.taskappphincon.utils.reduceFileImage
@@ -212,7 +212,7 @@ class RegisterFragment : Fragment() {
                         val err = it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
                         val gson = Gson()
                         val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                        val errorResponse = gson.fromJson(jsonObject, ResponseLoginError::class.java)
+                        val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
                         AlertDialog.Builder(requireActivity())
                             .setTitle("Gagal")

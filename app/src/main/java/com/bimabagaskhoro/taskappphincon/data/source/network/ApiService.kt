@@ -1,9 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.data.source.network
 
 import com.bimabagaskhoro.taskappphincon.data.source.response.*
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseChangeImage
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseChangePassword
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseRefreshToken
+import com.bimabagaskhoro.taskappphincon.data.source.response.auth.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
@@ -33,6 +31,7 @@ interface ApiService {
     @Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
     @POST("change-password/{id}")
     suspend fun changePassword(
+        @Header("Authorization") token : String,
         @Path("id") id: Int,
         @Field("password") password: String,
         @Field("new_password") newPassword: String,
@@ -43,6 +42,7 @@ interface ApiService {
     @Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
     @POST("change-image")
     suspend fun changeImage(
+        @Header("Authorization") token : String,
         @Part("id") id: Int,
         @Part image: MultipartBody.Part,
     ): ResponseChangeImage

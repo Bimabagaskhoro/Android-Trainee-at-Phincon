@@ -1,17 +1,10 @@
 package com.bimabagaskhoro.taskappphincon.data.source.repository
 
 import com.bimabagaskhoro.taskappphincon.data.source.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseLogin
-import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseRegister
-import com.bimabagaskhoro.taskappphincon.data.source.response.SuccessResponse
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseChangeImage
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseChangePassword
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseRefreshToken
+import com.bimabagaskhoro.taskappphincon.data.source.response.auth.*
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Field
-import retrofit2.http.Part
 
 interface AuthRepository {
     fun login(
@@ -26,9 +19,10 @@ interface AuthRepository {
         name: RequestBody,
         phone: RequestBody,
         gender: Int
-    ): Flow<Resource<ResponseRegister>>
+    ) : Flow<Resource<ResponseRegister>>
 
     fun changePassword(
+        token: String,
         id: Int,
         password: String,
         newPassword: String,
@@ -36,8 +30,9 @@ interface AuthRepository {
     ): Flow<Resource<ResponseChangePassword>>
 
     fun changeImage(
+        token: String,
         id: Int,
-        image: MultipartBody.Part,
+        image: MultipartBody.Part
     ): Flow<Resource<ResponseChangeImage>>
 
     fun refreshToken(
@@ -45,4 +40,5 @@ interface AuthRepository {
         accessToken: String,
         refreshToken: String
     ): Flow<Resource<ResponseRefreshToken>>
+
 }

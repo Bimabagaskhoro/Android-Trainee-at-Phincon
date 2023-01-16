@@ -3,18 +3,19 @@ package com.bimabagaskhoro.taskappphincon.data.source.response.auth
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
-
+//
+// error
 @Parcelize
-data class ResponseChangePassword(
-	@SerializedName("success")
-	val success: SuccessPassword
+data class ResponseError(
+    @SerializedName("error")
+    val error: ErrorResponse
 ) : Parcelable
 
 @Parcelize
-data class SuccessPassword(
-	@SerializedName("message")
-	val message: String,
+data class ErrorResponse(
+    @SerializedName("message")
+    val message: String,
 
-	@SerializedName("status")
-	val status: Int
+    @SerializedName("status")
+    val status: Int
 ) : Parcelable

@@ -11,7 +11,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,17 +18,20 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreference
 import com.bimabagaskhoro.taskappphincon.data.source.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseLoginError
+import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentUserBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
 import com.bimabagaskhoro.taskappphincon.utils.rotateBitmap
 import com.bimabagaskhoro.taskappphincon.utils.uriToFile
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
+import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,10 +47,10 @@ class UserFragment : Fragment() {
 
     private var _binding: FragmentUserBinding? = null
     private val binding get() = _binding!!
-    private lateinit var authPreference: AuthPreference
     private var getFile: File? = null
     private lateinit var result: Bitmap
     private val viewModel: AuthViewModel by viewModels()
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     private val launcherIntentCameraX = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -98,18 +100,20 @@ class UserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        authPreference = AuthPreference(requireContext())
-        //initDataStore()
+        initDataStore()
 
         binding.apply {
             val spinner = binding.spinner
+            card2.setOnClickListener{
+                findNavController().navigate(R.id.action_navigation_user_to_passwordFragment)
+            }
             floatingActionButton.setOnClickListener{
                 initDialog()
-                //initData()
+                initChangeImage()
             }
             btnLogout.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    //authPreference.clear()
+                    dataStoreViewModel.clear()
                     startActivity(Intent(requireActivity(), AuthActivity::class.java))
                 }
             }
@@ -117,42 +121,60 @@ class UserFragment : Fragment() {
     }
 
     private fun initDataStore() {
-//        val path = authPreference.userPath
-//        val userName = authPreference.userName
-//        val userEmail = authPreference.userEmail
-//        Glide.with(requireActivity())
-//            .load(path)
-//            .into(binding.imgProfile)
-//        userName.observe(viewLifecycleOwner) {
-//            binding.tvUsername.text = it
-//        }
-//        userEmail.observe(viewLifecycleOwner) {
-//            binding.tvEmail.text = it
-//        }
+        dataStoreViewModel.apply {
+            getUserName.observe(viewLifecycleOwner) {
+                val username = it
+                binding.tvUsername.text = username
+            }
+
+            getUserEmail.observe(viewLifecycleOwner) {
+                val userEmail = it
+                binding.tvEmail.text = userEmail
+            }
+
+            getUserPath.observe(viewLifecycleOwner) {
+                val userPath = it
+                Glide.with(requireActivity())
+                    .load(userPath)
+                    .into(binding.imgProfile)
+            }
+        }
+
+
     }
 
-    private fun initData() {
-        val userId = authPreference.userId
-        userId.observe(viewLifecycleOwner) {
-            if (getFile != null) {
-                val file = getFile as File
-                val reqBodyImage = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                val multipartImage: MultipartBody.Part = MultipartBody.Part.createFormData(
-                    "photo",
-                    file.name,
-                    reqBodyImage
-                )
-                viewModel.changeImage(it, multipartImage).observe(viewLifecycleOwner)  { result ->
-                    when(result) {
+    private fun initChangeImage() {
+        if (getFile != null) {
+            val file = getFile as File
+            val reqBodyImage = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+            val multipartImage: MultipartBody.Part = MultipartBody.Part.createFormData(
+                "photo",
+                file.name,
+                reqBodyImage
+            )
+
+            var userToken = ""
+            var userId = 0
+            dataStoreViewModel.apply {
+                getToken.observe(viewLifecycleOwner) {
+                    userToken = it
+                }
+                getUserId.observe(viewLifecycleOwner) {
+                    userId = it
+                }
+            }
+            viewModel.changeImage(userToken, userId, multipartImage)
+                .observe(viewLifecycleOwner) { result ->
+                    when (result) {
                         is Resource.Loading -> {
                             binding.progressbar.visibility = View.VISIBLE
-                            binding.cardProgressbar.visibility =View.VISIBLE
-                            binding.tvWaiting.visibility =View.VISIBLE
+                            binding.cardProgressbar.visibility = View.VISIBLE
+                            binding.tvWaiting.visibility = View.VISIBLE
                         }
                         is Resource.Success -> {
                             binding.progressbar.visibility = View.GONE
-                            binding.cardProgressbar.visibility =View.GONE
-                            binding.tvWaiting.visibility =View.GONE
+                            binding.cardProgressbar.visibility = View.GONE
+                            binding.tvWaiting.visibility = View.GONE
                             val dataMessages = result.data!!.success.message
                             AlertDialog.Builder(requireActivity())
                                 .setTitle("Change Image Success")
@@ -163,12 +185,14 @@ class UserFragment : Fragment() {
                         }
                         is Resource.Error -> {
                             binding.progressbar.visibility = View.GONE
-                            binding.cardProgressbar.visibility =View.GONE
-                            binding.tvWaiting.visibility =View.GONE
-                            val err = result.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                            binding.cardProgressbar.visibility = View.GONE
+                            binding.tvWaiting.visibility = View.GONE
+                            val err = result.errorBody?.string()
+                                ?.let { it1 -> JSONObject(it1).toString() }
                             val gson = Gson()
                             val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                            val errorResponse = gson.fromJson(jsonObject, ResponseLoginError::class.java)
+                            val errorResponse =
+                                gson.fromJson(jsonObject, ResponseError::class.java)
                             val messageErr = errorResponse.error.message
                             AlertDialog.Builder(requireActivity())
                                 .setTitle("Change Image Failed")
@@ -177,45 +201,9 @@ class UserFragment : Fragment() {
                                 }
                                 .show()
 
-
-                            val errCode = result.errorCode!!.toInt()
-                            if (errCode == 401) {
-                                val userIds = authPreference.userId.value!!.toInt()
-                                val accessToken = authPreference.userToken.value!!.toString()
-                                val refreshToken = authPreference.refreshToken.value!!.toString()
-                                viewModel.refreshToken(userIds, accessToken, refreshToken).observe(viewLifecycleOwner) {errCode ->
-                                    when(errCode) {
-                                        is Resource.Loading -> {
-                                            binding.progressbar.visibility = View.VISIBLE
-                                            binding.cardProgressbar.visibility =View.VISIBLE
-                                            binding.tvWaiting.visibility =View.VISIBLE
-                                        }
-                                        is Resource.Success -> {
-                                            binding.progressbar.visibility = View.VISIBLE
-                                            binding.cardProgressbar.visibility =View.VISIBLE
-                                            binding.tvWaiting.visibility =View.VISIBLE
-                                            val newAccessToken = errCode.data!!.success.accessToken
-                                            val newRefreshToken = errCode.data.success.refreshToken
-                                            Log.d("Token","$newAccessToken $newRefreshToken")
-                                        }
-                                        is Resource.Error -> {
-                                            binding.progressbar.visibility = View.VISIBLE
-                                            binding.cardProgressbar.visibility =View.VISIBLE
-                                            binding.tvWaiting.visibility =View.VISIBLE
-                                            val errE = errCode.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
-                                            val gsonE= Gson()
-                                            val jsonObjectE = gsonE.fromJson(errE, JsonObject::class.java)
-                                            val errorResponseE = gson.fromJson(jsonObjectE, ResponseLoginError::class.java)
-                                            val messageErrE = errorResponseE.error.message
-                                            Log.d("Token", messageErrE)
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }
-            }
         }
     }
 

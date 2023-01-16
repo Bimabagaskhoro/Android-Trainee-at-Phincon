@@ -10,29 +10,28 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreference
 import com.bimabagaskhoro.taskappphincon.data.source.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseLoginError
-import com.bimabagaskhoro.taskappphincon.data.source.response.SuccessResponse
+import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseError
+import com.bimabagaskhoro.taskappphincon.data.source.response.auth.SuccessLogin
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentLoginBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.MainActivity
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
-
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private val viewModel: AuthViewModel by viewModels()
-    private lateinit var authPreference: AuthPreference
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +44,6 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        authPreference = AuthPreference(requireContext())
 
         binding.apply {
             btnLogin.setOnClickListener { onButtonPressed() }
@@ -95,15 +93,12 @@ class LoginFragment : Fragment() {
                     binding.cardProgressbar.visibility =View.GONE
                     binding.tvWaiting.visibility =View.GONE
                     saveUserData(it.data!!.success)
-                    val dataPref = it.data.success
-
-                    Log.e("pref" , "$dataPref")
+                    val dataLog = it.data!!.success
+                    Log.d("datas", "$dataLog")
                     Intent(requireContext(), MainActivity::class.java).also { intent ->
                         startActivity(intent)
                         requireActivity().finish()
                     }
-                    //Toast.makeText(requireActivity(), it.data.success.dataUser.id, Toast.LENGTH_SHORT).show()
-                    //Log.d("get id login", "$idPref")
                 }
                 is Resource.Error -> {
                     binding.progressbar.visibility = View.GONE
@@ -112,7 +107,7 @@ class LoginFragment : Fragment() {
                     val err = it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
                     val gson = Gson()
                     val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                    val errorResponse = gson.fromJson(jsonObject, ResponseLoginError::class.java)
+                    val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
                     val messageErr = errorResponse.error.message
                     Toast.makeText(requireActivity(), messageErr, Toast.LENGTH_SHORT).show()
                 }
@@ -120,27 +115,27 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun saveUserData(success: SuccessResponse) {
-        val accessToken = success.accessToken
-        val refreshToken = success.refreshToken
-        val id = success.dataUser.id
-        val email = success.dataUser.email
-        val name = success.dataUser.name
-        val path = success.dataUser.path
-        val gender = success.dataUser.gender
-        val phone = success.dataUser.phone
+    private fun saveUserData(data: SuccessLogin) {
+        val isLoggedIn = true
+        val accessToken = data.access_token
+        val refreshToken = data.refresh_token
+        val userId = data.data_user.id
+        val userEmail = data.data_user.email
+        val username = data.data_user.name
+        val gender = data.data_user.gender
+        val phone = data.data_user.phone
+        val path = data.data_user.path
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            authPreference.apply {
-                saveUserToken(accessToken)
-                saveUserId(id)
-                saveRefreshToken(refreshToken)
-//                saveUserEmail(email)
-//                saveUserPhone(phone)
-//                saveUserGender(gender)
-//                saveUserPath(path)
-                saveIsLoggedIn(true)
-            }
+        dataStoreViewModel.apply {
+            isLogin(isLoggedIn)
+            saveToken(accessToken)
+            saveRefreshToken(refreshToken)
+            saveUserId(userId)
+            saveUserEmail(userEmail)
+            saveUserName(username)
+            saveUserGender(gender)
+            saveUserPhone(phone)
+            saveUserPath(path)
         }
     }
 }

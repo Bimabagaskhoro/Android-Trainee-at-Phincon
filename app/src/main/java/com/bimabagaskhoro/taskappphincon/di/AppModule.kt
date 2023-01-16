@@ -1,11 +1,8 @@
 package com.bimabagaskhoro.taskappphincon.di
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.bimabagaskhoro.taskappphincon.BuildConfig
-import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreference
+import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
 import com.bimabagaskhoro.taskappphincon.data.source.network.ApiService
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepositoryImpl
@@ -20,16 +17,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
-
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
     @Provides
     @Singleton
     fun provideApiService(): ApiService {
-        val loggingInterceptor =
-            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         if (!BuildConfig.DEBUG) {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE)
         }
@@ -47,12 +41,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDataStore(@ApplicationContext context: Context): AuthPreference =
-        AuthPreference(context)
+    fun provideUserRepository(apiService: ApiService) : AuthRepository {
+        return AuthRepositoryImpl(apiService)
+    }
 
     @Provides
     @Singleton
-    fun provideUserRepository(
-        apiService: ApiService,
-    ): AuthRepository = AuthRepositoryImpl(apiService)
+    fun provideDataStore(@ApplicationContext context: Context): AuthPreferences =
+        AuthPreferences(context)
+
 }
