@@ -3,7 +3,6 @@ package com.bimabagaskhoro.taskappphincon.ui.auth
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -18,7 +17,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,7 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.Resource
+import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentRegisterBinding
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
@@ -45,7 +43,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import org.w3c.dom.Text
 import java.io.File
 
 @AndroidEntryPoint
@@ -168,12 +165,11 @@ class RegisterFragment : Fragment() {
     }
 
     private fun initData(name: String, email: String, password: String, phone: String, gender: Int) {
-
         if (getFile != null) {
-            val file = getFile as File
+            val file = reduceFileImage(getFile as File)
             val reqBodyImage = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
             val multipartImage: MultipartBody.Part = MultipartBody.Part.createFormData(
-                "photo",
+                "image",
                 file.name,
                 reqBodyImage
             )
@@ -185,7 +181,7 @@ class RegisterFragment : Fragment() {
             val nameBody = name.toRequestBody("text/plain".toMediaType())
             val phoneBody = phone.toRequestBody("text/plain".toMediaType())
 
-            viewModel.register(multipartImage,emailBody, passwordBody, nameBody, phoneBody, gender).observe(viewLifecycleOwner) {
+            viewModel.register(multipartImage, emailBody, passwordBody, nameBody, phoneBody, gender).observe(viewLifecycleOwner) {
                 when(it) {
                     is Resource.Loading -> {
                         binding.progressbar.visibility = View.VISIBLE

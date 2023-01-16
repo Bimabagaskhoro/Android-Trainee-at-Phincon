@@ -1,7 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.vm
 
 import androidx.lifecycle.*
-import com.bimabagaskhoro.taskappphincon.data.source.Resource
+import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,7 +43,7 @@ class AuthViewModel @Inject constructor(
         image: MultipartBody.Part,
     ): LiveData<Resource<ResponseChangeImage>> =
         authRepository.changeImage(token, id, image).asLiveData()
-
-    fun refreshToken(idUser: Int, accessToken: String, refreshToken: String) =
-        authRepository.refreshToken(idUser, accessToken, refreshToken).asLiveData()
+//
+//    fun refreshToken(idUser: Int, accessToken: String, refreshToken: String) =
+//        authRepository.refreshToken(idUser, accessToken, refreshToken).asLiveData()
 }

@@ -1,6 +1,6 @@
 package com.bimabagaskhoro.taskappphincon.data.source.repository
 
-import com.bimabagaskhoro.taskappphincon.data.source.Resource
+import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.*
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody

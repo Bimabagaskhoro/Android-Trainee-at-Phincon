@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -17,16 +18,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.Resource
+import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentUserBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
+import com.bimabagaskhoro.taskappphincon.utils.reduceFileImage
 import com.bimabagaskhoro.taskappphincon.utils.rotateBitmap
 import com.bimabagaskhoro.taskappphincon.utils.uriToFile
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
@@ -44,7 +47,6 @@ import java.io.File
 
 @AndroidEntryPoint
 class UserFragment : Fragment() {
-
     private var _binding: FragmentUserBinding? = null
     private val binding get() = _binding!!
     private var getFile: File? = null
@@ -88,6 +90,10 @@ class UserFragment : Fragment() {
         }
     }
 
+    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -100,6 +106,13 @@ class UserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (!allPermissionsGranted()) {
+            ActivityCompat.requestPermissions(
+                requireActivity(),
+                REQUIRED_PERMISSIONS,
+                REQUEST_CODE_PERMISSIONS
+            )
+        }
         initDataStore()
 
         binding.apply {
@@ -132,37 +145,34 @@ class UserFragment : Fragment() {
                 binding.tvEmail.text = userEmail
             }
 
-            getUserImage.observe(viewLifecycleOwner) {
+            getUserPath.observe(viewLifecycleOwner) {
                 val userPath = it
                 Glide.with(requireActivity())
-                    .load(BASE_URL+userPath)
+                    .load(userPath)
                     .into(binding.imgProfile)
             }
         }
-
-
     }
 
     private fun initChangeImage() {
+        var userToken = ""
+        var userId = 0
+        dataStoreViewModel.apply {
+            getToken.observe(viewLifecycleOwner) {
+                userToken = it
+            }
+            getUserId.observe(viewLifecycleOwner) {
+                userId = it
+            }
+        }
         if (getFile != null) {
-            val file = getFile as File
+            val file = reduceFileImage(getFile as File)
             val reqBodyImage = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
             val multipartImage: MultipartBody.Part = MultipartBody.Part.createFormData(
-                "photo",
+                "image",
                 file.name,
                 reqBodyImage
             )
-
-            var userToken = ""
-            var userId = 0
-            dataStoreViewModel.apply {
-                getToken.observe(viewLifecycleOwner) {
-                    userToken = it
-                }
-                getUserId.observe(viewLifecycleOwner) {
-                    userId = it
-                }
-            }
             viewModel.changeImage(userToken, userId, multipartImage)
                 .observe(viewLifecycleOwner) { result ->
                     when (result) {
@@ -191,8 +201,7 @@ class UserFragment : Fragment() {
                                 ?.let { it1 -> JSONObject(it1).toString() }
                             val gson = Gson()
                             val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                            val errorResponse =
-                                gson.fromJson(jsonObject, ResponseError::class.java)
+                            val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
                             val messageErr = errorResponse.error.message
                             AlertDialog.Builder(requireActivity())
                                 .setTitle("Change Image Failed")
@@ -237,7 +246,6 @@ class UserFragment : Fragment() {
 
     companion object {
         const val CAMERA_X_RESULT = 200
-        const val BASE_URL = "http://172.17.20.201/training_android/public/public/user_profile/"
 
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10

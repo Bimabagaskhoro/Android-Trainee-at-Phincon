@@ -4,6 +4,7 @@ import com.bimabagaskhoro.taskappphincon.data.source.response.*
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
@@ -44,7 +45,7 @@ interface ApiService {
     suspend fun changeImage(
         @Header("Authorization") token : String,
         @Part("id") id: Int,
-        @Part image: MultipartBody.Part,
+        @Part image: MultipartBody.Part
     ): ResponseChangeImage
 
     @FormUrlEncoded

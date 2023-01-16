@@ -1,8 +1,6 @@
 package com.bimabagaskhoro.taskappphincon.data.source.repository
 
-import androidx.lifecycle.asLiveData
-import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
-import com.bimabagaskhoro.taskappphincon.data.source.Resource
+import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.network.ApiService
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseLogin
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseRegister
@@ -14,7 +12,6 @@ import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
