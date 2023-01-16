@@ -35,7 +35,9 @@ class AuthViewModel @Inject constructor(
         oldPassword: String,
         newPassword: String,
         confirmPassword: String
-    ) = authRepository.changePassword(token, id, oldPassword, newPassword,confirmPassword).asLiveData()
+    ) = authRepository.changePassword(
+        token,
+        id, oldPassword, newPassword,confirmPassword).asLiveData()
 
     fun changeImage(
         token: String,
@@ -43,7 +45,5 @@ class AuthViewModel @Inject constructor(
         image: MultipartBody.Part,
     ): LiveData<Resource<ResponseChangeImage>> =
         authRepository.changeImage(token, id, image).asLiveData()
-//
-//    fun refreshToken(idUser: Int, accessToken: String, refreshToken: String) =
-//        authRepository.refreshToken(idUser, accessToken, refreshToken).asLiveData()
+
 }

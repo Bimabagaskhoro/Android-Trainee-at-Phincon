@@ -26,6 +26,7 @@ import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseError
+import com.bimabagaskhoro.taskappphincon.data.source.response.auth.SuccessImage
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentUserBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
@@ -53,6 +54,9 @@ class UserFragment : Fragment() {
     private lateinit var result: Bitmap
     private val viewModel: AuthViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    val arrLanguage = arrayOf("EN","ID")
+    val arrFlag = intArrayOf(R.drawable.unitedstates, R.drawable.indonesia)
+
 
     private val launcherIntentCameraX = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -114,6 +118,7 @@ class UserFragment : Fragment() {
             )
         }
         initDataStore()
+        //initSpinner()
 
         binding.apply {
             val spinner = binding.spinner
@@ -185,6 +190,7 @@ class UserFragment : Fragment() {
                             binding.progressbar.visibility = View.GONE
                             binding.cardProgressbar.visibility = View.GONE
                             binding.tvWaiting.visibility = View.GONE
+                            saveUpdateImagePath(result.data!!.success)
                             val dataMessages = result.data!!.success.message
                             AlertDialog.Builder(requireActivity())
                                 .setTitle("Change Image Success")
@@ -213,6 +219,13 @@ class UserFragment : Fragment() {
                         }
                     }
                 }
+        }
+    }
+
+    private fun saveUpdateImagePath(data: SuccessImage) {
+        val path = data.path
+        dataStoreViewModel.apply {
+            saveUserPath(path)
         }
     }
 

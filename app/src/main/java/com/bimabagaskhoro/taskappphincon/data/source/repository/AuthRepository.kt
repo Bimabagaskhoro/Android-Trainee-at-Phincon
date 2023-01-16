@@ -34,11 +34,4 @@ interface AuthRepository {
         id: Int,
         image: MultipartBody.Part
     ): Flow<Resource<ResponseChangeImage>>
-
-    fun refreshToken(
-        idUser: Int,
-        accessToken: String,
-        refreshToken: String
-    ): Flow<Resource<ResponseRefreshToken>>
-
 }

@@ -3,9 +3,13 @@ package com.bimabagaskhoro.taskappphincon.di
 import android.content.Context
 import com.bimabagaskhoro.taskappphincon.BuildConfig
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
+import com.bimabagaskhoro.taskappphincon.data.source.network.ApiAuth
 import com.bimabagaskhoro.taskappphincon.data.source.network.ApiService
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepositoryImpl
+import com.bimabagaskhoro.taskappphincon.utils.AuthInterceptor
+import com.bimabagaskhoro.taskappphincon.utils.Authenticator
+import com.bimabagaskhoro.taskappphincon.utils.HeaderInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +18,7 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
@@ -30,6 +35,7 @@ object AppModule {
 
         val client = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(HeaderInterceptor())
             .build()
         val retrofit = Retrofit.Builder()
             .baseUrl("http://172.17.20.201/training_android/public/api/ecommerce/")
@@ -39,6 +45,10 @@ object AppModule {
         return retrofit.create(ApiService::class.java)
     }
 
+    /**
+     *
+     *
+     */
     @Provides
     @Singleton
     fun provideUserRepository(apiService: ApiService) : AuthRepository {

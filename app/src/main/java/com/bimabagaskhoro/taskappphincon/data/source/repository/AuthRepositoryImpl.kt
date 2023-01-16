@@ -74,7 +74,9 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.changePassword(token, id, password, newPassword, confirmPassword)
+                val response = apiService.changePassword(
+                    token,
+                    id, password, newPassword, confirmPassword)
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {
@@ -97,28 +99,6 @@ class AuthRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             try {
                 val response = apiService.changeImage(token, id, image)
-                emit(Resource.Success(response))
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
-                    401 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
-                    404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
-                    500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
-                }
-            }
-        }
-    }
-
-    override fun refreshToken(
-        idUser: Int,
-        accessToken: String,
-        refreshToken: String
-    ): Flow<Resource<ResponseRefreshToken>> {
-        return flow {
-            emit(Resource.Loading())
-            try {
-                val response = apiService.refreshToken(idUser, accessToken, refreshToken)
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {

@@ -159,6 +159,29 @@ class AuthPreferences @Inject constructor(@ApplicationContext context: Context) 
     }
 
 
+    /**
+     *
+     *
+     */
+
+    fun getAccessToken(): Flow<String?> {
+        return dataStore.data.map { preferences ->
+            preferences[ACCESS_TOKEN]
+        }
+    }
+
+    fun getRefreshToken(): Flow<String?> {
+        return dataStore.data.map { preferences ->
+            preferences[REFRESH_TOKEN]
+        }
+    }
+
+    fun getUserId(): Flow<Int?> {
+        return dataStore.data.map { preferences ->
+            preferences[USER_ID]
+        }
+    }
+
     companion object {
         private val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         private val ACCESS_TOKEN = stringPreferencesKey("access_token")

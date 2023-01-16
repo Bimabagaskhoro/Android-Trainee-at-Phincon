@@ -7,17 +7,17 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.bimabagaskhoro.taskappphincon.ui.home.HomeFragment"
-        android:label="fragment_home"
+        android:label="Home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/navigation_fav"
         android:name="com.bimabagaskhoro.taskappphincon.ui.fav.FavoriteFragment"
-        android:label="fragment_favorite"
+        android:label="Favorite"
         tools:layout="@layout/fragment_favorite" />
     <fragment
         android:id="@+id/navigation_user"
         android:name="com.bimabagaskhoro.taskappphincon.ui.user.UserFragment"
-        android:label="fragment_user"
+        android:label="User"
         tools:layout="@layout/fragment_user" >
         <action
             android:id="@+id/action_navigation_user_to_passwordFragment"
