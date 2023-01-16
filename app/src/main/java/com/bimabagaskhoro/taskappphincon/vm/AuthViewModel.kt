@@ -1,15 +1,10 @@
 package com.bimabagaskhoro.taskappphincon.vm
 
 import androidx.lifecycle.*
-import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
 import com.bimabagaskhoro.taskappphincon.data.source.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
-import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepositoryImpl
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -36,7 +31,7 @@ class AuthViewModel @Inject constructor(
 
     fun changePassword(
         token: String,
-        id:Int,
+        id: Int,
         oldPassword: String,
         newPassword: String,
         confirmPassword: String

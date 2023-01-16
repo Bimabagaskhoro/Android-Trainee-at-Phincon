@@ -145,6 +145,19 @@ class AuthPreferences @Inject constructor(@ApplicationContext context: Context) 
         }
     }
 
+    /**
+     * User phone
+     */
+    val userImage = dataStore.data.map { preferences ->
+        preferences[USER_IMAGE] ?: ""
+    }.distinctUntilChanged().asLiveData()
+
+    suspend fun saveUserImage(path: String) {
+        dataStore.edit { preferences ->
+            preferences[USER_IMAGE] = path
+        }
+    }
+
 
     companion object {
         private val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
@@ -156,6 +169,7 @@ class AuthPreferences @Inject constructor(@ApplicationContext context: Context) 
         private val USER_GENDER = intPreferencesKey("user_gender")
         private val USER_PHONE = stringPreferencesKey("user_phone")
         private val USER_PATH = stringPreferencesKey("user_path")
+        private val USER_IMAGE = stringPreferencesKey("user_image")
     }
 
 }

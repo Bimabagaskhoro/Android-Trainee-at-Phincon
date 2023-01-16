@@ -29,7 +29,7 @@ interface ApiService {
 
     @FormUrlEncoded
     @Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
-    @POST("change-password/{id}")
+    @PUT("change-password/{id}")
     suspend fun changePassword(
         @Header("Authorization") token : String,
         @Path("id") id: Int,
@@ -51,7 +51,7 @@ interface ApiService {
     @Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
     @POST("refresh-token")
     suspend fun refreshToken(
-        @Path("id") idUser: Int,
+        @Path("id") id: Int,
         @Field("access_token") accessToken: String,
         @Field("refresh_token") refreshToken: String
     ): ResponseRefreshToken

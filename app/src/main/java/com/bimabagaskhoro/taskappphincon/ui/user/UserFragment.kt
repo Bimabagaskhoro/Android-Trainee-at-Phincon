@@ -132,10 +132,10 @@ class UserFragment : Fragment() {
                 binding.tvEmail.text = userEmail
             }
 
-            getUserPath.observe(viewLifecycleOwner) {
+            getUserImage.observe(viewLifecycleOwner) {
                 val userPath = it
                 Glide.with(requireActivity())
-                    .load(userPath)
+                    .load(BASE_URL+userPath)
                     .into(binding.imgProfile)
             }
         }
@@ -237,6 +237,7 @@ class UserFragment : Fragment() {
 
     companion object {
         const val CAMERA_X_RESULT = 200
+        const val BASE_URL = "http://172.17.20.201/training_android/public/public/user_profile/"
 
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10

@@ -125,6 +125,7 @@ class LoginFragment : Fragment() {
         val gender = data.data_user.gender
         val phone = data.data_user.phone
         val path = data.data_user.path
+        val image = data.data_user.image
 
         dataStoreViewModel.apply {
             isLogin(isLoggedIn)
@@ -136,6 +137,7 @@ class LoginFragment : Fragment() {
             saveUserGender(gender)
             saveUserPhone(phone)
             saveUserPath(path)
+            saveUserPhoto(image)
         }
     }
 }
