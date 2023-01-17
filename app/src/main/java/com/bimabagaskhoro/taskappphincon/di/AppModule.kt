@@ -60,11 +60,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAuthInterceptor(authPreferences: AuthPreferences): AuthInterceptor = AuthInterceptor(authPreferences)
+    fun provideAuthInterceptor(authPreferences: AuthPreferences, @ApplicationContext context: Context): AuthInterceptor = AuthInterceptor(authPreferences,context)
 
     @Singleton
     @Provides
-    fun provideAuthAuthenticator(authPreferences: AuthPreferences): AuthAuthenticator = AuthAuthenticator(authPreferences)
+    fun provideAuthAuthenticator(authPreferences: AuthPreferences,@ApplicationContext context: Context): AuthAuthenticator = AuthAuthenticator(authPreferences, context)
 
     @Singleton
     @Provides

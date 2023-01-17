@@ -160,8 +160,7 @@ class AuthPreferences @Inject constructor(@ApplicationContext context: Context) 
 
 
     /**
-     *
-     *
+     * for interceptor
      */
 
     fun getAccessToken(): Flow<String?> {

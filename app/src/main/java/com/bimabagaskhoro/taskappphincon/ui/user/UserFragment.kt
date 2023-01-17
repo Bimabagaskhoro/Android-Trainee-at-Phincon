@@ -20,7 +20,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -29,7 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseError
+import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.SuccessImage
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentUserBinding
 import com.bimabagaskhoro.taskappphincon.ui.SplashScreen
@@ -126,7 +125,7 @@ class UserFragment : Fragment() {
             )
         }
         initDataStore()
-        initSpinner()
+        //initSpinner()
 
         binding.apply {
             card2.setOnClickListener{
@@ -280,7 +279,6 @@ class UserFragment : Fragment() {
                                 .setPositiveButton("Ok") { _, _ ->
                                 }
                                 .show()
-
                         }
                     }
                 }

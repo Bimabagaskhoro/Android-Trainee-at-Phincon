@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseError
+import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentPasswordBinding
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel

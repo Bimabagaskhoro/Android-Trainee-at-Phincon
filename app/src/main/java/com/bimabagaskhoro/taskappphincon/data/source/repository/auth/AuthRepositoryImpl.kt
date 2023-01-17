@@ -16,7 +16,6 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ): AuthRepository {
-
     override fun login(
         email: String,
         password: String
@@ -29,7 +28,6 @@ class AuthRepositoryImpl @Inject constructor(
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
-                    401 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
                     404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
                     500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
                     else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -54,7 +52,6 @@ class AuthRepositoryImpl @Inject constructor(
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
-                    401 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
                     404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
                     500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
                     else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -72,9 +69,7 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.changePassword(
-                    //token,
-                    id, password, newPassword, confirmPassword)
+                val response = apiService.changePassword(id, password, newPassword, confirmPassword)
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {
@@ -95,9 +90,7 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.changeImage(
-                    //token,
-                    id, image)
+                val response = apiService.changeImage(id, image)
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {

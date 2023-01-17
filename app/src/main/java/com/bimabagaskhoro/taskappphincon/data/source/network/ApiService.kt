@@ -9,7 +9,6 @@ import retrofit2.http.*
 
 interface ApiService {
     @FormUrlEncoded
-    //@Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
     @POST("authentication")
     suspend fun login(
         @Field("email") email: String,
@@ -17,7 +16,6 @@ interface ApiService {
     ): ResponseLogin
 
     @Multipart
-    //@Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
     @POST("registration")
     suspend fun register(
         @Part image: MultipartBody.Part,
@@ -29,10 +27,8 @@ interface ApiService {
     ): ResponseRegister
 
     @FormUrlEncoded
-    //@Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
     @PUT("change-password/{id}")
     suspend fun changePassword(
-        //@Header("Authorization") token : String,
         @Path("id") id: Int,
         @Field("password") password: String,
         @Field("new_password") newPassword: String,
@@ -40,10 +36,8 @@ interface ApiService {
     ): ResponseChangePassword
 
     @Multipart
-    //@Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
     @POST("change-image")
     suspend fun changeImage(
-        //@Header("Authorization") token : String,
         @Part("id") id: Int,
         @Part image: MultipartBody.Part
     ): ResponseChangeImage

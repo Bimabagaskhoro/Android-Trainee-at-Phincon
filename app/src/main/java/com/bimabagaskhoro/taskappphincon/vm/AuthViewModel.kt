@@ -30,22 +30,16 @@ class AuthViewModel @Inject constructor(
         authRepository.register(image, email, password, name, phone, gender).asLiveData()
 
     fun changePassword(
-        //token: String,
         id: Int,
         oldPassword: String,
         newPassword: String,
         confirmPassword: String
-    ) = authRepository.changePassword(
-        //token,
-        id, oldPassword, newPassword,confirmPassword).asLiveData()
+    ) = authRepository.changePassword(id, oldPassword, newPassword,confirmPassword).asLiveData()
 
     fun changeImage(
-        //token: String,
         id: Int,
         image: MultipartBody.Part,
     ): LiveData<Resource<ResponseChangeImage>> =
-        authRepository.changeImage(
-            //token,
-            id, image).asLiveData()
+        authRepository.changeImage(id, image).asLiveData()
 
 }

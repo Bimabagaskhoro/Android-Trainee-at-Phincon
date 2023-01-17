@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.data.source.response.auth
+package com.bimabagaskhoro.taskappphincon.data.source.response
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
