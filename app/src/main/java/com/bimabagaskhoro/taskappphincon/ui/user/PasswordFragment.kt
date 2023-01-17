@@ -95,7 +95,7 @@ class PasswordFragment : Fragment() {
         }
 
         viewModel.changePassword(
-            userToken,
+            //userToken,
             userId,
             oldPassword,
             newPassword,

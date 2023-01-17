@@ -1,8 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.utils
 
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
-import com.bimabagaskhoro.taskappphincon.data.source.network.ApiAuth
-import com.bimabagaskhoro.taskappphincon.data.source.network.ApiService
+import com.bimabagaskhoro.taskappphincon.data.source.network.ApiToken
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseRefreshToken
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -10,12 +9,12 @@ import okhttp3.*
 import okhttp3.Authenticator
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 
-class Authenticator : Authenticator {
-    lateinit var tokenManager: AuthPreferences
+class AuthAuthenticator @Inject constructor(
+    private val tokenManager: AuthPreferences,
+): Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
         val accessToken = runBlocking {
             tokenManager.getAccessToken().first()
@@ -55,7 +54,7 @@ class Authenticator : Authenticator {
             .addConverterFactory(MoshiConverterFactory.create())
             .client(okHttpClient)
             .build()
-        val service = retrofit.create(ApiAuth::class.java)
+        val service = retrofit.create(ApiToken::class.java)
         return service.refreshToken(userId, accessToken, refreshToken )
     }
 }

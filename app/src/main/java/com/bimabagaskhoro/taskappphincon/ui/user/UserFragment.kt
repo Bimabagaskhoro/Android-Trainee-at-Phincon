@@ -6,17 +6,21 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -28,7 +32,9 @@ import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.SuccessImage
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentUserBinding
+import com.bimabagaskhoro.taskappphincon.ui.SplashScreen
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
+import com.bimabagaskhoro.taskappphincon.ui.adapter.CustomSpinnerAdapter
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
 import com.bimabagaskhoro.taskappphincon.utils.reduceFileImage
 import com.bimabagaskhoro.taskappphincon.utils.rotateBitmap
@@ -45,7 +51,9 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
 import java.io.File
+import java.util.*
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class UserFragment : Fragment() {
     private var _binding: FragmentUserBinding? = null
@@ -54,8 +62,8 @@ class UserFragment : Fragment() {
     private lateinit var result: Bitmap
     private val viewModel: AuthViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-    val arrLanguage = arrayOf("EN","ID")
-    val arrFlag = intArrayOf(R.drawable.unitedstates, R.drawable.indonesia)
+    val dataLanguage = arrayOf("EN","ID")
+    val dataImgLanguage = intArrayOf(R.drawable.unitedstates, R.drawable.indonesia)
 
 
     private val launcherIntentCameraX = registerForActivityResult(
@@ -118,10 +126,9 @@ class UserFragment : Fragment() {
             )
         }
         initDataStore()
-        //initSpinner()
+        initSpinner()
 
         binding.apply {
-            val spinner = binding.spinner
             card2.setOnClickListener{
                 findNavController().navigate(R.id.action_navigation_user_to_passwordFragment)
             }
@@ -137,6 +144,62 @@ class UserFragment : Fragment() {
             }
         }
     }
+
+    private fun initSpinner() {
+        binding.spinnerCustom.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                if (position == 0) {
+                    setLocate("en")
+                    Log.d("language", "setlocale")
+                    AlertDialog.Builder(requireActivity())
+                        .setTitle(R.string.change_language)
+                        .setMessage(R.string.change_language)
+                        .setPositiveButton(R.string.ok) { _, _ ->
+                            val intent = Intent(requireActivity(), SplashScreen::class.java)
+                            startActivity(intent)
+                        }
+                        .setNegativeButton(R.string.cancel) { _, _ ->
+                        }
+                        .show()
+                    //set dialog
+
+                } else if (position == 1) {
+                    setLocate("in")
+                    Log.d("language", "setlocale")
+                    AlertDialog.Builder(requireActivity())
+                        .setTitle(R.string.change_language)
+                        .setMessage(R.string.change_language)
+                        .setPositiveButton(R.string.ok) { _, _ ->
+                            val intent = Intent(requireActivity(), SplashScreen::class.java)
+                            startActivity(intent)
+                        }
+                        .setNegativeButton(R.string.cancel) { _, _ ->
+                        }
+                        .show()
+                    //set dialog
+                }
+                //Toast.makeText(requireContext(),"you select: $position \n${dataLanguage[position]}", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+        val customSpinnerAdapter = CustomSpinnerAdapter(requireContext(), dataImgLanguage, dataLanguage)
+        binding.spinnerCustom.adapter = customSpinnerAdapter
+    }
+
+    private fun setLocate(lang: String) {
+        val locale = Locale(lang)
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.locale = locale
+        requireActivity().resources.updateConfiguration(config, requireActivity().resources.displayMetrics)
+    }
+
 
     private fun initDataStore() {
         dataStoreViewModel.apply {
@@ -178,7 +241,9 @@ class UserFragment : Fragment() {
                 file.name,
                 reqBodyImage
             )
-            viewModel.changeImage(userToken, userId, multipartImage)
+            viewModel.changeImage(
+               // userToken,
+                userId, multipartImage)
                 .observe(viewLifecycleOwner) { result ->
                     when (result) {
                         is Resource.Loading -> {

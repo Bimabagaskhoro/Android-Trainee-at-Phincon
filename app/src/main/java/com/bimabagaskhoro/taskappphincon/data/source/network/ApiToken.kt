@@ -4,8 +4,7 @@ import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseRefre
 import retrofit2.Response
 import retrofit2.http.*
 
-interface ApiAuth {
-
+interface ApiToken {
     @FormUrlEncoded
     @Headers(*["apikey: TuIBt77u7tZHi8n7WqUC"])
     @POST("refresh-token")

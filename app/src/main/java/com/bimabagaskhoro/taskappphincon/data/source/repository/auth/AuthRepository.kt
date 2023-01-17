@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.data.source.repository
+package com.bimabagaskhoro.taskappphincon.data.source.repository.auth
 
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.response.auth.*
@@ -22,7 +22,7 @@ interface AuthRepository {
     ) : Flow<Resource<ResponseRegister>>
 
     fun changePassword(
-        token: String,
+        //token: String,
         id: Int,
         password: String,
         newPassword: String,
@@ -30,7 +30,7 @@ interface AuthRepository {
     ): Flow<Resource<ResponseChangePassword>>
 
     fun changeImage(
-        token: String,
+        //token: String,
         id: Int,
         image: MultipartBody.Part
     ): Flow<Resource<ResponseChangeImage>>

@@ -174,7 +174,7 @@ class RegisterFragment : Fragment() {
                 reqBodyImage
             )
 
-            //val multipartImage = MultipartBody.Part.createFormData("photo", file.name, reqBodyImage)
+            Log.d("getFile", "$getFile")
 
             val emailBody = email.toRequestBody("text/plain".toMediaType())
             val passwordBody = password.toRequestBody("text/plain".toMediaType())
