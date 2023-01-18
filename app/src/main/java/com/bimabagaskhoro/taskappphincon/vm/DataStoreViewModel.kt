@@ -23,6 +23,7 @@ class DataStoreViewModel @Inject constructor(
     fun saveUserPhone(phone: String) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserPhone(phone)}}
     fun saveUserPath(path: String) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserPath(path)}}
     fun saveUserPhoto(path: String) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserImage(path)}}
+    fun saveLanguage(language:Int) {viewModelScope.launch (Dispatchers.IO)  {dataPreference.saveUserLanguage(language)}}
 
     fun clear() { viewModelScope.launch(Dispatchers.IO) { dataPreference.clear() } }
 
@@ -36,5 +37,6 @@ class DataStoreViewModel @Inject constructor(
     val getUserPhone = dataPreference.userPhone
     val getUserPath = dataPreference.userPath
     val getUserImage = dataPreference.userImage
+    val getUserLanguage = dataPreference.userLanguage
 
 }

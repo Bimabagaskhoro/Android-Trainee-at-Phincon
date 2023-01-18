@@ -158,6 +158,19 @@ class AuthPreferences @Inject constructor(@ApplicationContext context: Context) 
         }
     }
 
+    /**
+     * isLanguage
+     */
+    val userLanguage = dataStore.data.map { preferences ->
+        preferences[IS_LANGUAGE] ?: 0
+    }.distinctUntilChanged().asLiveData()
+
+    suspend fun saveUserLanguage(language: Int) {
+        dataStore.edit { preferences ->
+            preferences[IS_LANGUAGE] = language
+        }
+    }
+
 
     /**
      * for interceptor
@@ -192,6 +205,7 @@ class AuthPreferences @Inject constructor(@ApplicationContext context: Context) 
         private val USER_PHONE = stringPreferencesKey("user_phone")
         private val USER_PATH = stringPreferencesKey("user_path")
         private val USER_IMAGE = stringPreferencesKey("user_image")
+        private val IS_LANGUAGE = intPreferencesKey("is_language")
     }
 
 }

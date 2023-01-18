@@ -2,6 +2,7 @@ package com.bimabagaskhoro.taskappphincon.ui.user
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -123,19 +124,23 @@ class PasswordFragment : Fragment() {
                     binding.progressbar.visibility = View.GONE
                     binding.cardProgressbar.visibility = View.GONE
                     binding.tvWaiting.visibility = View.GONE
-                    val err = result.errorBody?.string()
-                        ?.let { it1 -> JSONObject(it1).toString() }
-                    val gson = Gson()
-                    val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                    val errorResponse =
-                        gson.fromJson(jsonObject, ResponseError::class.java)
-                    val messageErr = errorResponse.error.message
-                    AlertDialog.Builder(requireActivity())
-                        .setTitle("Change Password Failed")
-                        .setMessage(messageErr)
-                        .setPositiveButton("Ok") { _, _ ->
-                        }
-                        .show()
+                    try {
+                        val err = result.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                        val gson = Gson()
+                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                        val errorResponse =
+                            gson.fromJson(jsonObject, ResponseError::class.java)
+                        val messageErr = errorResponse.error.message
+                        AlertDialog.Builder(requireActivity())
+                            .setTitle("Change Password Failed")
+                            .setMessage(messageErr)
+                            .setPositiveButton("Ok") { _, _ ->
+                            }
+                            .show()
+                    } catch (e: java.lang.Exception) {
+                        val err =  result.errorCode
+                        Log.d("ErrorCode", "$err")
+                    }
                 }
             }
         }

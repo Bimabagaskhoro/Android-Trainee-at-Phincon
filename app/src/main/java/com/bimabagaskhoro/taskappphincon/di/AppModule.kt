@@ -8,6 +8,7 @@ import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthReposit
 import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthRepositoryImpl
 import com.bimabagaskhoro.taskappphincon.utils.AuthAuthenticator
 import com.bimabagaskhoro.taskappphincon.utils.AuthInterceptor
+import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
 import com.bimabagaskhoro.taskappphincon.utils.HeaderInterceptor
 import dagger.Module
 import dagger.Provides
@@ -64,11 +65,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAuthAuthenticator(authPreferences: AuthPreferences,@ApplicationContext context: Context): AuthAuthenticator = AuthAuthenticator(authPreferences, context)
+    fun provideAuthAuthenticator(authPreferences: AuthPreferences): AuthAuthenticator = AuthAuthenticator(authPreferences)
 
     @Singleton
     @Provides
-    fun provideHeaderInterceptor(): HeaderInterceptor = HeaderInterceptor()
+    fun provideHeaderInterceptor(authPreferences: AuthPreferences,): HeaderInterceptor = HeaderInterceptor(authPreferences)
 
     @Singleton
     @Provides
@@ -83,7 +84,7 @@ object AppModule {
         moshiConverterFactory: MoshiConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://172.17.20.201/training_android/public/api/ecommerce/")
+            .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(moshiConverterFactory)
             .build()

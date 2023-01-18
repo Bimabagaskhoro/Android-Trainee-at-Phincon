@@ -1,6 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.ui.user
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
@@ -125,7 +126,7 @@ class UserFragment : Fragment() {
             )
         }
         initDataStore()
-        //initSpinner()
+        initSpinner()
 
         binding.apply {
             card2.setOnClickListener{
@@ -143,52 +144,55 @@ class UserFragment : Fragment() {
             }
         }
     }
-
+    @SuppressLint("ClickableViewAccessibility")
     private fun initSpinner() {
-        binding.spinnerCustom.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                if (position == 0) {
-                    setLocate("en")
-                    Log.d("language", "setlocale")
-                    AlertDialog.Builder(requireActivity())
-                        .setTitle(R.string.change_language)
-                        .setMessage(R.string.change_language)
-                        .setPositiveButton(R.string.ok) { _, _ ->
-                            val intent = Intent(requireActivity(), SplashScreen::class.java)
-                            startActivity(intent)
-                        }
-                        .setNegativeButton(R.string.cancel) { _, _ ->
-                        }
-                        .show()
-                    //set dialog
+        var isSpinnerTouched = false
+        binding.apply {
+            spinnerCustom.setOnTouchListener(View.OnTouchListener { v, event ->
+                isSpinnerTouched = true
+                false
+            })
+            binding.spinnerCustom.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    if (isSpinnerTouched) {
+                        if (position == 0) {
+                            setLocate("en")
+                            setDialogChangeLanguage()
 
-                } else if (position == 1) {
-                    setLocate("in")
-                    Log.d("language", "setlocale")
-                    AlertDialog.Builder(requireActivity())
-                        .setTitle(R.string.change_language)
-                        .setMessage(R.string.change_language)
-                        .setPositiveButton(R.string.ok) { _, _ ->
-                            val intent = Intent(requireActivity(), SplashScreen::class.java)
-                            startActivity(intent)
+                        } else if (position == 1) {
+                            setLocate("in")
+                            setDialogChangeLanguage()
                         }
-                        .setNegativeButton(R.string.cancel) { _, _ ->
-                        }
-                        .show()
-                    //set dialog
+                    } else {
+                        isSpinnerTouched = false
+                    }
                 }
-                //Toast.makeText(requireContext(),"you select: $position \n${dataLanguage[position]}", Toast.LENGTH_SHORT).show()
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            dataStoreViewModel.getUserLanguage.observe(viewLifecycleOwner) {
+                spinnerCustom.setSelection(it)
+            }
+            val customSpinnerAdapter = CustomSpinnerAdapter(requireContext(), dataImgLanguage, dataLanguage)
+            spinnerCustom.adapter = customSpinnerAdapter
         }
-        val customSpinnerAdapter = CustomSpinnerAdapter(requireContext(), dataImgLanguage, dataLanguage)
-        binding.spinnerCustom.adapter = customSpinnerAdapter
+    }
+
+    private fun setDialogChangeLanguage() {
+        AlertDialog.Builder(requireActivity())
+            .setTitle(R.string.change_language)
+            .setMessage(R.string.change_language)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                val intent = Intent(requireActivity(), SplashScreen::class.java)
+                startActivity(intent)
+            }
+            .setNegativeButton(R.string.cancel) { _, _ ->
+            }
+            .show()
     }
 
     private fun setLocate(lang: String) {
@@ -267,18 +271,24 @@ class UserFragment : Fragment() {
                             binding.progressbar.visibility = View.GONE
                             binding.cardProgressbar.visibility = View.GONE
                             binding.tvWaiting.visibility = View.GONE
-                            val err = result.errorBody?.string()
-                                ?.let { it1 -> JSONObject(it1).toString() }
-                            val gson = Gson()
-                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                            val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
-                            val messageErr = errorResponse.error.message
-                            AlertDialog.Builder(requireActivity())
-                                .setTitle("Change Image Failed")
-                                .setMessage(messageErr)
-                                .setPositiveButton("Ok") { _, _ ->
-                                }
-                                .show()
+                            try {
+                                val err = result.errorBody?.string()
+                                    ?.let { it1 -> JSONObject(it1).toString() }
+                                val gson = Gson()
+                                val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                                val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                                val messageErr = errorResponse.error.message
+                                AlertDialog.Builder(requireActivity())
+                                    .setTitle("Change Image Failed")
+                                    .setMessage(messageErr)
+                                    .setPositiveButton("Ok") { _, _ ->
+                                    }
+                                    .show()
+                            } catch (e: java.lang.Exception) {
+                                val err =  result.errorCode
+                                Log.d("ErrorCode", "$err")
+                            }
+
                         }
                     }
                 }
