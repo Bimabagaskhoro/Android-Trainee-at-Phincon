@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseError
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentPasswordBinding
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
@@ -100,7 +100,8 @@ class PasswordFragment : Fragment() {
             userId,
             oldPassword,
             newPassword,
-            confirmPassword).observe(viewLifecycleOwner) { result ->
+            confirmPassword
+        ).observe(viewLifecycleOwner) { result ->
             when (result) {
                 is Resource.Loading -> {
                     binding.progressbar.visibility = View.VISIBLE
@@ -125,7 +126,8 @@ class PasswordFragment : Fragment() {
                     binding.cardProgressbar.visibility = View.GONE
                     binding.tvWaiting.visibility = View.GONE
                     try {
-                        val err = result.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                        val err =
+                            result.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
                         val gson = Gson()
                         val jsonObject = gson.fromJson(err, JsonObject::class.java)
                         val errorResponse =
@@ -138,7 +140,7 @@ class PasswordFragment : Fragment() {
                             }
                             .show()
                     } catch (e: java.lang.Exception) {
-                        val err =  result.errorCode
+                        val err = result.errorCode
                         Log.d("ErrorCode", "$err")
                     }
                 }

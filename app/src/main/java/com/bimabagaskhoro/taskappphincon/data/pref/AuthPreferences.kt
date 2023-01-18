@@ -18,6 +18,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 @Singleton
 class AuthPreferences @Inject constructor(@ApplicationContext context: Context) {
     private val dataStore = context.dataStore
+
     /**
      * User access token
      */

@@ -7,18 +7,18 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.bimabagaskhoro.taskappphincon.ui.home.HomeFragment"
-        android:label="Home"
+        android:label=""
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/navigation_fav"
         android:name="com.bimabagaskhoro.taskappphincon.ui.fav.FavoriteFragment"
-        android:label="Favorite"
+        android:label=""
         tools:layout="@layout/fragment_favorite" />
     <fragment
         android:id="@+id/navigation_user"
         android:name="com.bimabagaskhoro.taskappphincon.ui.user.UserFragment"
-        android:label="User"
-        tools:layout="@layout/fragment_user" >
+        android:label=""
+        tools:layout="@layout/fragment_user">
         <action
             android:id="@+id/action_navigation_user_to_passwordFragment"
             app:destination="@id/passwordFragment" />
@@ -26,8 +26,8 @@
     <fragment
         android:id="@+id/passwordFragment"
         android:name="com.bimabagaskhoro.taskappphincon.ui.user.PasswordFragment"
-        android:label="fragment_password"
-        tools:layout="@layout/fragment_password" >
+        android:label="Password"
+        tools:layout="@layout/fragment_password">
         <action
             android:id="@+id/action_passwordFragment_to_navigation_user"
             app:destination="@id/navigation_user" />

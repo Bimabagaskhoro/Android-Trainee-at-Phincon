@@ -1,9 +1,10 @@
 package com.bimabagaskhoro.taskappphincon.vm
 
 import androidx.lifecycle.*
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthRepository
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -12,7 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
-    ) : ViewModel() {
+) : ViewModel() {
 
     fun login(
         email: String,
@@ -34,7 +35,7 @@ class AuthViewModel @Inject constructor(
         oldPassword: String,
         newPassword: String,
         confirmPassword: String
-    ) = authRepository.changePassword(id, oldPassword, newPassword,confirmPassword).asLiveData()
+    ) = authRepository.changePassword(id, oldPassword, newPassword, confirmPassword).asLiveData()
 
     fun changeImage(
         id: Int,

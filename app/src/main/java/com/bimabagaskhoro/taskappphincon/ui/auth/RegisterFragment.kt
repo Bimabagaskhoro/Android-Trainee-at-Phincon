@@ -27,7 +27,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseError
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentRegisterBinding
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
 import com.bimabagaskhoro.taskappphincon.utils.reduceFileImage
@@ -117,7 +117,7 @@ class RegisterFragment : Fragment() {
             btnLogin.setOnClickListener {
                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
             }
-            floatingActionButton.setOnClickListener{
+            floatingActionButton.setOnClickListener {
                 initDialog()
             }
         }
@@ -129,7 +129,10 @@ class RegisterFragment : Fragment() {
         val password = binding.edtPassword.text.toString().trim()
         val matchPassword = binding.edtConfirmPassword.text.toString().trim()
         val phone = binding.edtPhone.text.toString().trim()
-        val gender = if (binding.rdFemale.isChecked) isGender(binding.rdFemale.isChecked) else isGender(binding.rdMale.isChecked)
+        val gender =
+            if (binding.rdFemale.isChecked) isGender(binding.rdFemale.isChecked) else isGender(
+                binding.rdMale.isChecked
+            )
         checkEmail()
         checkMatchPassword()
         when {
@@ -164,7 +167,13 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    private fun initData(name: String, email: String, password: String, phone: String, gender: Int) {
+    private fun initData(
+        name: String,
+        email: String,
+        password: String,
+        phone: String,
+        gender: Int
+    ) {
         if (getFile != null) {
             val file = reduceFileImage(getFile as File)
             val reqBodyImage = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
@@ -175,54 +184,55 @@ class RegisterFragment : Fragment() {
             )
 
             Log.d("getFile", "$getFile")
-
             val emailBody = email.toRequestBody("text/plain".toMediaType())
             val passwordBody = password.toRequestBody("text/plain".toMediaType())
             val nameBody = name.toRequestBody("text/plain".toMediaType())
             val phoneBody = phone.toRequestBody("text/plain".toMediaType())
 
-            viewModel.register(multipartImage, emailBody, passwordBody, nameBody, phoneBody, gender).observe(viewLifecycleOwner) {
-                when(it) {
-                    is Resource.Loading -> {
-                        binding.progressbar.visibility = View.VISIBLE
-                        binding.cardProgressbar.visibility =View.VISIBLE
-                        binding.tvWaiting.visibility =View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        binding.progressbar.visibility = View.GONE
-                        binding.cardProgressbar.visibility =View.GONE
-                        binding.tvWaiting.visibility =View.GONE
-                        val dataMessages = it.data!!.success.message
-                        AlertDialog.Builder(requireActivity())
-                            .setTitle("Register Success")
-                            .setMessage(dataMessages)
-                            .setPositiveButton("Ok") { _, _ ->
-                            }
-                            .show()
-                        findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
-                    }
-                    is Resource.Error -> {
-                        binding.progressbar.visibility = View.GONE
-                        binding.cardProgressbar.visibility =View.GONE
-                        binding.tvWaiting.visibility =View.GONE
-                        val err = it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
-                        val gson = Gson()
-                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                        val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
-                        val messageErr = errorResponse.error.message
-                        AlertDialog.Builder(requireActivity())
-                            .setTitle("Gagal")
-                            .setMessage(messageErr)
-                            .setPositiveButton("Ok") { _, _ ->
-                            }
-                            .show()
-                        val errCode = it.errorCode!!.toInt()
-                        Log.d("errorCode", "$errCode")
+            viewModel.register(multipartImage, emailBody, passwordBody, nameBody, phoneBody, gender)
+                .observe(viewLifecycleOwner) {
+                    when (it) {
+                        is Resource.Loading -> {
+                            binding.progressbar.visibility = View.VISIBLE
+                            binding.cardProgressbar.visibility = View.VISIBLE
+                            binding.tvWaiting.visibility = View.VISIBLE
+                        }
+                        is Resource.Success -> {
+                            binding.progressbar.visibility = View.GONE
+                            binding.cardProgressbar.visibility = View.GONE
+                            binding.tvWaiting.visibility = View.GONE
+                            val dataMessages = it.data!!.success.message
+                            AlertDialog.Builder(requireActivity())
+                                .setTitle("Register Success")
+                                .setMessage(dataMessages)
+                                .setPositiveButton("Ok") { _, _ ->
+                                }
+                                .show()
+                            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                        }
+                        is Resource.Error -> {
+                            binding.progressbar.visibility = View.GONE
+                            binding.cardProgressbar.visibility = View.GONE
+                            binding.tvWaiting.visibility = View.GONE
+                            val err =
+                                it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                            val gson = Gson()
+                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                            val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                            val messageErr = errorResponse.error.message
+                            AlertDialog.Builder(requireActivity())
+                                .setTitle("Gagal")
+                                .setMessage(messageErr)
+                                .setPositiveButton("Ok") { _, _ ->
+                                }
+                                .show()
+                            val errCode = it.errorCode!!.toInt()
+                            Log.d("errorCode", "$errCode")
 
-                        //Toast.makeText(requireActivity(), errorResponse.error.message, Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(requireActivity(), errorResponse.error.message, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-            }
         }
     }
 
@@ -237,8 +247,14 @@ class RegisterFragment : Fragment() {
 
         val btnCam = dialogBinding.findViewById<TextView>(R.id.tv_camera)
         val btnGal = dialogBinding.findViewById<TextView>(R.id.tv_galery)
-        btnCam.setOnClickListener { openCameraX() }
-        btnGal.setOnClickListener { openGallery() }
+        btnCam.setOnClickListener {
+            openCameraX()
+            mDialog.dismiss()
+        }
+        btnGal.setOnClickListener {
+            openGallery()
+            mDialog.dismiss()
+        }
     }
 
     private fun isGender(isChecked: Boolean): Int {
@@ -290,3 +306,5 @@ class RegisterFragment : Fragment() {
     }
 
 }
+
+//

@@ -11,10 +11,11 @@ import android.widget.TextView
 import com.bimabagaskhoro.taskappphincon.R
 
 @SuppressLint("ViewHolder", "InflateParams")
-class CustomSpinnerAdapter (
+class CustomSpinnerAdapter(
     internal var context: Context,
     internal var images: IntArray,
-    internal var languages: Array<String>):  BaseAdapter() {
+    internal var languages: Array<String>
+) : BaseAdapter() {
 
     private var inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -31,7 +32,7 @@ class CustomSpinnerAdapter (
     }
 
     override fun getView(i: Int, p1: View?, p2: ViewGroup?): View {
-        val view = inflater.inflate(R.layout.spinner_custom,null)
+        val view = inflater.inflate(R.layout.spinner_custom, null)
         val icon = view.findViewById<View>(R.id.img_language) as ImageView?
         val names = view.findViewById<View>(R.id.tv_language) as TextView?
         icon!!.setImageResource(images[i])

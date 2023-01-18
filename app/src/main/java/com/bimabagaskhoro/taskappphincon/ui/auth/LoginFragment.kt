@@ -13,8 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseError
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.SuccessLogin
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.SuccessLogin
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentLoginBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.MainActivity
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
@@ -80,16 +80,16 @@ class LoginFragment : Fragment() {
 
     private fun initData(email: String, password: String) {
         viewModel.login(email, password).observe(viewLifecycleOwner) {
-            when(it) {
+            when (it) {
                 is Resource.Loading -> {
                     binding.progressbar.visibility = View.VISIBLE
-                    binding.cardProgressbar.visibility =View.VISIBLE
-                    binding.tvWaiting.visibility =View.VISIBLE
+                    binding.cardProgressbar.visibility = View.VISIBLE
+                    binding.tvWaiting.visibility = View.VISIBLE
                 }
                 is Resource.Success -> {
                     binding.progressbar.visibility = View.GONE
-                    binding.cardProgressbar.visibility =View.GONE
-                    binding.tvWaiting.visibility =View.GONE
+                    binding.cardProgressbar.visibility = View.GONE
+                    binding.tvWaiting.visibility = View.GONE
                     saveUserData(it.data!!.success)
                     val dataLog = it.data!!.success
                     Log.d("datas", "$dataLog")
@@ -100,8 +100,8 @@ class LoginFragment : Fragment() {
                 }
                 is Resource.Error -> {
                     binding.progressbar.visibility = View.GONE
-                    binding.cardProgressbar.visibility =View.GONE
-                    binding.tvWaiting.visibility =View.GONE
+                    binding.cardProgressbar.visibility = View.GONE
+                    binding.tvWaiting.visibility = View.GONE
                     val err = it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
                     val gson = Gson()
                     val jsonObject = gson.fromJson(err, JsonObject::class.java)

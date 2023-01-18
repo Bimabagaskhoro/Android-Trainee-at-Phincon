@@ -1,6 +1,6 @@
-package com.bimabagaskhoro.taskappphincon.data.source.network
+package com.bimabagaskhoro.taskappphincon.data.source.remote.network
 
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseRefreshToken
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRefreshToken
 import retrofit2.Response
 import retrofit2.http.*
 

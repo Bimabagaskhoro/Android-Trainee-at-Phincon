@@ -13,19 +13,53 @@ import javax.inject.Inject
 class DataStoreViewModel @Inject constructor(
     private val dataPreference: AuthPreferences
 ) : ViewModel() {
-    fun isLogin(state: Boolean) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveIsLoggedIn(state) } }
-    fun saveToken(token: String) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserToken(token) } }
-    fun saveRefreshToken(token: String) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveRefreshToken(token) }}
-    fun saveUserId(userId: Int) {viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserId(userId) } }
-    fun saveUserName(username: String) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserName(username)}}
-    fun saveUserEmail(email: String) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserEmail(email)}}
-    fun saveUserGender(gender: Int) {viewModelScope.launch(Dispatchers.IO) { dataPreference.saveGender(gender) } }
-    fun saveUserPhone(phone: String) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserPhone(phone)}}
-    fun saveUserPath(path: String) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserPath(path)}}
-    fun saveUserPhoto(path: String) { viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserImage(path)}}
-    fun saveLanguage(language:Int) {viewModelScope.launch (Dispatchers.IO)  {dataPreference.saveUserLanguage(language)}}
+    fun isLogin(state: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveIsLoggedIn(state) }
+    }
 
-    fun clear() { viewModelScope.launch(Dispatchers.IO) { dataPreference.clear() } }
+    fun saveToken(token: String) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserToken(token) }
+    }
+
+    fun saveRefreshToken(token: String) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveRefreshToken(token) }
+    }
+
+    fun saveUserId(userId: Int) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserId(userId) }
+    }
+
+    fun saveUserName(username: String) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserName(username) }
+    }
+
+    fun saveUserEmail(email: String) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserEmail(email) }
+    }
+
+    fun saveUserGender(gender: Int) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveGender(gender) }
+    }
+
+    fun saveUserPhone(phone: String) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserPhone(phone) }
+    }
+
+    fun saveUserPath(path: String) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserPath(path) }
+    }
+
+    fun saveUserPhoto(path: String) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserImage(path) }
+    }
+
+    fun saveLanguage(language: Int) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserLanguage(language) }
+    }
+
+    fun clear() {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.clear() }
+    }
 
     val isLoggedIn = dataPreference.isLoggedIn.asLiveData()
     val getToken = dataPreference.userToken

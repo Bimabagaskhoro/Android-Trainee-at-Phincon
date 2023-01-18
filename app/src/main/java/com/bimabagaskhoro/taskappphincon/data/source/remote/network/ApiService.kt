@@ -1,7 +1,9 @@
-package com.bimabagaskhoro.taskappphincon.data.source.network
+package com.bimabagaskhoro.taskappphincon.data.source.remote.network
 
-import com.bimabagaskhoro.taskappphincon.data.source.response.*
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.*
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangePassword
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseLogin
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response

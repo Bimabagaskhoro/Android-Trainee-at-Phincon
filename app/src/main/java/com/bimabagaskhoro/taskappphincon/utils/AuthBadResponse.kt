@@ -12,7 +12,7 @@ import javax.inject.Inject
 class AuthBadResponse @Inject constructor(
     private val tokenManager: AuthPreferences,
     private val context: Context
-): Interceptor {
+) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
         if (response.code == 401) {

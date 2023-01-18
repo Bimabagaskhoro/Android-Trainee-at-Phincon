@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class HeaderInterceptor @Inject constructor(
     private val tokenManager: AuthPreferences
-): Interceptor {
+) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking {
             tokenManager.getAccessToken().first()

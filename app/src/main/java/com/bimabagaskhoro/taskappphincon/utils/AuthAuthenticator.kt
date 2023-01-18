@@ -6,8 +6,8 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
-import com.bimabagaskhoro.taskappphincon.data.source.network.ApiToken
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseRefreshToken
+import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiToken
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRefreshToken
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
 import kotlinx.coroutines.flow.first
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 class AuthAuthenticator @Inject constructor(
     private val tokenManager: AuthPreferences
-): Authenticator {
+) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
 
         return runBlocking {
@@ -42,9 +42,6 @@ class AuthAuthenticator @Inject constructor(
                 val newRefreshToken = it.success.refresh_token
                 tokenManager.saveUserToken(newUserToken)
                 tokenManager.saveRefreshToken(newRefreshToken)
-                Log.d("newToken", it.success.access_token)
-                Log.d("newRefreshToken", it.success.refresh_token)
-                Log.d("resultAsddd", tokenManager.saveRefreshToken(newRefreshToken).toString())
                 response.request.newBuilder()
                     .header("Authorization", it.success.access_token)
                     .build()
@@ -67,6 +64,6 @@ class AuthAuthenticator @Inject constructor(
             .client(okHttpClient)
             .build()
         val service = retrofit.create(ApiToken::class.java)
-        return service.refreshToken(userId, accessToken, refreshToken )
+        return service.refreshToken(userId, accessToken, refreshToken)
     }
 }

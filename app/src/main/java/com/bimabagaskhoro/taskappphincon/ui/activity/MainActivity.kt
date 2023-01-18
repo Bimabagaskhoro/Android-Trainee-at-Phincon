@@ -3,6 +3,7 @@ package com.bimabagaskhoro.taskappphincon.ui.activity
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
@@ -26,6 +27,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val toolbar = binding.toolbar
+        setSupportActionBar(toolbar)
+
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment)
@@ -45,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             val language = it
             if (language == 1) {
                 setLocate("en")
-            } else if (language == 2){
+            } else if (language == 2) {
                 setLocate("in")
             }
         }

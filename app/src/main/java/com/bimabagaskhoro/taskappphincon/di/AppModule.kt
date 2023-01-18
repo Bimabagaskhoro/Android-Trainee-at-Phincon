@@ -3,9 +3,13 @@ package com.bimabagaskhoro.taskappphincon.di
 import android.content.Context
 import com.bimabagaskhoro.taskappphincon.BuildConfig
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
-import com.bimabagaskhoro.taskappphincon.data.source.network.ApiService
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.ProductDatabase
+import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiPaging
+import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
 import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthRepository
 import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthRepositoryImpl
+import com.bimabagaskhoro.taskappphincon.data.source.repository.product.ProductRepository
+import com.bimabagaskhoro.taskappphincon.data.source.repository.product.ProductRepositoryImpl
 import com.bimabagaskhoro.taskappphincon.utils.AuthAuthenticator
 import com.bimabagaskhoro.taskappphincon.utils.AuthBadResponse
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
@@ -61,15 +65,20 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAuthInterceptor(authPreferences: AuthPreferences, @ApplicationContext context: Context): AuthBadResponse = AuthBadResponse(authPreferences,context)
+    fun provideAuthInterceptor(
+        authPreferences: AuthPreferences,
+        @ApplicationContext context: Context
+    ): AuthBadResponse = AuthBadResponse(authPreferences, context)
 
     @Singleton
     @Provides
-    fun provideAuthAuthenticator(authPreferences: AuthPreferences): AuthAuthenticator = AuthAuthenticator(authPreferences)
+    fun provideAuthAuthenticator(authPreferences: AuthPreferences): AuthAuthenticator =
+        AuthAuthenticator(authPreferences)
 
     @Singleton
     @Provides
-    fun provideHeaderInterceptor(authPreferences: AuthPreferences,): HeaderInterceptor = HeaderInterceptor(authPreferences)
+    fun provideHeaderInterceptor(authPreferences: AuthPreferences): HeaderInterceptor =
+        HeaderInterceptor(authPreferences)
 
     @Singleton
     @Provides
@@ -89,17 +98,32 @@ object AppModule {
             .addConverterFactory(moshiConverterFactory)
             .build()
     }
-    
+
     @Singleton
     @Provides
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun provideApiPaging(retrofit: Retrofit): ApiPaging {
+        return retrofit.create(ApiPaging::class.java)
+    }
+
     @Provides
     @Singleton
-    fun provideUserRepository(apiService: ApiService) : AuthRepository {
+    fun provideUserRepository(apiService: ApiService): AuthRepository {
         return AuthRepositoryImpl(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideProductRepository(
+        apiPaging: ApiPaging,
+        database: ProductDatabase
+    ): ProductRepository {
+        return ProductRepositoryImpl(apiPaging, database)
     }
 
     @Provides

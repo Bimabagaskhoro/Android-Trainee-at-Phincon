@@ -36,29 +36,29 @@
                 android:layout_marginTop="56dp"
                 android:layout_marginEnd="38dp"
                 android:hint="@string/email"
-                app:startIconDrawable="@drawable/ic_person"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                app:startIconDrawable="@drawable/ic_person">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:inputType="textEmailAddress"
                     android:ems="10"
-                    android:fontFamily="@font/poppinsbold" />
+                    android:fontFamily="@font/poppinsbold"
+                    android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
                 android:id="@+id/tv_checking_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/poppinsbold"
                 android:text="@string/wrong_email_format"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="10sp"
-                android:fontFamily="@font/poppinsbold"
                 android:visibility="invisible"
                 app:layout_constraintStart_toStartOf="@+id/textInputLayout1"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout1"
@@ -72,20 +72,20 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="38dp"
                 android:hint="@string/password"
-                app:startIconDrawable="@drawable/ic_lock"
-                app:passwordToggleEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_checking_email">
+                app:layout_constraintTop_toBottomOf="@+id/tv_checking_email"
+                app:passwordToggleEnabled="true"
+                app:startIconDrawable="@drawable/ic_lock">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:inputType="textPassword"
                     android:ems="10"
-                    android:fontFamily="@font/poppinsbold" />
+                    android:fontFamily="@font/poppinsbold"
+                    android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
@@ -105,8 +105,8 @@
         android:id="@+id/card_progressbar"
         android:layout_width="186dp"
         android:layout_height="160dp"
-        app:cardCornerRadius="20dp"
         android:visibility="gone"
+        app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -147,9 +147,9 @@
         android:id="@+id/btn_signup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_custom"
         android:fontFamily="@font/poppinsbold"
         android:text="@string/sign_up"
-        android:background="@drawable/btn_custom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

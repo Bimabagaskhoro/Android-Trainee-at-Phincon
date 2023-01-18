@@ -1,11 +1,11 @@
 package com.bimabagaskhoro.taskappphincon.data.source.repository.auth
 
-import com.bimabagaskhoro.taskappphincon.data.source.network.ApiService
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseChangeImage
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseChangePassword
+import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangePassword
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseLogin
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.ResponseRegister
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseLogin
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val apiService: ApiService
-): AuthRepository {
+) : AuthRepository {
     override fun login(
         email: String,
         password: String

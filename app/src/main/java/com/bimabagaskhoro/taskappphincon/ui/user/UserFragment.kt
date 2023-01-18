@@ -29,8 +29,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.response.ResponseError
-import com.bimabagaskhoro.taskappphincon.data.source.response.auth.SuccessImage
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.SuccessImage
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentUserBinding
 import com.bimabagaskhoro.taskappphincon.ui.SplashScreen
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
@@ -62,49 +62,8 @@ class UserFragment : Fragment() {
     private lateinit var result: Bitmap
     private val viewModel: AuthViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-    val dataLanguage = arrayOf("EN","ID")
+    val dataLanguage = arrayOf("EN", "ID")
     val dataImgLanguage = intArrayOf(R.drawable.unitedstates, R.drawable.indonesia)
-
-
-    private val launcherIntentCameraX = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (it.resultCode == CAMERA_X_RESULT) {
-            val myFile = it.data?.getSerializableExtra("picture") as File
-            val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
-
-            getFile = myFile
-            result = rotateBitmap(
-                BitmapFactory.decodeFile(myFile.absolutePath),
-                isBackCamera
-            )
-
-            binding.apply {
-                floatingActionButton.isEnabled = true
-                imgProfile.visibility = View.VISIBLE
-                imgProfile.setImageBitmap(result)
-            }
-        }
-    }
-    private val launcherIntentGallery = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        if (it.resultCode == Activity.RESULT_OK) {
-            val uri = it.data?.data as Uri
-            val file = uriToFile(uri, requireContext())
-            getFile = file
-
-            binding.apply {
-                floatingActionButton.isEnabled = true
-                imgProfile.visibility = View.VISIBLE
-                imgProfile.setImageURI(uri)
-            }
-        }
-    }
-
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -129,12 +88,11 @@ class UserFragment : Fragment() {
         initSpinner()
 
         binding.apply {
-            card2.setOnClickListener{
+            card2.setOnClickListener {
                 findNavController().navigate(R.id.action_navigation_user_to_passwordFragment)
             }
-            floatingActionButton.setOnClickListener{
+            floatingActionButton.setOnClickListener {
                 initDialog()
-                initChangeImage()
             }
             btnLogout.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
@@ -144,6 +102,7 @@ class UserFragment : Fragment() {
             }
         }
     }
+
     @SuppressLint("ClickableViewAccessibility")
     private fun initSpinner() {
         var isSpinnerTouched = false
@@ -152,32 +111,40 @@ class UserFragment : Fragment() {
                 isSpinnerTouched = true
                 false
             })
-            binding.spinnerCustom.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    if (isSpinnerTouched) {
-                        if (position == 0) {
-                            setLocate("en")
-                            setDialogChangeLanguage()
+            binding.spinnerCustom.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        if (isSpinnerTouched) {
+                            if (position == 0) {
+                                setLocate("en")
+                                setDialogChangeLanguage()
 
-                        } else if (position == 1) {
-                            setLocate("in")
-                            setDialogChangeLanguage()
+                            } else if (position == 1) {
+                                setLocate("in")
+                                setDialogChangeLanguage()
+                            }
+                        } else {
+                            isSpinnerTouched = false
                         }
-                    } else {
-                        isSpinnerTouched = false
                     }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
                 }
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
-            }
             dataStoreViewModel.getUserLanguage.observe(viewLifecycleOwner) {
-                spinnerCustom.setSelection(it)
+                val pos = it
+                if (pos != null) {
+                    spinnerCustom.setSelection(pos)
+                } else {
+                    spinnerCustom.setSelection(0)
+                }
             }
-            val customSpinnerAdapter = CustomSpinnerAdapter(requireContext(), dataImgLanguage, dataLanguage)
+            val customSpinnerAdapter =
+                CustomSpinnerAdapter(requireContext(), dataImgLanguage, dataLanguage)
             spinnerCustom.adapter = customSpinnerAdapter
         }
     }
@@ -200,7 +167,10 @@ class UserFragment : Fragment() {
         Locale.setDefault(locale)
         val config = Configuration()
         config.locale = locale
-        requireActivity().resources.updateConfiguration(config, requireActivity().resources.displayMetrics)
+        requireActivity().resources.updateConfiguration(
+            config,
+            requireActivity().resources.displayMetrics
+        )
     }
 
 
@@ -225,6 +195,49 @@ class UserFragment : Fragment() {
         }
     }
 
+
+    private val launcherIntentCameraX = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == CAMERA_X_RESULT) {
+            val myFile = it.data?.getSerializableExtra("picture") as File
+            val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
+
+            getFile = myFile
+            result = rotateBitmap(
+                BitmapFactory.decodeFile(myFile.absolutePath),
+                isBackCamera
+            )
+
+            binding.apply {
+                floatingActionButton.isEnabled = true
+                imgProfile.visibility = View.VISIBLE
+                imgProfile.setImageBitmap(result)
+                initChangeImage()
+            }
+        }
+    }
+    private val launcherIntentGallery = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            val uri = it.data?.data as Uri
+            val file = uriToFile(uri, requireContext())
+            getFile = file
+
+            binding.apply {
+                floatingActionButton.isEnabled = true
+                imgProfile.visibility = View.VISIBLE
+                imgProfile.setImageURI(uri)
+                initChangeImage()
+            }
+        }
+    }
+
+    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
+        ContextCompat.checkSelfPermission(requireContext(), it) == PackageManager.PERMISSION_GRANTED
+    }
+
     private fun initChangeImage() {
         var userToken = ""
         var userId = 0
@@ -245,8 +258,9 @@ class UserFragment : Fragment() {
                 reqBodyImage
             )
             viewModel.changeImage(
-               // userToken,
-                userId, multipartImage)
+                // userToken,
+                userId, multipartImage
+            )
                 .observe(viewLifecycleOwner) { result ->
                     when (result) {
                         is Resource.Loading -> {
@@ -276,7 +290,8 @@ class UserFragment : Fragment() {
                                     ?.let { it1 -> JSONObject(it1).toString() }
                                 val gson = Gson()
                                 val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                                val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                                val errorResponse =
+                                    gson.fromJson(jsonObject, ResponseError::class.java)
                                 val messageErr = errorResponse.error.message
                                 AlertDialog.Builder(requireActivity())
                                     .setTitle("Change Image Failed")
@@ -285,7 +300,7 @@ class UserFragment : Fragment() {
                                     }
                                     .show()
                             } catch (e: java.lang.Exception) {
-                                val err =  result.errorCode
+                                val err = result.errorCode
                                 Log.d("ErrorCode", "$err")
                             }
 
@@ -313,8 +328,14 @@ class UserFragment : Fragment() {
 
         val btnCam = dialogBinding.findViewById<TextView>(R.id.tv_camera)
         val btnGal = dialogBinding.findViewById<TextView>(R.id.tv_galery)
-        btnCam.setOnClickListener { openCameraX() }
-        btnGal.setOnClickListener { openGallery() }
+        btnCam.setOnClickListener {
+            openCameraX()
+            mDialog.dismiss()
+        }
+        btnGal.setOnClickListener {
+            openGallery()
+            mDialog.dismiss()
+        }
     }
 
     private fun openGallery() {
