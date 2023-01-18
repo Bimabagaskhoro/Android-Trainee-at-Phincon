@@ -1,18 +1,15 @@
 package com.bimabagaskhoro.taskappphincon.utils
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
 
-class AuthInterceptor @Inject constructor(
+class AuthBadResponse @Inject constructor(
     private val tokenManager: AuthPreferences,
     private val context: Context
 ): Interceptor {

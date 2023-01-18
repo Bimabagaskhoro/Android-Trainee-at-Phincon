@@ -28,6 +28,7 @@ class AuthAuthenticator @Inject constructor(
             val accessToken = tokenManager.getAccessToken().first()
             val refreshToken = tokenManager.getRefreshToken().first()
             val userId = tokenManager.getUserId().first()
+
             val newToken = getNewToken(accessToken, refreshToken, userId)
             println("token $newToken")
 

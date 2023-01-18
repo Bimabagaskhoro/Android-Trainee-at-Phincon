@@ -7,7 +7,7 @@ import com.bimabagaskhoro.taskappphincon.data.source.network.ApiService
 import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthRepository
 import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthRepositoryImpl
 import com.bimabagaskhoro.taskappphincon.utils.AuthAuthenticator
-import com.bimabagaskhoro.taskappphincon.utils.AuthInterceptor
+import com.bimabagaskhoro.taskappphincon.utils.AuthBadResponse
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
 import com.bimabagaskhoro.taskappphincon.utils.HeaderInterceptor
 import dagger.Module
@@ -40,7 +40,7 @@ object AppModule {
     @Provides
     fun provideOkHttpClient(
         httpLoggingInterceptor: HttpLoggingInterceptor,
-        authInterceptor: AuthInterceptor,
+        authBadResponse: AuthBadResponse,
         authAuthenticator: AuthAuthenticator,
         headerInterceptor: HeaderInterceptor
     ): OkHttpClient {
@@ -49,9 +49,9 @@ object AppModule {
 
         return OkHttpClient.Builder()
             .addInterceptor(httpLoggingInterceptor)
-            .addInterceptor(headerInterceptor)
-            .addInterceptor(authInterceptor)
-            .authenticator(authAuthenticator)
+            .addInterceptor(headerInterceptor) //header
+            .addInterceptor(authBadResponse) // 401 bad response
+            .authenticator(authAuthenticator) // get refresh token
             .readTimeout(10, TimeUnit.SECONDS)
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
@@ -61,7 +61,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideAuthInterceptor(authPreferences: AuthPreferences, @ApplicationContext context: Context): AuthInterceptor = AuthInterceptor(authPreferences,context)
+    fun provideAuthInterceptor(authPreferences: AuthPreferences, @ApplicationContext context: Context): AuthBadResponse = AuthBadResponse(authPreferences,context)
 
     @Singleton
     @Provides
