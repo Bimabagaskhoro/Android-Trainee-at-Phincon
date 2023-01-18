@@ -22,14 +22,11 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val toolbar = binding.toolbar
-        setSupportActionBar(toolbar)
-
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment)
@@ -38,11 +35,17 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home, R.id.navigation_fav, R.id.navigation_user
             )
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         checkLogin()
+        setupWindow()
     }
+    private fun setupWindow() {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+    }
+
+
 
     private fun checkLogin() {
         dataStoreViewModel.getUserLanguage.observe(this) {

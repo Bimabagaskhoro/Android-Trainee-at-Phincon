@@ -1,20 +1,19 @@
-package com.bimabagaskhoro.taskappphincon.ui.user
+package com.bimabagaskhoro.taskappphincon.ui.activity
 
 import android.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
-import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
-import com.bimabagaskhoro.taskappphincon.databinding.FragmentPasswordBinding
+import com.bimabagaskhoro.taskappphincon.databinding.ActivityPasswordBinding
+import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.google.gson.Gson
@@ -23,25 +22,22 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
 
 @AndroidEntryPoint
-class PasswordFragment : Fragment() {
-    private var _binding: FragmentPasswordBinding? = null
-    private val binding get() = _binding!!
+class PasswordActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityPasswordBinding
     private val viewModel: AuthViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-    private lateinit var userPreference: AuthPreferences
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        _binding = FragmentPasswordBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityPasswordBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        userPreference = AuthPreferences(requireContext())
+        val reqActivity = this@PasswordActivity
+        reqActivity.title = getString(R.string.change_language)
+//        reqActivity.binding.btnBack
+        binding.btnBack.setOnClickListener { finish() }
+        reqActivity.setSupportActionBar(binding.toolbar)
+
         binding.apply {
             btnChangePassword.setOnClickListener { onButtonPressed() }
         }
@@ -52,7 +48,7 @@ class PasswordFragment : Fragment() {
         val newPassword = binding.edtNewPassword.text.toString().trim()
         val confirmPassword = binding.edtConfirmNewPassword.text.toString().trim()
         if (oldPassword == newPassword) {
-            Toast.makeText(context, "Password baru harus unik", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Password baru harus unik", Toast.LENGTH_LONG).show()
         } else if (newPassword != confirmPassword) {
             binding.tvCheckingPassword.visibility = View.VISIBLE
             binding.tvCheckingPassword2.visibility = View.VISIBLE
@@ -87,10 +83,10 @@ class PasswordFragment : Fragment() {
         var userId = 0
 
         dataStoreViewModel.apply {
-            getToken.observe(viewLifecycleOwner) {
+            getToken.observe(this@PasswordActivity) {
                 userToken = it
             }
-            getUserId.observe(viewLifecycleOwner) {
+            getUserId.observe(this@PasswordActivity) {
                 userId = it
             }
         }
@@ -101,7 +97,7 @@ class PasswordFragment : Fragment() {
             oldPassword,
             newPassword,
             confirmPassword
-        ).observe(viewLifecycleOwner) { result ->
+        ).observe(this) { result ->
             when (result) {
                 is Resource.Loading -> {
                     binding.progressbar.visibility = View.VISIBLE
@@ -113,13 +109,14 @@ class PasswordFragment : Fragment() {
                     binding.cardProgressbar.visibility = View.GONE
                     binding.tvWaiting.visibility = View.GONE
                     val dataMessages = result.data!!.success.message
-                    AlertDialog.Builder(requireActivity())
+                    AlertDialog.Builder(this)
                         .setTitle("Change Password Success")
                         .setMessage(dataMessages)
                         .setPositiveButton("Ok") { _, _ ->
                         }
                         .show()
-                    findNavController().navigate(R.id.action_passwordFragment_to_navigation_user)
+                    finish()
+                    //findNavController().navigate(R.id.action_passwordFragment_to_navigation_user)
                 }
                 is Resource.Error -> {
                     binding.progressbar.visibility = View.GONE
@@ -133,12 +130,13 @@ class PasswordFragment : Fragment() {
                         val errorResponse =
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
-                        AlertDialog.Builder(requireActivity())
+                        AlertDialog.Builder(this)
                             .setTitle("Change Password Failed")
                             .setMessage(messageErr)
                             .setPositiveButton("Ok") { _, _ ->
                             }
                             .show()
+                        finish()
                     } catch (e: java.lang.Exception) {
                         val err = result.errorCode
                         Log.d("ErrorCode", "$err")
@@ -147,5 +145,4 @@ class PasswordFragment : Fragment() {
             }
         }
     }
-
 }

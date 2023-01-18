@@ -24,6 +24,14 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activity.PasswordActivity"
+            android:exported="false"
+            android:theme="@style/Theme.SplashScreen">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ui.camera.CameraActivity"
             android:exported="false">
             <meta-data

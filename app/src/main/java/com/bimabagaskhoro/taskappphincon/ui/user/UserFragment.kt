@@ -22,6 +22,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
@@ -34,6 +35,7 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.Succes
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentUserBinding
 import com.bimabagaskhoro.taskappphincon.ui.SplashScreen
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
+import com.bimabagaskhoro.taskappphincon.ui.activity.PasswordActivity
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CustomSpinnerAdapter
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
 import com.bimabagaskhoro.taskappphincon.utils.reduceFileImage
@@ -89,7 +91,8 @@ class UserFragment : Fragment() {
 
         binding.apply {
             card2.setOnClickListener {
-                findNavController().navigate(R.id.action_navigation_user_to_passwordFragment)
+                val intent = Intent(requireActivity(), PasswordActivity::class.java)
+                startActivity(intent)
             }
             floatingActionButton.setOnClickListener {
                 initDialog()
@@ -156,6 +159,7 @@ class UserFragment : Fragment() {
             .setPositiveButton(R.string.ok) { _, _ ->
                 val intent = Intent(requireActivity(), SplashScreen::class.java)
                 startActivity(intent)
+                activity?.finish()
             }
             .setNegativeButton(R.string.cancel) { _, _ ->
             }
