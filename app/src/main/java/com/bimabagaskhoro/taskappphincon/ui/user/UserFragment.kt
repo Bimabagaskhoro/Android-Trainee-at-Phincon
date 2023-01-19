@@ -7,7 +7,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -22,12 +21,10 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
@@ -60,11 +57,12 @@ import java.util.*
 class UserFragment : Fragment() {
     private var _binding: FragmentUserBinding? = null
     private val binding get() = _binding!!
+
     private var getFile: File? = null
     private lateinit var result: Bitmap
     private val viewModel: AuthViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-    val dataLanguage = arrayOf("EN", "ID")
+    val dataLanguage = arrayOf("en", "id")
     val dataImgLanguage = intArrayOf(R.drawable.unitedstates, R.drawable.indonesia)
 
     override fun onCreateView(
@@ -106,14 +104,15 @@ class UserFragment : Fragment() {
         }
     }
 
+    // Start Spinner
     @SuppressLint("ClickableViewAccessibility")
     private fun initSpinner() {
         var isSpinnerTouched = false
         binding.apply {
-            spinnerCustom.setOnTouchListener(View.OnTouchListener { v, event ->
+            spinnerCustom.setOnTouchListener { _, _ ->
                 isSpinnerTouched = true
                 false
-            })
+            }
             binding.spinnerCustom.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
@@ -123,13 +122,15 @@ class UserFragment : Fragment() {
                         id: Long
                     ) {
                         if (isSpinnerTouched) {
-                            if (position == 0) {
-                                setLocate("en")
-                                setDialogChangeLanguage()
-
-                            } else if (position == 1) {
-                                setLocate("in")
-                                setDialogChangeLanguage()
+                            when (position) {
+                                0 -> {
+                                    setLocate("en")
+                                    setDialogChangeLanguage()
+                                }
+                                1 -> {
+                                    setLocate("in")
+                                    setDialogChangeLanguage()
+                                }
                             }
                         } else {
                             isSpinnerTouched = false
@@ -138,14 +139,14 @@ class UserFragment : Fragment() {
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {}
                 }
-            dataStoreViewModel.getUserLanguage.observe(viewLifecycleOwner) {
-                val pos = it
-                if (pos != null) {
-                    spinnerCustom.setSelection(pos)
-                } else {
-                    spinnerCustom.setSelection(0)
-                }
-            }
+//            dataStoreViewModel.getUserLanguage.observe(viewLifecycleOwner) {
+//                val pos = it
+//                if (pos != null) {
+//                    spinnerCustom.setSelection(pos)
+//                } else {
+//                    spinnerCustom.setSelection(0)
+//                }
+//            }
             val customSpinnerAdapter =
                 CustomSpinnerAdapter(requireContext(), dataImgLanguage, dataLanguage)
             spinnerCustom.adapter = customSpinnerAdapter
@@ -157,9 +158,7 @@ class UserFragment : Fragment() {
             .setTitle(R.string.change_language)
             .setMessage(R.string.change_language)
             .setPositiveButton(R.string.ok) { _, _ ->
-                val intent = Intent(requireActivity(), SplashScreen::class.java)
-                startActivity(intent)
-                activity?.finish()
+                activity?.recreate()
             }
             .setNegativeButton(R.string.cancel) { _, _ ->
             }
@@ -169,14 +168,17 @@ class UserFragment : Fragment() {
     private fun setLocate(lang: String) {
         val locale = Locale(lang)
         Locale.setDefault(locale)
-        val config = Configuration()
-        config.locale = locale
-        requireActivity().resources.updateConfiguration(
-            config,
-            requireActivity().resources.displayMetrics
-        )
+        val res = resources
+        val dm = res.displayMetrics
+        val conf = res.configuration
+        conf.locale = locale
+        res.updateConfiguration(conf, dm)
+
+
+        dataStoreViewModel.saveLanguage(lang)
     }
 
+    // End Spinner
 
     private fun initDataStore() {
         dataStoreViewModel.apply {
@@ -198,7 +200,6 @@ class UserFragment : Fragment() {
             }
         }
     }
-
 
     private val launcherIntentCameraX = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -309,6 +310,9 @@ class UserFragment : Fragment() {
                             }
 
                         }
+                        is Resource.Empty -> {
+                            Log.d("Empty Data", "Empty")
+                        }
                     }
                 }
         }
@@ -322,7 +326,7 @@ class UserFragment : Fragment() {
     }
 
     private fun initDialog() {
-        val dialogBinding = layoutInflater.inflate(R.layout.fragment_dialog_camera, null)
+        val dialogBinding = layoutInflater.inflate(R.layout.custom_dialog_camera, null)
         val mDialog = Dialog(requireActivity())
         mDialog.setContentView(dialogBinding)
 
@@ -353,6 +357,11 @@ class UserFragment : Fragment() {
     private fun openCameraX() {
         val intent = Intent(requireActivity(), CameraActivity::class.java)
         launcherIntentCameraX.launch(intent)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {

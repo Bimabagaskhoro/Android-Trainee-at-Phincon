@@ -1,51 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.home.HomeFragment">
-    <!--Todo Start Code The App-->
 
-    <!--Todo End Code The App-->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_progressbar"
-        android:layout_width="186dp"
-        android:layout_height="160dp"
-        app:cardCornerRadius="20dp"
-        android:visibility="gone"
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/edt_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="35dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_search"
+        android:elevation="1.5dp"
+        android:inputType="text"
+        app:iconifiedByDefault="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:queryHint="@string/search"
+        tools:ignore="Autofill" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_product"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <androidx.constraintlayout.widget.ConstraintLayout
+        app:layout_constraintTop_toBottomOf="@+id/edt_search"
+        tools:listitem="@layout/item_product" />
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_search"
+        app:shimmer_auto_start="true">
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            <ProgressBar
-                android:id="@+id/progressbar"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="45dp"
-                android:progress="200"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_waiting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/waiting"
-                android:textSize="23sp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="@+id/progressbar"
-                app:layout_constraintStart_toStartOf="@+id/progressbar"
-                app:layout_constraintTop_toBottomOf="@+id/progressbar" />
+                <include layout="@layout/item_product_placeholder" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+                <include layout="@layout/item_product_placeholder" />
+
+                <include layout="@layout/item_product_placeholder" />
+
+                <include layout="@layout/item_product_placeholder" />
+
+                <include layout="@layout/item_product_placeholder" />
+
+                <include layout="@layout/item_product_placeholder" />
+
+                <include layout="@layout/item_product_placeholder" />
+
+                <include layout="@layout/item_product_placeholder" />
+            </LinearLayout>
+        </ScrollView>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_shorting"
+        android:layout_width="120dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:text="@string/sort_by"
+        android:textSize="8sp"
+        app:icon="@drawable/ic_shorting"
+        app:iconGravity="end"
+        app:iconSize="25dp"
+        android:backgroundTint="@color/background_pink"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="SmallSp" />
+    <include
+        android:id="@+id/view_empty_data"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/view_empty" />
 </androidx.constraintlayout.widget.ConstraintLayout>

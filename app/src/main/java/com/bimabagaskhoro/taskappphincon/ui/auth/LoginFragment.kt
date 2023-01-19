@@ -109,6 +109,9 @@ class LoginFragment : Fragment() {
                     val messageErr = errorResponse.error.message
                     Toast.makeText(requireActivity(), messageErr, Toast.LENGTH_SHORT).show()
                 }
+                is Resource.Empty -> {
+                    Log.d("Empty Data", "Empty")
+                }
             }
         }
     }
@@ -137,5 +140,10 @@ class LoginFragment : Fragment() {
             saveUserPath(path)
             saveUserPhoto(image)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="background_pink">#FFC7CD</color>
     <color name="pinkz">#EB848E</color>
+    <color name="shimmer_a">#EAEAEA</color>
+    <color name="shimmer_b">#7F000000</color>
+
 </resources>

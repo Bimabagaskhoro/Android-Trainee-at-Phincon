@@ -113,9 +113,9 @@ class PasswordActivity : AppCompatActivity() {
                         .setTitle("Change Password Success")
                         .setMessage(dataMessages)
                         .setPositiveButton("Ok") { _, _ ->
+
                         }
                         .show()
-                    finish()
                     //findNavController().navigate(R.id.action_passwordFragment_to_navigation_user)
                 }
                 is Resource.Error -> {
@@ -136,11 +136,13 @@ class PasswordActivity : AppCompatActivity() {
                             .setPositiveButton("Ok") { _, _ ->
                             }
                             .show()
-                        finish()
                     } catch (e: java.lang.Exception) {
                         val err = result.errorCode
                         Log.d("ErrorCode", "$err")
                     }
+                }
+                is Resource.Empty -> {
+                    Log.d("Empty Data", "Empty")
                 }
             }
         }

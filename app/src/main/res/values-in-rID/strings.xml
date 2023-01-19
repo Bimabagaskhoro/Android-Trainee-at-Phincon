@@ -33,4 +33,5 @@
     <string name="confirm_new_password">Konfirmasi Kata Sandi Baru</string>
     <string name="password_harus_sama">Kata Sandi Haru Sama</string>
     <string name="cancel">Batal</string>
+    <string name="search">Cari</string>
 </resources>

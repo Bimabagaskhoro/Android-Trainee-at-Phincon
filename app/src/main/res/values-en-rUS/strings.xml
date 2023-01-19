@@ -33,4 +33,5 @@
     <string name="confirm_new_password">Confirm new password</string>
     <string name="password_harus_sama">Password must be same</string>
     <string name="cancel">Cancel</string>
+    <string name="search">search</string>
 </resources>

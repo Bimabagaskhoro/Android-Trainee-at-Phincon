@@ -7,11 +7,13 @@ import retrofit2.http.Query
 
 interface ApiPaging {
     @GET("get_list_product")
-    suspend fun getListProduct(): ResponseProduct
+    suspend fun getListProduct(
+        @Query("search") search: String? = null
+    ): ResponseProduct
 
     @GET("get_list_product_favorite")
     suspend fun getListFav(
-        @Query("search") search: String,
-        @Query("id_user") id_user: Int
+        @Query("id_user") id_user: Int,
+        @Query("search") search: String? = null
     ): ResponseFavorite
 }

@@ -53,7 +53,7 @@ class DataStoreViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserImage(path) }
     }
 
-    fun saveLanguage(language: Int) {
+    fun saveLanguage(language: String) {
         viewModelScope.launch(Dispatchers.IO) { dataPreference.saveUserLanguage(language) }
     }
 

@@ -121,9 +121,11 @@ object AppModule {
     @Singleton
     fun provideProductRepository(
         apiPaging: ApiPaging,
-        database: ProductDatabase
+        //database: ProductDatabase
     ): ProductRepository {
-        return ProductRepositoryImpl(apiPaging, database)
+        return ProductRepositoryImpl(apiPaging
+            //, database
+        )
     }
 
     @Provides

@@ -1,5 +1,6 @@
 package com.bimabagaskhoro.taskappphincon.utils
 
+import android.app.Activity
 import android.app.Application
 import android.content.ContentResolver
 import android.content.Context
@@ -8,8 +9,10 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Environment
+import android.view.inputmethod.InputMethodManager
 import com.bimabagaskhoro.taskappphincon.R
 import java.io.*
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -98,5 +101,18 @@ fun reduceFileImage(file: File): File {
     bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
 
     return file
+}
+
+fun String.formatterIdr() : String {
+    val localeID = Locale("in", "ID")
+    val doubleValue = this.toDoubleOrNull() ?: return this
+    val numberFormat = NumberFormat.getCurrencyInstance(localeID)
+    numberFormat.minimumFractionDigits = 0
+    return numberFormat.format(doubleValue)
+}
+
+fun hideKeyboard(activity: Activity) {
+    val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(activity.currentFocus?.windowToken, 0)
 }
 

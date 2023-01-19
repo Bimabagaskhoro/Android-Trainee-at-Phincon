@@ -95,7 +95,8 @@ class RegisterFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
@@ -231,13 +232,16 @@ class RegisterFragment : Fragment() {
 
                             //Toast.makeText(requireActivity(), errorResponse.error.message, Toast.LENGTH_SHORT).show()
                         }
+                        is Resource.Empty -> {
+                            Log.d("Empty Data", "Empty")
+                        }
                     }
                 }
         }
     }
 
     private fun initDialog() {
-        val dialogBinding = layoutInflater.inflate(R.layout.fragment_dialog_camera, null)
+        val dialogBinding = layoutInflater.inflate(R.layout.custom_dialog_camera, null)
         val mDialog = Dialog(requireActivity())
         mDialog.setContentView(dialogBinding)
 
@@ -305,6 +309,10 @@ class RegisterFragment : Fragment() {
         private const val REQUEST_CODE_PERMISSIONS = 10
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
 
 //

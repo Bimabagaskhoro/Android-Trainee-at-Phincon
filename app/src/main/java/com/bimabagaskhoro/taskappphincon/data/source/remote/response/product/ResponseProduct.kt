@@ -12,7 +12,7 @@ data class ResponseProduct(
 ) : Parcelable
 
 @Parcelize
-data class DataItem(
+data class DataItemProduct(
 
     @SerializedName("date")
     val date: String,
@@ -49,7 +49,7 @@ data class DataItem(
 data class Success(
 
     @SerializedName("data")
-    val data: List<DataItem>,
+    val data: List<DataItemProduct>,
 
     @SerializedName("message")
     val message: String,

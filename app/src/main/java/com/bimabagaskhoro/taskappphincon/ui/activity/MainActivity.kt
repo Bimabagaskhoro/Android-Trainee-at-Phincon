@@ -37,32 +37,10 @@ class MainActivity : AppCompatActivity() {
         )
         navView.setupWithNavController(navController)
 
-        checkLogin()
         setupWindow()
     }
     private fun setupWindow() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-    }
-
-
-
-    private fun checkLogin() {
-        dataStoreViewModel.getUserLanguage.observe(this) {
-            val language = it
-            if (language == 1) {
-                setLocate("en")
-            } else if (language == 2) {
-                setLocate("in")
-            }
-        }
-    }
-
-    private fun setLocate(lang: String) {
-        var locale = Locale(lang)
-        Locale.setDefault(locale)
-        val config = Configuration()
-        config.locale = locale
-        baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
     }
 }

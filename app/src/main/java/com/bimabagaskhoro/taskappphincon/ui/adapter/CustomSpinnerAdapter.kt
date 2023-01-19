@@ -35,6 +35,7 @@ class CustomSpinnerAdapter(
         val view = inflater.inflate(R.layout.spinner_custom, null)
         val icon = view.findViewById<View>(R.id.img_language) as ImageView?
         val names = view.findViewById<View>(R.id.tv_language) as TextView?
+
         icon!!.setImageResource(images[i])
         names!!.text = languages[i]
         view.setPadding(0, view.paddingTop, 0, view.paddingBottom)

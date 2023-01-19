@@ -11,7 +11,7 @@ data class ResponseFavorite(
 ) : Parcelable
 
 @Parcelize
-data class DataItem(
+data class DataItemFavorite(
 
 	@SerializedName("date")
 	val date: String,
@@ -48,7 +48,7 @@ data class DataItem(
 data class Success(
 
 	@SerializedName("data")
-	val data: List<DataItem>,
+	val data: List<DataItemFavorite>,
 
 	@SerializedName("message")
 	val message: String,
