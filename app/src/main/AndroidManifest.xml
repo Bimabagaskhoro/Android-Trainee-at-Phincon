@@ -41,7 +41,8 @@
         <activity
             android:name=".ui.activity.MainActivity"
             android:exported="false"
-            android:theme="@style/Theme.SplashScreen">
+            android:theme="@style/Theme.SplashScreen"
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
