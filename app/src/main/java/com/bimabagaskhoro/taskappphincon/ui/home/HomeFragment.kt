@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.clearFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bimabagaskhoro.taskappphincon.R
@@ -16,7 +17,6 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.Res
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentHomeBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductAdapter
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.utils.hideKeyboard
 import com.bimabagaskhoro.taskappphincon.vm.ProductViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
@@ -40,22 +40,19 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+        val root: View = binding.root
         adapter = ProductAdapter()
         initSearchingKey()
         setData(queryString, 0)
+        return root
     }
 
     private fun initSearchingKey() {
         binding.edtSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                hideKeyboard(requireActivity())
-                return false
+//                hideKeyboard(requireActivity())
+//                return false
+                TODO("Not yet implemented")
             }
 
             override fun onQueryTextChange(q: String?): Boolean {
@@ -63,10 +60,12 @@ class HomeFragment : Fragment() {
                 searchJob = coroutineScope.launch {
                     q?.let {
                         delay(2000)
-                        if (q.isEmpty() || q.toString() == "") {
+                        if (q?.length == 0 || q.toString() == "") {
                             setData("", 0)
+                            clearFragmentResult(q)
                         } else {
                             setData(q, 0)
+                            clearFragmentResult(q)
                         }
                     }
                 }
@@ -195,13 +194,13 @@ class HomeFragment : Fragment() {
             }.setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
                 when (selectedOption) {
                     options[0] -> {
-                        setData(queryString,1)
+                        setData(queryString, 1)
                     }
                     options[1] -> {
-                        setData(queryString,2)
+                        setData(queryString, 2)
                     }
                     else -> {
-                        setData(queryString,0)
+                        setData(queryString, 0)
                     }
                 }
             }.setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
@@ -213,6 +212,7 @@ class HomeFragment : Fragment() {
         binding.apply {
             progressBar.visibility = View.GONE
             rvProduct.adapter = adapter
+            binding.viewEmptyData.root.visibility = View.GONE
             rvProduct.layoutManager = LinearLayoutManager(context)
             rvProduct.setHasFixedSize(true)
             adapter.onItemClick = {

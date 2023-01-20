@@ -1,25 +1,18 @@
 package com.bimabagaskhoro.taskappphincon.ui.fav
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
-import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseFavorite
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.ResponseProduct
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentFavoriteBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductFavAdapter
 import com.bimabagaskhoro.taskappphincon.utils.Resource
@@ -52,13 +45,10 @@ class FavoriteFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val root: View = binding.root
         adapter = ProductFavAdapter()
         initSearchingKey()
+        return root
     }
 
     private fun initSearchingKey() {
@@ -151,9 +141,11 @@ class FavoriteFragment : Fragment() {
                         if (data.data!!.success.data.isNotEmpty()) {
                             binding.rvProduct.visibility = View.VISIBLE
                             binding.fabShorting.visibility = View.VISIBLE
+                            binding.viewEmptyData.root.visibility = View.GONE
                             setProductRv(data.data, i)
                         } else {
                             binding.rvProduct.visibility = View.GONE
+                            binding.viewEmptyData.root.visibility = View.GONE
                         }
 
                     }
@@ -178,7 +170,7 @@ class FavoriteFragment : Fragment() {
                         binding.apply {
                             progressBar.visibility = View.GONE
                             viewEmptyData.root.visibility = View.VISIBLE
-                            binding.rvProduct.visibility = View.GONE
+                            rvProduct.visibility = View.GONE
                         }
                     }
                 }
@@ -231,6 +223,7 @@ class FavoriteFragment : Fragment() {
         binding.apply {
             progressBar.visibility = View.GONE
             rvProduct.adapter = adapter
+            binding.viewEmptyData.root.visibility = View.GONE
             rvProduct.layoutManager = LinearLayoutManager(context)
             rvProduct.setHasFixedSize(true)
             adapter.onItemClick = {
