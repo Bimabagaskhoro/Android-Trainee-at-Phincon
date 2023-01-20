@@ -60,50 +60,20 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_tittle_product"
                 tools:text="Rp. 10.000" />
 
-            <ImageView
-                android:id="@+id/img_item_star_1"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintStart_toStartOf="@+id/tv_price_product"
-                app:layout_constraintTop_toBottomOf="@+id/tv_price_product"
-                app:srcCompat="@drawable/ic_star" />
+            <RatingBar
+                android:id="@+id/rating_bar"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="58dp"
+                android:foregroundGravity="left"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:progressTint="@color/black"
+                android:scaleX=".4"
+                android:scaleY=".4"
+                app:layout_constraintStart_toStartOf="@+id/img_product"
+                app:layout_constraintTop_toBottomOf="@+id/tv_price_product" />
 
-            <ImageView
-                android:id="@+id/img_item_star_2"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                app:layout_constraintBottom_toBottomOf="@+id/img_item_star_1"
-                app:layout_constraintStart_toEndOf="@+id/img_item_star_1"
-                app:layout_constraintTop_toTopOf="@+id/img_item_star_1"
-                app:srcCompat="@drawable/ic_star" />
-
-            <ImageView
-                android:id="@+id/img_item_star_3"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                app:layout_constraintBottom_toBottomOf="@+id/img_item_star_2"
-                app:layout_constraintStart_toEndOf="@+id/img_item_star_2"
-                app:layout_constraintTop_toTopOf="@+id/img_item_star_2"
-                app:srcCompat="@drawable/ic_star" />
-
-            <ImageView
-                android:id="@+id/img_item_star_4"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                app:layout_constraintBottom_toBottomOf="@+id/img_item_star_3"
-                app:layout_constraintStart_toEndOf="@+id/img_item_star_3"
-                app:layout_constraintTop_toTopOf="@+id/img_item_star_3"
-                app:srcCompat="@drawable/ic_star" />
-
-            <ImageView
-                android:id="@+id/img_item_star_5"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                app:layout_constraintBottom_toBottomOf="@+id/img_item_star_4"
-                app:layout_constraintStart_toEndOf="@+id/img_item_star_4"
-                app:layout_constraintTop_toTopOf="@+id/img_item_star_4"
-                app:srcCompat="@drawable/ic_star" />
 
             <TextView
                 android:id="@+id/tv_date_product"

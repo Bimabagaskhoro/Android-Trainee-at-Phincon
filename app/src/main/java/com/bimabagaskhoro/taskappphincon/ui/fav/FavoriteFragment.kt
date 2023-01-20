@@ -18,12 +18,15 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseFavorite
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.ResponseProduct
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentFavoriteBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductFavAdapter
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.hideKeyboard
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.bimabagaskhoro.taskappphincon.vm.ProductViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,6 +44,7 @@ class FavoriteFragment : Fragment() {
 
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
     private var searchJob: Job? = null
+    private var queryString: String? = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,221 +62,184 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun initSearchingKey() {
-        dataStoreViewModel.getUserId.observe(viewLifecycleOwner) {
-            val idUser = it
-            iniDataFavorite(null, idUser)
+        dataStoreViewModel.apply {
+            getUserId.observe(viewLifecycleOwner) {
+                val idUser = it
+                setData(queryString, idUser, 0)
+                binding.edtSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        hideKeyboard(requireActivity())
+                        return false
+                    }
 
-            binding.edtSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    hideKeyboard(requireActivity())
-                    return false
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    searchJob?.cancel()
-                    searchJob = coroutineScope.launch {
-                        newText?.let { query ->
-                            delay(3000)
-                            if (query.isEmpty()) {
-                                iniDataFavorite(null, idUser)
-                            } else {
-                                iniDataFavorite(newText, idUser)
+                    override fun onQueryTextChange(q: String?): Boolean {
+                        searchJob?.cancel()
+                        searchJob = coroutineScope.launch {
+                            q?.let {
+                                delay(2000)
+                                if (q.isEmpty() || q.toString() == "") {
+                                    setData("", idUser, 0)
+                                } else {
+                                    setData(q, idUser, 0)
+                                }
                             }
                         }
+                        return false
                     }
-                    return false
+                })
+                binding.apply {
+                    fabShorting.setOnClickListener {
+                        showFilterDialog(idUser)
+                    }
                 }
-            })
 
-            binding.fabShorting.setOnClickListener {
-                initDialog(idUser)
             }
+        }
+    }
 
+    private fun setData(q: String?, idUser: Int, i: Int?) {
+        if (q.toString().isNotEmpty()) {
+            queryString = q.toString()
+            viewModel.getFavProduct(idUser, q).observe(viewLifecycleOwner) { data ->
+                when (data) {
+                    is Resource.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    is Resource.Success -> {
+                        if (data.data!!.success.data.isNotEmpty()) {
+                            binding.rvProduct.visibility = View.VISIBLE
+                            binding.fabShorting.visibility = View.VISIBLE
+                            setProductRv(data.data, i)
+                        } else {
+                            binding.rvProduct.visibility = View.GONE
+                        }
+
+                    }
+                    is Resource.Error -> {
+                        binding.progressBar.visibility = View.GONE
+                        try {
+                            val err =
+                                data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                            val gson = Gson()
+                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                            val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                            val messageErr = errorResponse.error.message
+                            AlertDialog.Builder(requireActivity()).setTitle("Failed")
+                                .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
+                                }.show()
+                        } catch (e: java.lang.Exception) {
+                            val err = data.errorCode
+                            Log.d("ErrorCode", "$err")
+                        }
+                    }
+                    is Resource.Empty -> {
+                        binding.apply {
+                            progressBar.visibility = View.GONE
+                            viewEmptyData.root.visibility = View.VISIBLE
+                            binding.rvProduct.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+        } else {
+            viewModel.getFavProduct(idUser).observe(viewLifecycleOwner) { data ->
+                when (data) {
+                    is Resource.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    is Resource.Success -> {
+                        if (data.data!!.success.data.isNotEmpty()) {
+                            binding.rvProduct.visibility = View.VISIBLE
+                            binding.fabShorting.visibility = View.VISIBLE
+                            setProductRv(data.data, i)
+                        } else {
+                            binding.rvProduct.visibility = View.GONE
+                        }
+
+                    }
+                    is Resource.Error -> {
+                        binding.progressBar.visibility = View.GONE
+                        try {
+                            val err =
+                                data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                            val gson = Gson()
+                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                            val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                            val messageErr = errorResponse.error.message
+                            AlertDialog.Builder(requireActivity()).setTitle("Failed")
+                                .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
+                                }.show()
+                        } catch (e: java.lang.Exception) {
+                            val err = data.errorCode
+                            Log.d("ErrorCode", "$err")
+                        }
+                    }
+                    is Resource.Empty -> {
+                        binding.apply {
+                            progressBar.visibility = View.GONE
+                            viewEmptyData.root.visibility = View.VISIBLE
+                            binding.rvProduct.visibility = View.GONE
+                        }
+                    }
+                }
+            }
         }
     }
 
 
-    private fun iniDataFavorite(q: String?, idUser: Int) {
-        viewModel.getFavProduct(idUser, q).observe(viewLifecycleOwner) { results ->
-            when (results) {
-                is Resource.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-                is Resource.Success -> {
-                    adapter.setData(results.data!!.success.data)
-                    binding.apply {
-                        progressBar.visibility = View.GONE
-                        rvProduct.adapter = adapter
-                        rvProduct.layoutManager = LinearLayoutManager(context)
-                        rvProduct.setHasFixedSize(true)
-                        adapter.onItemClick = {
-//                            val bundle = Bundle().apply { putParcelable(DetailItemFragment.EXTRA_DATA, it) }
-//                            findNavController().navigate(R.id.action_navigation_dashboard_to_detailItemFragment, bundle)
-                        }
-                    }
-                }
-                is Resource.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    try {
-                        val err = results.errorBody?.string()
-                            ?.let { it1 -> JSONObject(it1).toString() }
-                        val gson = Gson()
-                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                        val errorResponse =
-                            gson.fromJson(jsonObject, ResponseError::class.java)
-                        val messageErr = errorResponse.error.message
-                        AlertDialog.Builder(requireActivity())
-                            .setTitle("Failed")
-                            .setMessage(messageErr)
-                            .setPositiveButton("Ok") { _, _ ->
-                            }
-                            .show()
-                    } catch (e: java.lang.Exception) {
-                        val err = results.errorCode
-                        Log.d("ErrorCode", "$err")
-                    }
-                }
-                is Resource.Empty -> {
-                    binding.apply {
-                        progressBar.visibility = View.GONE
-                        viewEmptyData.root.visibility = View.VISIBLE
-                    }
-                }
+    private fun setProductRv(data: ResponseFavorite, i: Int?) {
+        when (i) {
+            0 -> {
+                adapter.setData(data.success.data)
+                initRecyclerView()
             }
-
+            1 -> {
+                adapter.setData(data.success.data.sortedBy { it.name_product })
+                initRecyclerView()
+            }
+            2 -> {
+                adapter.setData(data.success.data.sortedByDescending { it.name_product })
+                initRecyclerView()
+            }
         }
     }
 
-    private fun initDialog(idUser: Int) {
-        val dialogBinding = layoutInflater.inflate(R.layout.custom_dialog_shorting, null)
-        val mDialog = Dialog(requireActivity())
-        mDialog.setContentView(dialogBinding)
-
-        mDialog.setCancelable(true)
-        mDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        mDialog.show()
-
-        val shortingAtoZ = dialogBinding.findViewById<RadioButton>(R.id.rd_shorting_a)
-        val shortingZtoA = dialogBinding.findViewById<RadioButton>(R.id.rd_shorting_z)
-        val tvFilter = dialogBinding.findViewById<TextView>(R.id.tv_ok_close)
-
-        shortingAtoZ.setOnClickListener {
-            sortedByAsc(null, idUser)
-
-        }
-        shortingZtoA.setOnClickListener {
-            sortedByDesc(null, idUser)
-        }
-        tvFilter.setOnClickListener {
-            mDialog.dismiss()
-        }
+    private fun showFilterDialog(idUser: Int) {
+        val options = arrayOf("From A to Z", "From Z to A")
+        var selectedOption = ""
+        MaterialAlertDialogBuilder(requireActivity()).setTitle(resources.getString(R.string.sort_by))
+            .setSingleChoiceItems(options, -1) { _, which ->
+                selectedOption = options[which]
+            }.setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+                when (selectedOption) {
+                    options[0] -> {
+                        setData(queryString, idUser, 1)
+                    }
+                    options[1] -> {
+                        setData(queryString, idUser, 2)
+                    }
+                    else -> {
+                        setData(queryString, idUser, 0)
+                    }
+                }
+            }.setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                dialog.dismiss()
+            }.show()
     }
 
-    private fun sortedByDesc(q: String?, idUser: Int) {
-        viewModel.getFavProduct(idUser, q).observe(viewLifecycleOwner) { results ->
-            when (results) {
-                is Resource.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-                is Resource.Success -> {
-                   // adapter.setData(results.data!!.success.data)
-                    adapter.setData(results.data!!.success.data.sortedByDescending { name ->
-                        name.name_product
-                    })
-                    binding.apply {
-                        progressBar.visibility = View.GONE
-                        rvProduct.adapter = adapter
-                        rvProduct.layoutManager = LinearLayoutManager(context)
-                        rvProduct.setHasFixedSize(true)
-                        adapter.onItemClick = {
-//                            val bundle = Bundle().apply { putParcelable(DetailItemFragment.EXTRA_DATA, it) }
-//                            findNavController().navigate(R.id.action_navigation_dashboard_to_detailItemFragment, bundle)
-                        }
-                    }
-                }
-                is Resource.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    try {
-                        val err = results.errorBody?.string()
-                            ?.let { it1 -> JSONObject(it1).toString() }
-                        val gson = Gson()
-                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                        val errorResponse =
-                            gson.fromJson(jsonObject, ResponseError::class.java)
-                        val messageErr = errorResponse.error.message
-                        AlertDialog.Builder(requireActivity())
-                            .setTitle("Failed")
-                            .setMessage(messageErr)
-                            .setPositiveButton("Ok") { _, _ ->
-                            }
-                            .show()
-                    } catch (e: java.lang.Exception) {
-                        val err = results.errorCode
-                        Log.d("ErrorCode", "$err")
-                    }
-                }
-                is Resource.Empty -> {
-                    binding.apply {
-                        progressBar.visibility = View.GONE
-                        viewEmptyData.root.visibility = View.VISIBLE
-                    }
-                }
+    private fun initRecyclerView() {
+        binding.apply {
+            progressBar.visibility = View.GONE
+            rvProduct.adapter = adapter
+            rvProduct.layoutManager = LinearLayoutManager(context)
+            rvProduct.setHasFixedSize(true)
+            adapter.onItemClick = {
+//                val bundle = Bundle().apply { putParcelable(DetailItemFragment.EXTRA_DATA, it) }
+//                findNavController().navigate(
+//                    R.id.action_navigation_dashboard_to_detailItemFragment,
+//                    bundle
+//                )
             }
-
-        }
-    }
-
-    private fun sortedByAsc(q: String?, idUser: Int) {
-        viewModel.getFavProduct(idUser, q).observe(viewLifecycleOwner) { results ->
-            when (results) {
-                is Resource.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-                is Resource.Success -> {
-                    // adapter.setData(results.data!!.success.data)
-                    adapter.setData(results.data!!.success.data.sortedBy { name ->
-                        name.name_product
-                    })
-                    binding.apply {
-                        progressBar.visibility = View.GONE
-                        rvProduct.adapter = adapter
-                        rvProduct.layoutManager = LinearLayoutManager(context)
-                        rvProduct.setHasFixedSize(true)
-                        adapter.onItemClick = {
-//                            val bundle = Bundle().apply { putParcelable(DetailItemFragment.EXTRA_DATA, it) }
-//                            findNavController().navigate(R.id.action_navigation_dashboard_to_detailItemFragment, bundle)
-                        }
-                    }
-                }
-                is Resource.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    try {
-                        val err = results.errorBody?.string()
-                            ?.let { it1 -> JSONObject(it1).toString() }
-                        val gson = Gson()
-                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                        val errorResponse =
-                            gson.fromJson(jsonObject, ResponseError::class.java)
-                        val messageErr = errorResponse.error.message
-                        AlertDialog.Builder(requireActivity())
-                            .setTitle("Failed")
-                            .setMessage(messageErr)
-                            .setPositiveButton("Ok") { _, _ ->
-                            }
-                            .show()
-                    } catch (e: java.lang.Exception) {
-                        val err = results.errorCode
-                        Log.d("ErrorCode", "$err")
-                    }
-                }
-                is Resource.Empty -> {
-                    binding.apply {
-                        progressBar.visibility = View.GONE
-                        viewEmptyData.root.visibility = View.VISIBLE
-                    }
-                }
-            }
-
         }
     }
 

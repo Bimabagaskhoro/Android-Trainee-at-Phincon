@@ -1,5 +1,6 @@
 package com.bimabagaskhoro.taskappphincon.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.ContentResolver
@@ -117,8 +118,12 @@ fun hideKeyboard(activity: Activity) {
     imm.hideSoftInputFromWindow(activity.currentFocus?.windowToken, 0)
 }
 
-fun sortNamesAscending():Comparator<DataItemProduct> =
-    Comparator<DataItemProduct> { o1, o2 -> o1!!.name_product.compareTo(o2!!.name_product) }
+@SuppressLint("SimpleDateFormat")
+fun formatDate(date: String): String{
+    val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+    val inputDate = format.parse(date)
+    val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale("in", "ID"))
+    return dateFormat.format(inputDate!!)
 
-fun sortNamesDescending():Comparator<DataItemProduct> =
-    Comparator<DataItemProduct> { o1, o2 -> o2!!.name_product!!.compareTo(o1!!.name_product!!) }
+}
+
