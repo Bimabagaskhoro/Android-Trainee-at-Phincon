@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Environment
 import android.view.inputmethod.InputMethodManager
 import com.bimabagaskhoro.taskappphincon.R
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.DataItemProduct
 import java.io.*
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -116,3 +117,8 @@ fun hideKeyboard(activity: Activity) {
     imm.hideSoftInputFromWindow(activity.currentFocus?.windowToken, 0)
 }
 
+fun sortNamesAscending():Comparator<DataItemProduct> =
+    Comparator<DataItemProduct> { o1, o2 -> o1!!.name_product.compareTo(o2!!.name_product) }
+
+fun sortNamesDescending():Comparator<DataItemProduct> =
+    Comparator<DataItemProduct> { o1, o2 -> o2!!.name_product!!.compareTo(o1!!.name_product!!) }

@@ -34,4 +34,8 @@
     <string name="password_harus_sama">Password must be same</string>
     <string name="cancel">Cancel</string>
     <string name="search">search</string>
+    <string name="sort_by">Sort By</string>
+    <string name="empty_data">Empty Data</string>
+    <string name="from_a_to_z">From A to Z</string>
+    <string name="from_z_to_a">From Z to A</string>
 </resources>

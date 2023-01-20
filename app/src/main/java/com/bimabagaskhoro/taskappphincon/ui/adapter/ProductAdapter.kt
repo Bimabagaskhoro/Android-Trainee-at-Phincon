@@ -41,6 +41,7 @@ class ProductAdapter : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
                 Glide.with(itemView.context)
                     .asBitmap()
                     .load(data.image)
+                    .placeholder(R.drawable.ic_broken_image)
                     .into(imgProduct)
                 tvTittleProduct.text = data.name_product
                 tvPriceProduct.text = data.harga

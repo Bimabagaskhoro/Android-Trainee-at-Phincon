@@ -1,25 +1,17 @@
 package com.bimabagaskhoro.taskappphincon.ui.fav
 
 import android.app.AlertDialog
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
-import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentFavoriteBinding
-import com.bimabagaskhoro.taskappphincon.databinding.FragmentRegisterBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductFavAdapter
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.hideKeyboard
@@ -44,19 +36,17 @@ class FavoriteFragment : Fragment() {
     private var searchJob: Job? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Inflate the layout for this fragment
         _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         adapter = ProductFavAdapter()
-        iniDataFavorite(null)
         initSearchingKey()
         binding.apply {
             fabShorting.setOnClickListener {
@@ -66,37 +56,39 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun initSearchingKey() {
-        binding.edtSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                hideKeyboard(requireActivity())
-                return false
-            }
+        dataStoreViewModel.getUserId.observe(viewLifecycleOwner) {
+            val idUser = it
+            iniDataFavorite(null, idUser)
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                searchJob?.cancel()
-                searchJob = coroutineScope.launch {
-                    newText?.let {
-                        delay(3000)
-                        if (it.isEmpty()) {
-                            iniDataFavorite(null)
-                        } else {
-                            iniDataFavorite(newText)
+            binding.edtSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    hideKeyboard(requireActivity())
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    searchJob?.cancel()
+                    searchJob = coroutineScope.launch {
+                        newText?.let { query ->
+                            delay(3000)
+                            if (query.isEmpty()) {
+                                iniDataFavorite(null, idUser)
+                            } else {
+                                iniDataFavorite(newText, idUser)
+                            }
                         }
                     }
+                    return false
                 }
-                return false
-            }
-        })
+            })
+
+        }
     }
 
-    private fun iniDataFavorite(q: String?) {
-        var userIds = 0
-        dataStoreViewModel.getUserId.observe(viewLifecycleOwner) {
-            userIds = it
-            Log.d("UserPrefFav", "$userIds")
-        }
-        viewModel.getFavProduct(3,q).observe(viewLifecycleOwner) { results ->
-            when(results) {
+
+    private fun iniDataFavorite(q: String?, idUser: Int) {
+        viewModel.getFavProduct(idUser, q).observe(viewLifecycleOwner) { results ->
+            when (results) {
                 is Resource.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                 }
@@ -137,7 +129,7 @@ class FavoriteFragment : Fragment() {
                 is Resource.Empty -> {
                     binding.apply {
                         progressBar.visibility = View.GONE
-                        binding.viewEmptyData.root.visibility = View.VISIBLE
+                        viewEmptyData.root.visibility = View.VISIBLE
                     }
                 }
             }
@@ -149,4 +141,5 @@ class FavoriteFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

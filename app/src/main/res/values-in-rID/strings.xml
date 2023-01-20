@@ -34,4 +34,8 @@
     <string name="password_harus_sama">Kata Sandi Haru Sama</string>
     <string name="cancel">Batal</string>
     <string name="search">Cari</string>
+    <string name="sort_by">Urutkan Dari</string>
+    <string name="empty_data">Tidak Ada Data</string>
+    <string name="from_a_to_z">Dari A ke Z</string>
+    <string name="from_z_to_a">Dari Z ke A</string>
 </resources>

@@ -130,7 +130,7 @@ class HomeFragment : Fragment() {
                 is Resource.Empty -> {
                     binding.apply {
                         progressBar.visibility = View.GONE
-                        binding.viewEmptyData.root.visibility = View.VISIBLE
+                        viewEmptyData.root.visibility = View.VISIBLE
                     }
                 }
             }
@@ -149,6 +149,7 @@ class HomeFragment : Fragment() {
         val shortingAtoZ = dialogBinding.findViewById<RadioButton>(R.id.rd_shorting_a)
         val shortingZtoA = dialogBinding.findViewById<RadioButton>(R.id.rd_shorting_z)
         val tvFilter = dialogBinding.findViewById<TextView>(R.id.tv_ok_shorting)
+
 //        val btnCam = dialogBinding.findViewById<TextView>(R.id.tv_camera)
 //        val btnGal = dialogBinding.findViewById<TextView>(R.id.tv_galery)
         shortingAtoZ.setOnClickListener {
@@ -156,6 +157,7 @@ class HomeFragment : Fragment() {
         }
         shortingZtoA.setOnClickListener {
 //            mDialog.dismiss()
+
         }
         tvFilter.setOnClickListener {
             // set fliter here
