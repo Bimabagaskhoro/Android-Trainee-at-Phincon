@@ -4,6 +4,8 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.Respon
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangePassword
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseLogin
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ResponseDetail
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseAddFavorite
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -43,4 +45,16 @@ interface ApiService {
         @Part("id") id: Int,
         @Part image: MultipartBody.Part
     ): ResponseChangeImage
+
+    @FormUrlEncoded
+    @POST("add_favorite")
+    suspend fun addFavorite(
+        @Field("id_product") id_product: Int,
+        @Field("id_user") id_user: Int
+    ): ResponseAddFavorite
+
+    @GET("get_detail_product")
+    suspend fun getDetail(
+        @Query("id_product") id_product: Int,
+    ): ResponseDetail
 }

@@ -6,6 +6,8 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.Respon
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseLogin
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ResponseDetail
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseAddFavorite
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
@@ -96,6 +98,40 @@ class AuthRepositoryImpl @Inject constructor(
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
                     401 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                }
+            }
+        }
+    }
+
+    override fun addFavorite(userId: Int, idProduct: Int): Flow<Resource<ResponseAddFavorite>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val response = apiService.addFavorite(idProduct,userId)
+                emit(Resource.Success(response))
+            } catch (t: HttpException) {
+                when (t.code()) {
+                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                }
+            }
+        }
+    }
+
+    override fun getDetailProduct(idProduct: Int): Flow<Resource<ResponseDetail>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val response = apiService.getDetail(idProduct)
+                emit(Resource.Success(response))
+            } catch (t: HttpException) {
+                when (t.code()) {
+                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
                     404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
                     500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
                     else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))

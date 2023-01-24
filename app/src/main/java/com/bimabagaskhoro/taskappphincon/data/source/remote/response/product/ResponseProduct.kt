@@ -14,6 +14,9 @@ data class ResponseProduct(
 @Parcelize
 data class DataItemProduct(
 
+    @SerializedName("id")
+    val id: Int,
+
     @SerializedName("date")
     val date: String,
 

@@ -3,6 +3,8 @@ package com.bimabagaskhoro.taskappphincon.vm
 import androidx.lifecycle.*
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ResponseDetail
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseAddFavorite
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,5 +44,17 @@ class AuthViewModel @Inject constructor(
         image: MultipartBody.Part,
     ): LiveData<Resource<ResponseChangeImage>> =
         authRepository.changeImage(id, image).asLiveData()
+
+    fun getDetail(
+        idProduct: Int,
+    ): LiveData<Resource<ResponseDetail>> =
+        authRepository.getDetailProduct(idProduct).asLiveData()
+
+    fun addFavorite(
+        userId: Int,
+        idProduct: Int
+    ): LiveData<Resource<ResponseAddFavorite>> =
+        authRepository.addFavorite(userId,idProduct).asLiveData()
+
 
 }

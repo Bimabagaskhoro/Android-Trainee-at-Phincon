@@ -97,7 +97,7 @@
         tools:ignore="SmallSp" />
 
     <include
-        android:id="@+id/view_empty_data"
+        android:id="@+id/view_empty_datas"
         layout="@layout/view_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

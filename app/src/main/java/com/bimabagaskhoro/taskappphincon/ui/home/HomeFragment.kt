@@ -1,6 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.ui.home
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseErr
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.ResponseProduct
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentHomeBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductAdapter
+import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.vm.ProductViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -117,7 +119,7 @@ class HomeFragment : Fragment() {
                     is Resource.Empty -> {
                         binding.apply {
                             progressBar.visibility = View.GONE
-                            viewEmptyData.root.visibility = View.VISIBLE
+                            viewEmptyDatas.root.visibility = View.VISIBLE
                             binding.rvProduct.visibility = View.GONE
                         }
                     }
@@ -159,7 +161,7 @@ class HomeFragment : Fragment() {
                     is Resource.Empty -> {
                         binding.apply {
                             progressBar.visibility = View.GONE
-                            viewEmptyData.root.visibility = View.VISIBLE
+                            viewEmptyDatas.root.visibility = View.VISIBLE
                             binding.rvProduct.visibility = View.GONE
                         }
                     }
@@ -212,10 +214,13 @@ class HomeFragment : Fragment() {
         binding.apply {
             progressBar.visibility = View.GONE
             rvProduct.adapter = adapter
-            binding.viewEmptyData.root.visibility = View.GONE
+            binding.viewEmptyDatas.root.visibility = View.GONE
             rvProduct.layoutManager = LinearLayoutManager(context)
             rvProduct.setHasFixedSize(true)
             adapter.onItemClick = {
+                val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra(DetailActivity.EXTRA_DATA_DETAIL, it.id)
+                startActivity(intent)
 //                val bundle = Bundle().apply { putParcelable(DetailItemFragment.EXTRA_DATA, it) }
 //                findNavController().navigate(
 //                    R.id.action_navigation_dashboard_to_detailItemFragment,

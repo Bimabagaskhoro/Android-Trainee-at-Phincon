@@ -1,21 +1,29 @@
-package com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite
+package com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class ResponseFavorite(
+data class ResponseDetail(
 	@SerializedName("success")
-	val success: Success
+	val success: SuccessDetail
 ) : Parcelable
 
 @Parcelize
-data class DataItemFavorite(
+data class SuccessDetail(
+	@SerializedName("data")
+	val data: Data,
 
-	@SerializedName("id")
-	val id: Int,
+	@SerializedName("message")
+	val message: String,
 
+	@SerializedName("status")
+	val status: Int
+) : Parcelable
+
+@Parcelize
+data class Data(
 	@SerializedName("date")
 	val date: String,
 
@@ -37,6 +45,12 @@ data class DataItemFavorite(
 	@SerializedName("weight")
 	val weight: String,
 
+	@SerializedName("image_product")
+	val image_product: List<ImageProductItem>,
+
+	@SerializedName("id")
+	val id: Int,
+
 	@SerializedName("stock")
 	val stock: Int,
 
@@ -48,14 +62,10 @@ data class DataItemFavorite(
 ) : Parcelable
 
 @Parcelize
-data class Success(
+data class ImageProductItem(
+	@SerializedName("image_product")
+	val image_product: String,
 
-	@SerializedName("data")
-	val data: List<DataItemFavorite>,
-
-	@SerializedName("message")
-	val message: String,
-
-	@SerializedName("status")
-	val status: Int
+	@SerializedName("title_product")
+	val title_product: String
 ) : Parcelable

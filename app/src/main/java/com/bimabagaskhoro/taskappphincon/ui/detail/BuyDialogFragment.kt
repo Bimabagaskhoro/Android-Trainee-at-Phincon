@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bimabagaskhoro.taskappphincon.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BuyDialogFragment : Fragment() {
 
     override fun onCreateView(
