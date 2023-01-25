@@ -50,8 +50,8 @@
     <string name="buy_now">Buy Now -</string>
     <string name="total">Total</string>
     <string name="_1">1</string>
-    <string name="pesanan_anda_berhasil">Pesanan Anda Berhasil</string>
-    <string name="berikan_penilaian_anda">Berikan Penilaian Anda</string>
+    <string name="pesanan_anda_berhasil">Your Order Success</string>
+    <string name="berikan_penilaian_anda">Gift Your Rating</string>
     <string name="submit">Submit</string>
     <string name="total_price">Total Price</string>
     <string name="check_all">Check All</string>

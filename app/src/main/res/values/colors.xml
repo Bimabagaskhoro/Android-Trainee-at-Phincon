@@ -11,5 +11,6 @@
     <color name="pinkz">#EB848E</color>
     <color name="shimmer_a">#EAEAEA</color>
     <color name="shimmer_b">#7F000000</color>
+    <color name="lighter_grey">#D9D9D9</color>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.bimabagaskhoro.taskappphincon.data.source.remote.network
 
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangePassword
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseLogin
@@ -56,5 +57,11 @@ interface ApiService {
     @GET("get_detail_product")
     suspend fun getDetail(
         @Query("id_product") id_product: Int,
+        @Query("id_user") id_user: Int,
     ): ResponseDetail
+
+    @POST("update-stock")
+    suspend fun updateStock(
+        @Body requestStock: RequestStock
+    ) : ResponseAddFavorite
 }

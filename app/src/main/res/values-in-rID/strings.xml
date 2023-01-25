@@ -38,4 +38,22 @@
     <string name="empty_data">Tidak Ada Data</string>
     <string name="from_a_to_z">Dari A ke Z</string>
     <string name="from_z_to_a">Dari Z ke A</string>
+    <string name="front">Depan</string>
+    <string name="detail_product">Detail Produk</string>
+    <string name="stock">Stok</string>
+    <string name="size">Ukuran</string>
+    <string name="weight">Berat</string>
+    <string name="type">Tipe</string>
+    <string name="helpers">:</string>
+    <string name="description">Deskripsi</string>
+    <string name="buy">Beli</string>
+    <string name="cart">+Keranjang</string>
+    <string name="buy_now">Beli Sekarang -</string>
+    <string name="total">Total</string>
+    <string name="_1">1</string>
+    <string name="pesanan_anda_berhasil">Pesanan Anda Berhasil</string>
+    <string name="berikan_penilaian_anda">Berikan Penilaian Anda</string>
+    <string name="submit">Simpan</string>
+    <string name="total_price">Total Harga</string>
+    <string name="check_all">Pilih Semua</string>
 </resources>

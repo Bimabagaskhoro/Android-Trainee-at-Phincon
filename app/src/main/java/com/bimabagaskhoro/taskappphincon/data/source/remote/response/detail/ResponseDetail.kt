@@ -13,7 +13,7 @@ data class ResponseDetail(
 @Parcelize
 data class SuccessDetail(
 	@SerializedName("data")
-	val data: Data,
+	val data: DataDetail,
 
 	@SerializedName("message")
 	val message: String,
@@ -23,7 +23,7 @@ data class SuccessDetail(
 ) : Parcelable
 
 @Parcelize
-data class Data(
+data class DataDetail(
 	@SerializedName("date")
 	val date: String,
 

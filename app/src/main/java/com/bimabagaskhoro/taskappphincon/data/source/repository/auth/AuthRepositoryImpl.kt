@@ -1,6 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.data.source.repository.auth
 
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangePassword
 import com.bimabagaskhoro.taskappphincon.utils.Resource
@@ -123,11 +124,28 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getDetailProduct(idProduct: Int): Flow<Resource<ResponseDetail>> {
+    override fun getDetailProduct(idProduct: Int, idUser: Int): Flow<Resource<ResponseDetail>> {
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.getDetail(idProduct)
+                val response = apiService.getDetail(idProduct, idUser)
+                emit(Resource.Success(response))
+            } catch (t: HttpException) {
+                when (t.code()) {
+                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                }
+            }
+        }
+    }
+
+    override fun updateStock(requestStock: RequestStock): Flow<Resource<ResponseAddFavorite>> {
+        return flow {
+            try {
+                emit(Resource.Loading())
+                val response = apiService.updateStock(requestStock)
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {
