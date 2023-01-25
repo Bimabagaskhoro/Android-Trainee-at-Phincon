@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.data.source.local.model
+package com.bimabagaskhoro.taskappphincon.data.source.local.model.product
 
 import android.os.Parcelable
 import androidx.room.Entity

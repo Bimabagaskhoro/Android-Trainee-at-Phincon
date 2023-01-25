@@ -1,10 +1,10 @@
-package com.bimabagaskhoro.taskappphincon.data.source.local.db
+package com.bimabagaskhoro.taskappphincon.data.source.local.db.product
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.ProductKeys
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.product.ProductKeys
 
 @Dao
 interface ProductKeysDao {

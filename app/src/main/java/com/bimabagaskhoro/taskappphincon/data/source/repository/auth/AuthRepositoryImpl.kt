@@ -157,4 +157,21 @@ class AuthRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override fun unFavorite(userId: Int, idProduct: Int): Flow<Resource<ResponseAddFavorite>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val response = apiService.unFavorite(idProduct,userId)
+                emit(Resource.Success(response))
+            } catch (t: HttpException) {
+                when (t.code()) {
+                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                }
+            }
+        }
+    }
 }

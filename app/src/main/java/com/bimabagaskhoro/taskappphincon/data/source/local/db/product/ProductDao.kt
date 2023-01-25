@@ -1,11 +1,11 @@
-package com.bimabagaskhoro.taskappphincon.data.source.local.db
+package com.bimabagaskhoro.taskappphincon.data.source.local.db.product
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.ProductEntity
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.product.ProductEntity
 
 @Dao
 interface ProductDao {

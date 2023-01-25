@@ -55,4 +55,9 @@ interface AuthRepository {
     fun updateStock(
         requestStock: RequestStock
     ): Flow<Resource<ResponseAddFavorite>>
+
+    fun unFavorite(
+        userId: Int,
+        idProduct: Int
+    ): Flow<Resource<ResponseAddFavorite>>
 }

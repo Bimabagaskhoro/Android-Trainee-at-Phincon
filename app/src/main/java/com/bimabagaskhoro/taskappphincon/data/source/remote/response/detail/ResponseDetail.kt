@@ -58,7 +58,10 @@ data class DataDetail(
 	val type: String,
 
 	@SerializedName("desc")
-	val desc: String
+	val desc: String,
+
+	@SerializedName("isFavorite")
+	val isFavorite: Boolean
 ) : Parcelable
 
 @Parcelize

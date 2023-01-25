@@ -1,6 +1,5 @@
 package com.bimabagaskhoro.taskappphincon.data.source.repository.product
 
-import com.bimabagaskhoro.taskappphincon.data.source.local.db.ProductDatabase
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiPaging
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseFavorite
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.ResponseProduct

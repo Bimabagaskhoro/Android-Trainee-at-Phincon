@@ -58,6 +58,12 @@ class AuthViewModel @Inject constructor(
     ): LiveData<Resource<ResponseAddFavorite>> =
         authRepository.addFavorite(userId,idProduct).asLiveData()
 
+    fun unFavorite(
+        userId: Int,
+        idProduct: Int
+    ): LiveData<Resource<ResponseAddFavorite>> =
+        authRepository.unFavorite(userId,idProduct).asLiveData()
+
 //    fun updateStock(
 //        idProduct: String,
 //        stock: Int

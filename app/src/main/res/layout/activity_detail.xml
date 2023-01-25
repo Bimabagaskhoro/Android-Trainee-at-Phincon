@@ -157,6 +157,8 @@
                 android:id="@+id/img_favorite"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:clickable="false"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_detail_product"
                 app:layout_constraintEnd_toEndOf="@+id/tv_price"
                 app:srcCompat="@drawable/ic_favorite" />
@@ -165,6 +167,8 @@
                 android:id="@+id/img_un_favorite"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
+                android:clickable="false"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_detail_product"
                 app:layout_constraintEnd_toEndOf="@+id/tv_price"
                 app:srcCompat="@drawable/ic_un_favorite" />

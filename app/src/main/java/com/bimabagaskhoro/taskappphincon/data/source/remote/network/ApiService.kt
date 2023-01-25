@@ -54,6 +54,13 @@ interface ApiService {
         @Field("id_user") id_user: Int
     ): ResponseAddFavorite
 
+    @FormUrlEncoded
+    @POST("remove_favorite")
+    suspend fun unFavorite(
+        @Field("id_product") id_product: Int,
+        @Field("id_user") id_user: Int
+    ): ResponseAddFavorite
+
     @GET("get_detail_product")
     suspend fun getDetail(
         @Query("id_product") id_product: Int,

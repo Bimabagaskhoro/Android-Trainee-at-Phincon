@@ -1,9 +1,11 @@
 package com.bimabagaskhoro.taskappphincon.di
 
 import android.content.Context
+import androidx.room.Room
 import com.bimabagaskhoro.taskappphincon.BuildConfig
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
-import com.bimabagaskhoro.taskappphincon.data.source.local.db.ProductDatabase
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.cart.CartDatabase
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiPaging
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
 import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthRepository
@@ -13,6 +15,7 @@ import com.bimabagaskhoro.taskappphincon.data.source.repository.product.ProductR
 import com.bimabagaskhoro.taskappphincon.utils.AuthAuthenticator
 import com.bimabagaskhoro.taskappphincon.utils.AuthBadResponse
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
+import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CART_DATABASE
 import com.bimabagaskhoro.taskappphincon.utils.HeaderInterceptor
 import dagger.Module
 import dagger.Provides
@@ -127,10 +130,27 @@ object AppModule {
             //, database
         )
     }
-
     @Provides
     @Singleton
     fun provideDataStore(@ApplicationContext context: Context): AuthPreferences =
         AuthPreferences(context)
+
+    /**
+     * for room cart
+     */
+    @Provides
+    @Singleton
+    fun provideCartDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
+        context, CartDatabase::class.java, CART_DATABASE)
+        .allowMainThreadQueries()
+        .fallbackToDestructiveMigration()
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideCartDao(db: CartDatabase) = db.cartDao()
+
+//    @Provides
+//    fun provideCartEntity() = CartEntity()
 
 }

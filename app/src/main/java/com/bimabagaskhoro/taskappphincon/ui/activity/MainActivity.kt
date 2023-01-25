@@ -1,15 +1,11 @@
 package com.bimabagaskhoro.taskappphincon.ui.activity
 
-import android.content.res.Configuration
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityMainBinding
@@ -41,6 +37,11 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         setupWindow()
+
+        binding.icCart.setOnClickListener {
+            startActivity(Intent(this@MainActivity, CartActivity::class.java))
+            finish()
+        }
     }
     private fun setupWindow() {
         setSupportActionBar(binding.toolbar)
