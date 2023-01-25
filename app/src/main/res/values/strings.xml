@@ -59,4 +59,6 @@
     <string name="succes_trolley">Success Adding to Trolley</string>
     <string name="delete_trolley">Success Delete Item in Trolley</string>
     <string name="succes_rating">Success Adding Rating</string>
+    <string name="succes_favorite">Success Adding to Favorite</string>
+    <string name="delete_favorite">Success Un Favorite Item</string>
 </resources>

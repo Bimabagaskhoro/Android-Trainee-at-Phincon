@@ -16,9 +16,7 @@ import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.bumptech.glide.Glide
 
 class CartAdapter(
-    private val onDeleteItem: (Int) -> Unit,
-//    private val onAddItem: (Int) -> Unit,
-//    private val onMinItem: (Int) -> Unit
+    private val onDeleteItem: (Int) -> Unit
 ) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
     private var listData = ArrayList<CartEntity>()
     var onItemClick: ((CartEntity) -> Unit)? = null
@@ -60,12 +58,13 @@ class CartAdapter(
                 btnDelete.setOnClickListener {
                     onDeleteItem(data.id)
                 }
-//                addFragmentDialog.setOnClickListener {
-//                    onAddItem(data.quantity)
-//                }
-//                minFragmentDialog.setOnClickListener {
-//                    onMinItem(data.quantity)
-//                }
+                addFragmentDialog.setOnClickListener {
+                    CartActivity().addQuantity()
+                    tvTotalNumber.text
+                }
+                minFragmentDialog.setOnClickListener {
+                    CartActivity().addQuantity()
+                }
             }
         }
     }

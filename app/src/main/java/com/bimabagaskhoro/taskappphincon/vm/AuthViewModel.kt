@@ -1,7 +1,9 @@
 package com.bimabagaskhoro.taskappphincon.vm
 
 import androidx.lifecycle.*
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ResponseDetail
@@ -64,11 +66,14 @@ class AuthViewModel @Inject constructor(
     ): LiveData<Resource<ResponseAddFavorite>> =
         authRepository.unFavorite(userId,idProduct).asLiveData()
 
-//    fun updateStock(
-//        idProduct: String,
-//        stock: Int
-//    ): LiveData<Resource<ResponseChangeImage>> =
-//        authRepository.updateStock(RequestStock(idProduct, stock)).asLiveData()
+    fun updateStock(
+        dataStock: String,
+        idStock: String,
+        stock: Int
+    ): LiveData<Resource<ResponseAddFavorite>> =
+        authRepository.updateStock(
+//            dataStock,
+            RequestStock(listOf(DataStockItem(idStock,stock)))).asLiveData()
 
     fun updateRating(
         userId: Int,

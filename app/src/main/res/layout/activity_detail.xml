@@ -153,25 +153,19 @@
                 app:layout_constraintStart_toStartOf="@+id/tv_tittle"
                 app:layout_constraintTop_toBottomOf="@+id/rating_bar" />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatToggleButton
                 android:id="@+id/img_favorite"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:clickable="false"
-                android:visibility="invisible"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:textOff=""
+                android:textOn=""
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:background="@drawable/ic_un_favorite"
+                android:src="@drawable/ic_favorite"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_detail_product"
                 app:layout_constraintEnd_toEndOf="@+id/tv_price"
-                app:srcCompat="@drawable/ic_favorite" />
-
-            <ImageView
-                android:id="@+id/img_un_favorite"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:clickable="false"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_detail_product"
-                app:layout_constraintEnd_toEndOf="@+id/tv_price"
-                app:srcCompat="@drawable/ic_un_favorite" />
+                app:srcCompat="@drawable/ic_un_favorite"/>
 
             <View
                 android:id="@+id/view2"

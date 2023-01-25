@@ -2,33 +2,44 @@ package com.bimabagaskhoro.taskappphincon.ui.detail
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.bimabagaskhoro.taskappphincon.R
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.DataDetail
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentBuyDialogBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity
+import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import kotlin.math.log
 
 @AndroidEntryPoint
 class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragment() {
     private var _binding: FragmentBuyDialogBinding? = null
     private val binding get() = _binding
     private val viewModel: BuyDialogViewModel by viewModels()
+    private val viewModelStock: AuthViewModel by viewModels()
     override fun getTheme(): Int {
         return R.style.NoBackgroundDialogTheme
     }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,8 +60,6 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
 
             tvPriceFragmentDialog.text = data.harga.formatterIdr()
             tvStockFragmentDialog.text = data.stock.toString()
-
-
         }
 
         viewModel.quantity.observe(requireActivity()) { results ->
@@ -74,22 +83,66 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
             binding?.tvTotalPrice?.text = data.toString().formatterIdr()
         }
 
-        setActionData()
-        setTotalPrice()
-
         binding?.apply {
-            cardBuy.setOnClickListener {
-                val intent = Intent(context, OnSuccessActivity::class.java)
-                intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, data.id)
-                startActivity(intent)
+            val stock = tvStockFragmentDialog.text
+            val buy = tvTotalNumber.text
+            if (stock == buy) {
+                cardBuy.isClickable = false
+                cardBuy.setOnClickListener {
+                    Log.d("checkingCar", "onViewCreated: ")
+                }
+            } else if (stock != buy){
+                cardBuy.isClickable = true
+                cardBuy.setOnClickListener {
+                    val intent = Intent(context, OnSuccessActivity::class.java)
+                    intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, data.id)
+                    startActivity(intent)
 
-                doActionUpdate()
+                    val reqParams = "data_stock"
+                    val idProduct = data.id.toString()
+                    val stockProduct = binding?.tvTotalNumber?.text.toString()
+                    doActionUpdate(reqParams, idProduct, stockProduct)
+                }
             }
         }
+
+        setActionData()
     }
 
-    private fun doActionUpdate() {
+    private fun doActionUpdate(reqParams: String, idProduct: String, stockProduct: String)  {
+        viewModelStock.updateStock(
+            reqParams,
+            idProduct,
+            stockProduct.toInt()
+        ).observe(viewLifecycleOwner) { results ->
+            when (results) {
+                is Resource.Loading -> {
+                }
+                is Resource.Success -> {
+                    Log.d("Teststockkkkkkk", "doActionUpdate: ")
+                }
+                is Resource.Error -> {
+                    try {
+                        val err =
+                            results.errorBody?.string()
+                                ?.let { it1 -> JSONObject(it1).toString() }
+                        val gson = Gson()
+                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                        val errorResponse =
+                            gson.fromJson(jsonObject, ResponseError::class.java)
+                        val messageErr = errorResponse.error.message
+                        Toast.makeText(requireActivity(), messageErr, Toast.LENGTH_SHORT).show()
+                    } catch (e: java.lang.Exception) {
+                        val err = results.errorCode
+                        Log.d("ErrorCode", "$err")
+                    }
+                }
+                is Resource.Empty -> {
+                    Log.d("unFavorite", "Empty Data")
+                }
 
+            }
+        }
     }
 
     private fun setActionData() {
@@ -99,16 +152,6 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
         binding?.minFragmentDialog?.setOnClickListener {
             viewModel.minQuantity()
         }
-    }
-
-    private fun setTotalPrice() {
-//        val quantity = binding?.tvTotalNumber
-//        val price = binding?.tvPriceFragmentDialog
-//        val n1: Int = quantity?.text.toString().toInt()
-//        val n2: Int = price?.text.toString().toInt()
-//        val results = (n2*n1)
-
-//        binding?.tvTotalPrice?.text = results.toString()
     }
 
 }

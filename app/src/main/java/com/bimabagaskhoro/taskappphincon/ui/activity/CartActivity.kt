@@ -24,10 +24,7 @@ class CartActivity : AppCompatActivity() {
         binding = ActivityCartBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        adapter = CartAdapter {
-            roomViewModel.deleteCart(it)
-            recreate()
-        }
+        adapter = CartAdapter { roomViewModel.deleteCart(it) }
 
         initData()
         binding.btnBack.setOnClickListener {
@@ -51,5 +48,15 @@ class CartActivity : AppCompatActivity() {
                 Log.d("getDatabase", "Errr00r awokokwokwokwokw")
             }
         }
+    }
+
+    fun addQuantity () {
+        viewModel.quantity.observe(this@CartActivity) { results ->
+
+        }
+    }
+
+    fun minQuantity() {
+
     }
 }

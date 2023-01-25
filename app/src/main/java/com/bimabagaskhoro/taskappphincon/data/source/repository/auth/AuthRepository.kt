@@ -1,5 +1,6 @@
 package com.bimabagaskhoro.taskappphincon.data.source.repository.auth
 
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
@@ -53,7 +54,8 @@ interface AuthRepository {
     ): Flow<Resource<ResponseDetail>>
 
     fun updateStock(
-        requestStock: RequestStock
+//        dataStock: String,
+        dataStockItem : RequestStock
     ): Flow<Resource<ResponseAddFavorite>>
 
     fun unFavorite(

@@ -77,20 +77,13 @@ class DetailActivity : AppCompatActivity() {
                                 tvWeight.text = data.weight
                                 tvType.text = data.type
                                 tvDesc.text = data.desc
-                                val isFav = data.isFavorite
-                                if (!isFav) {
-                                    imgUnFavorite.visibility = View.VISIBLE
-                                } else if (isFav) {
-                                    imgFavorite.visibility = View.VISIBLE
-                                }
+                                imgFavorite.isChecked = data.isFavorite
 
                             }
                             binding.btnCart.setOnClickListener {
                                 doActionCart(results.data.success.data)
                             }
-                            binding.imgUnFavorite.setOnClickListener {
-                                initFavorite(userId, results.data.success.data, productId)
-                            }
+                            initFavorite(userId, results.data.success.data, productId)
                             doAction(results.data.success.data.image_product)
                             setActionDialog(results.data.success.data)
                         }
@@ -124,119 +117,85 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun initFavorite(userId: Int, data: DataDetail, productId: Int) {
-        if (data.isFavorite) {
-            binding.imgFavorite.isClickable = true
-            viewModel.addFavorite(productId, userId).observe(this@DetailActivity) { result ->
-                when (result) {
-                    is Resource.Loading -> {
-                        binding.apply {
-                            progressbarAddFav.visibility = View.VISIBLE
-                            cardProgressbar.visibility = View.VISIBLE
-                            tvWaiting.visibility = View.VISIBLE
-                        }
-                    }
-                    is Resource.Success -> {
-                        binding.apply {
-                            progressbarAddFav.visibility = View.GONE
-                            cardProgressbar.visibility = View.GONE
-                            tvWaiting.visibility = View.GONE
-                            imgFavorite.visibility = View.VISIBLE
-                            imgUnFavorite.visibility = View.INVISIBLE
-                            imgUnFavorite.isClickable = false
-                        }
-
-                        val dataMessages = result.data!!.success.message
-                        AlertDialog.Builder(this@DetailActivity)
-                            .setTitle("Delete From Favorite Success")
-                            .setMessage(dataMessages)
-                            .setPositiveButton("Ok") { _, _ ->
-                            }
-                            .show()
-                    }
-                    is Resource.Error -> {
-                        binding.apply {
-                            progressbarAddFav.visibility = View.GONE
-                            cardProgressbar.visibility = View.GONE
-                            tvWaiting.visibility = View.GONE
-                        }
-                        try {
-                            val err =
-                                result.errorBody?.string()
-                                    ?.let { it1 -> JSONObject(it1).toString() }
-                            val gson = Gson()
-                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                            val errorResponse =
-                                gson.fromJson(jsonObject, ResponseError::class.java)
-                            val messageErr = errorResponse.error.message
-                            AlertDialog.Builder(this@DetailActivity).setTitle("Failed")
-                                .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
-                                }.show()
-                        } catch (e: java.lang.Exception) {
-                            val err = result.errorCode
-                            Log.d("ErrorCode", "$err")
-                        }
-                    }
-                    is Resource.Empty -> {
-                        Log.d("DetailActivity", "Empty Data")
-                    }
-                }
+        binding.imgFavorite.setOnClickListener {
+            if (data.isFavorite) {
+                unFavorite(userId, productId)
+            } else {
+                addFavorite(userId, productId)
             }
-        } else if (!data.isFavorite) {
-            binding.imgUnFavorite.isClickable = true
-            viewModel.unFavorite(productId, userId).observe(this@DetailActivity) { result ->
-                when (result) {
-                    is Resource.Loading -> {
-                        binding.apply {
-                            progressbarAddFav.visibility = View.VISIBLE
-                            cardProgressbar.visibility = View.VISIBLE
-                            tvWaiting.visibility = View.VISIBLE
-                        }
-                    }
-                    is Resource.Success -> {
-                        binding.apply {
-                            progressbarAddFav.visibility = View.GONE
-                            cardProgressbar.visibility = View.GONE
-                            tvWaiting.visibility = View.GONE
-                            imgUnFavorite.visibility = View.VISIBLE
-                            imgFavorite.visibility = View.INVISIBLE
-                            imgFavorite.isClickable = false
-                        }
+        }
+    }
 
-                        val dataMessages = result.data!!.success.message
-                        AlertDialog.Builder(this@DetailActivity)
-                            .setTitle("Add Favorite Success")
-                            .setMessage(dataMessages)
-                            .setPositiveButton("Ok") { _, _ ->
-                            }
-                            .show()
-                    }
-                    is Resource.Error -> {
-                        binding.apply {
-                            progressbarAddFav.visibility = View.GONE
-                            cardProgressbar.visibility = View.GONE
-                            tvWaiting.visibility = View.GONE
-                        }
-                        try {
-                            val err =
-                                result.errorBody?.string()
-                                    ?.let { it1 -> JSONObject(it1).toString() }
-                            val gson = Gson()
-                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                            val errorResponse =
-                                gson.fromJson(jsonObject, ResponseError::class.java)
-                            val messageErr = errorResponse.error.message
-                            AlertDialog.Builder(this@DetailActivity).setTitle("Failed")
-                                .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
-                                }.show()
-                        } catch (e: java.lang.Exception) {
-                            val err = result.errorCode
-                            Log.d("ErrorCode", "$err")
-                        }
-                    }
-                    is Resource.Empty -> {
-                        Log.d("DetailActivity", "Empty Data")
+    private fun addFavorite(userId: Int, productId: Int) {
+        viewModel.addFavorite(userId, productId).observe(this@DetailActivity) { results ->
+            when (results) {
+                is Resource.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    Log.d("addFavoriteLoading", "Loading")
+                }
+                is Resource.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(this@DetailActivity, R.string.succes_favorite, Toast.LENGTH_SHORT).show()
+                }
+                is Resource.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    try {
+                        val err =
+                            results.errorBody?.string()
+                                ?.let { it1 -> JSONObject(it1).toString() }
+                        val gson = Gson()
+                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                        val errorResponse =
+                            gson.fromJson(jsonObject, ResponseError::class.java)
+                        val messageErr = errorResponse.error.message
+                        Toast.makeText(this@DetailActivity, messageErr, Toast.LENGTH_SHORT).show()
+                    } catch (e: java.lang.Exception) {
+                        val err = results.errorCode
+                        Log.d("ErrorCode", "$err")
                     }
                 }
+                is Resource.Empty -> {
+                    binding.progressBar.visibility = View.GONE
+                    Log.d("addFavorite", "Empty Data")
+                }
+
+            }
+        }
+    }
+
+    private fun unFavorite(userId: Int, productId: Int) {
+        viewModel.unFavorite(userId, productId).observe(this@DetailActivity) { results ->
+            when (results) {
+                is Resource.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    Log.d("unFavoriteLoading", "Loading")
+                }
+                is Resource.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    Toast.makeText(this@DetailActivity, R.string.delete_favorite, Toast.LENGTH_SHORT).show()
+                }
+                is Resource.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    try {
+                        val err =
+                            results.errorBody?.string()
+                                ?.let { it1 -> JSONObject(it1).toString() }
+                        val gson = Gson()
+                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                        val errorResponse =
+                            gson.fromJson(jsonObject, ResponseError::class.java)
+                        val messageErr = errorResponse.error.message
+                        Toast.makeText(this@DetailActivity, messageErr, Toast.LENGTH_SHORT).show()
+                    } catch (e: java.lang.Exception) {
+                        val err = results.errorCode
+                        Log.d("ErrorCode", "$err")
+                    }
+                }
+                is Resource.Empty -> {
+                    binding.progressBar.visibility = View.GONE
+                    Log.d("unFavorite", "Empty Data")
+                }
+
             }
         }
     }

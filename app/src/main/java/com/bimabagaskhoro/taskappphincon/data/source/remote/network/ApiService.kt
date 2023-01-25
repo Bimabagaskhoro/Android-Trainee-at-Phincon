@@ -1,5 +1,6 @@
 package com.bimabagaskhoro.taskappphincon.data.source.remote.network
 
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
@@ -68,14 +69,15 @@ interface ApiService {
         @Query("id_user") id_user: Int,
     ): ResponseDetail
 
+//    @Multipart
     @POST("update-stock")
     suspend fun updateStock(
-        @Body requestStock: RequestStock
-    ) : ResponseAddFavorite
+        @Body dataStockItem : RequestStock
+    ): ResponseAddFavorite
 
     @PUT("update_rate/{id}")
     suspend fun updateRating(
         @Path("id") id: Int,
         @Body requestRating: RequestRating
-    ) : ResponseAddFavorite
+    ): ResponseAddFavorite
 }

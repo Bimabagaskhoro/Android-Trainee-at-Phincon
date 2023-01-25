@@ -1,6 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.data.source.repository.auth
 
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
@@ -112,7 +113,7 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.addFavorite(idProduct,userId)
+                val response = apiService.addFavorite(idProduct, userId)
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {
@@ -142,11 +143,16 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun updateStock(requestStock: RequestStock): Flow<Resource<ResponseAddFavorite>> {
+    override fun updateStock(
+//        dataStock: String,
+        dataStockItem: RequestStock
+    ): Flow<Resource<ResponseAddFavorite>> {
         return flow {
+            emit(Resource.Loading())
             try {
-                emit(Resource.Loading())
-                val response = apiService.updateStock(requestStock)
+                val response = apiService.updateStock(
+//                    dataStock,
+                    dataStockItem)
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {
@@ -163,7 +169,7 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.unFavorite(idProduct,userId)
+                val response = apiService.unFavorite(idProduct, userId)
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {
