@@ -1,5 +1,6 @@
 package com.bimabagaskhoro.taskappphincon.data.source.remote.network
 
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangePassword
@@ -70,5 +71,11 @@ interface ApiService {
     @POST("update-stock")
     suspend fun updateStock(
         @Body requestStock: RequestStock
+    ) : ResponseAddFavorite
+
+    @PUT("update_rate/{id}")
+    suspend fun updateRating(
+        @Path("id") id: Int,
+        @Body requestRating: RequestRating
     ) : ResponseAddFavorite
 }

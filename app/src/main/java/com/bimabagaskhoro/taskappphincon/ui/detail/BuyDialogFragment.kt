@@ -1,5 +1,6 @@
 package com.bimabagaskhoro.taskappphincon.ui.detail
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,9 +8,13 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.bimabagaskhoro.taskappphincon.R
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.DataDetail
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentBuyDialogBinding
+import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
+import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
+import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -63,8 +68,28 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
             }
         }
 
+        viewModel.setPrice(data.harga.toInt())
+
+        viewModel.price.observe(requireActivity()) {data ->
+            binding?.tvTotalPrice?.text = data.toString().formatterIdr()
+        }
+
         setActionData()
         setTotalPrice()
+
+        binding?.apply {
+            cardBuy.setOnClickListener {
+                val intent = Intent(context, OnSuccessActivity::class.java)
+                intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, data.id)
+                startActivity(intent)
+
+                doActionUpdate()
+            }
+        }
+    }
+
+    private fun doActionUpdate() {
+
     }
 
     private fun setActionData() {

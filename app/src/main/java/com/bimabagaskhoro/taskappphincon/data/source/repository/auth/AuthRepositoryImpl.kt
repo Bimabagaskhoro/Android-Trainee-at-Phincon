@@ -1,6 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.data.source.repository.auth
 
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangePassword
@@ -163,6 +164,23 @@ class AuthRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             try {
                 val response = apiService.unFavorite(idProduct,userId)
+                emit(Resource.Success(response))
+            } catch (t: HttpException) {
+                when (t.code()) {
+                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                }
+            }
+        }
+    }
+
+    override fun updateRate(userId: Int, rate: RequestRating): Flow<Resource<ResponseAddFavorite>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val response = apiService.updateRating(userId, rate)
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {
