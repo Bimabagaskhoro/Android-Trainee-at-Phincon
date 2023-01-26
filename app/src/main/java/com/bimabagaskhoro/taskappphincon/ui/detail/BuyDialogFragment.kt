@@ -89,15 +89,12 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
             if (stock == buy) {
                 cardBuy.isClickable = false
                 cardBuy.setOnClickListener {
-                    Log.d("checkingCar", "onViewCreated: ")
+                    Toast.makeText(requireActivity(), R.string.out_stock, Toast.LENGTH_SHORT).show()
+//                    Log.d("checkingCar", "onViewCreated: ")
                 }
             } else if (stock != buy){
                 cardBuy.isClickable = true
                 cardBuy.setOnClickListener {
-                    val intent = Intent(context, OnSuccessActivity::class.java)
-                    intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, data.id)
-                    startActivity(intent)
-
                     val reqParams = "data_stock"
                     val idProduct = data.id.toString()
                     val stockProduct = binding?.tvTotalNumber?.text.toString()
@@ -119,6 +116,9 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
                 is Resource.Loading -> {
                 }
                 is Resource.Success -> {
+                    val intent = Intent(context, OnSuccessActivity::class.java)
+                    intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, data.id)
+                    startActivity(intent)
                     Log.d("Teststockkkkkkk", "doActionUpdate: ")
                 }
                 is Resource.Error -> {
