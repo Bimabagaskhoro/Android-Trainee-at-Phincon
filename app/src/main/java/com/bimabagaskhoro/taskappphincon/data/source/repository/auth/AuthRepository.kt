@@ -54,7 +54,6 @@ interface AuthRepository {
     ): Flow<Resource<ResponseDetail>>
 
     fun updateStock(
-//        dataStock: String,
         dataStockItem : RequestStock
     ): Flow<Resource<ResponseAddFavorite>>
 

@@ -16,6 +16,9 @@ interface CartDao {
     @Query("SELECT * FROM $CART_TABLE ORDER BY id ASC")
     fun getAllCarts(): Flow<List<CartEntity>>
 
+    @Query("SELECT COUNT(*) FROM $CART_TABLE")
+    fun countItems(): Int
+
 //    @Update
 //    fun updateCart(cartEntity: CartEntity)
 //

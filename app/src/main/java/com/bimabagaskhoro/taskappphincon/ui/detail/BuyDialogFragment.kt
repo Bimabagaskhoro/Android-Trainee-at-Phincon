@@ -102,7 +102,7 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
                     val reqParams = "data_stock"
                     val idProduct = data.id.toString()
                     val stockProduct = binding?.tvTotalNumber?.text.toString()
-                    doActionUpdate(reqParams, idProduct, stockProduct)
+                    doActionUpdate(reqParams, idProduct, stockProduct.toInt())
                 }
             }
         }
@@ -110,11 +110,11 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
         setActionData()
     }
 
-    private fun doActionUpdate(reqParams: String, idProduct: String, stockProduct: String)  {
+    private fun doActionUpdate(reqParams: String, idProduct: String, stockProduct: Int)  {
         viewModelStock.updateStock(
             reqParams,
             idProduct,
-            stockProduct.toInt()
+            stockProduct,
         ).observe(viewLifecycleOwner) { results ->
             when (results) {
                 is Resource.Loading -> {

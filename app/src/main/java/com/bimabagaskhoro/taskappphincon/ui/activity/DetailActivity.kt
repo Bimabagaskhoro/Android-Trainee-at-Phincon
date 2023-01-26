@@ -1,6 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.ui.activity
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -38,8 +39,6 @@ class DetailActivity : AppCompatActivity() {
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val roomViewModel: LocalViewModel by viewModels()
 
-    private lateinit var adapter: ImageSliderAdapter
-    private lateinit var dots: ArrayList<TextView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +76,9 @@ class DetailActivity : AppCompatActivity() {
                                 tvWeight.text = data.weight
                                 tvType.text = data.type
                                 tvDesc.text = data.desc
+                                cardImage.adapter = ImageSliderAdapter(this@DetailActivity, data.image_product)
+                                dotsIndicator.attachTo(cardImage)
+
                                 imgFavorite.isChecked = data.isFavorite
 
                                 if (data.stock == 1) {
@@ -88,7 +90,7 @@ class DetailActivity : AppCompatActivity() {
                                 doActionCart(results.data.success.data)
                             }
                             initFavorite(userId, results.data.success.data, productId)
-                            doAction(results.data.success.data.image_product)
+//                            doAction(results.data.success.data.image_product)
                             setActionDialog(results.data.success.data)
                         }
                         is Resource.Error -> {
@@ -222,43 +224,8 @@ class DetailActivity : AppCompatActivity() {
         val cart = CartEntity(idProduct, nameProduct, priceProduct, imageProduct, quantityProduct)
         roomViewModel.insertCart(cart)
         Toast.makeText(this, R.string.succes_trolley, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun doAction(list: List<ImageProductItem>) {
-        adapter = ImageSliderAdapter(list)
-        binding.cardImage.adapter = adapter
-        dots = ArrayList()
-        setIndicator(list)
-        binding.cardImage.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                selectedDot(position, list)
-                super.onPageSelected(position)
-            }
-        })
-    }
-
-    private fun selectedDot(position: Int, list: List<ImageProductItem>) {
-        for (i in list.indices) {
-            if (i == position) {
-                dots[i].setTextColor(ContextCompat.getColor(this, R.color.pinkz))
-            } else {
-                dots[i].setTextColor(ContextCompat.getColor(this, R.color.lighter_grey))
-            }
-        }
-    }
-
-
-    private fun setIndicator(list: List<ImageProductItem>) {
-        for (i in list.indices) {
-            dots.add(TextView(this))
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                dots[i].text = fromHtml("&#9679", Html.FROM_HTML_MODE_LEGACY).toString()
-            } else {
-                dots[i].text = fromHtml("&#9679")
-            }
-            dots[i].textSize = 18f
-            binding.dotsIndicator.addView(dots[i])
-        }
+        startActivity(Intent(this@DetailActivity, MainActivity::class.java))
+        finish()
     }
 
     private fun setActionDialog(data: DataDetail) {

@@ -56,4 +56,10 @@
     <string name="submit">Simpan</string>
     <string name="total_price">Total Harga</string>
     <string name="check_all">Pilih Semua</string>
+    <string name="succes_trolley">Berhasil Menambahkan ke Keranjang</string>
+    <string name="delete_trolley">Berhasil Menghapus Barang di Keranjang</string>
+    <string name="succes_rating">Berhasil Menambahkan Rate</string>
+    <string name="succes_favorite">Berhasil Menambahkan Kesukaan</string>
+    <string name="delete_favorite">Berhasil Menghapus Kesukaan</string>
+    <string name="out_stock">Kosong</string>
 </resources>

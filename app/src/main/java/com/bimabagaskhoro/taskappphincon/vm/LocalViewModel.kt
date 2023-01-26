@@ -21,5 +21,6 @@ class LocalViewModel @Inject constructor(
     fun insertCart(cartEntity: CartEntity) = viewModelScope.launch(Dispatchers.IO) { repository.saveCart(cartEntity)}
 
     val getAllCart: LiveData<List<CartEntity>> = repository.getAllCarts().asLiveData()
+    val countAllCart: Int = repository.countItems()
 
 }

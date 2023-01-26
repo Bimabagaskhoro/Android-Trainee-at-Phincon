@@ -3,6 +3,7 @@ package com.bimabagaskhoro.taskappphincon.ui.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -10,6 +11,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityMainBinding
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
+import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -18,7 +20,7 @@ import java.util.*
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    private val roomViewModel: LocalViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +40,21 @@ class MainActivity : AppCompatActivity() {
 
         setupWindow()
 
-        binding.icCart.setOnClickListener {
-            startActivity(Intent(this@MainActivity, CartActivity::class.java))
-            finish()
+        val countBadges = roomViewModel.countAllCart
+
+        binding.apply {
+            if (countBadges == 0) {
+                imgBadges.visibility = View.INVISIBLE
+                tvBadgesMenu.visibility = View.INVISIBLE
+            } else {
+                imgBadges.visibility = View.VISIBLE
+                tvBadgesMenu.visibility = View.VISIBLE
+                tvBadgesMenu.text = countBadges.toString()
+            }
+            icCart.setOnClickListener {
+                startActivity(Intent(this@MainActivity, CartActivity::class.java))
+                finish()
+            }
         }
     }
     private fun setupWindow() {

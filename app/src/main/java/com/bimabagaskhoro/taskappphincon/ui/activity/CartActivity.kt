@@ -31,6 +31,8 @@ class CartActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
+//
+//        binding.tvCheckAll.text = roomViewModel.countAllCart.toString()
     }
 
     private fun initData() {
@@ -50,7 +52,7 @@ class CartActivity : AppCompatActivity() {
         }
     }
 
-    fun addQuantity () {
+    fun addQuantity() {
         viewModel.quantity.observe(this@CartActivity) { results ->
 
         }

@@ -23,4 +23,8 @@ class LocalDataSource @Inject constructor(private val dao: CartDao) {
     suspend fun deleteCart(id: Int) {
         dao.deleteCart(id)
     }
+
+    fun countItems(): Int {
+        return dao.countItems()
+    }
 }
