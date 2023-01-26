@@ -15,13 +15,19 @@ import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.bumptech.glide.Glide
 
+@SuppressLint("NotifyDataSetChanged")
+@Suppress("DEPRECATION")
 class CartAdapter(
-    private val onDeleteItem: (Int) -> Unit
-) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
+    private val onDeleteItem: (Int) -> Unit,
+    private val onCheckedItem: (Int) -> Unit,
+    private val onUnCheckedItem: (Any) -> Unit,
+    private val onAddQuantity: (Int) -> Unit,
+    private val onMinQuantity: (Int) -> Unit
+) :
+    RecyclerView.Adapter<CartAdapter.ViewHolder>() {
     private var listData = ArrayList<CartEntity>()
     var onItemClick: ((CartEntity) -> Unit)? = null
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setData(newListData: List<CartEntity>?) {
         if (newListData == null) return
         listData.clear()
@@ -58,13 +64,28 @@ class CartAdapter(
                 btnDelete.setOnClickListener {
                     onDeleteItem(data.id)
                 }
+                checkBox.setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        onCheckedItem(data.id)
+                    } else if (!isChecked) {
+                        onUnCheckedItem(data.id)
+                    }
+                }
                 addFragmentDialog.setOnClickListener {
-//                    CartActivity().addQuantity()
-//                    tvTotalNumber.text
+                    onAddQuantity(data.quantity)
                 }
                 minFragmentDialog.setOnClickListener {
-//                    CartActivity().addQuantity()
+                    onMinQuantity(data.quantity)
                 }
+            }
+        }
+
+        init {
+            binding.addFragmentDialog.setOnClickListener {
+                onItemClick?.invoke(listData[adapterPosition])
+            }
+            binding.addFragmentDialog.setOnClickListener {
+                onItemClick?.invoke(listData[adapterPosition])
             }
         }
     }

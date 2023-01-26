@@ -27,4 +27,8 @@ class LocalDataSource @Inject constructor(private val dao: CartDao) {
     fun countItems(): Int {
         return dao.countItems()
     }
+
+    fun getPrice(id: Int): String {
+        return dao.getPrice(id)
+    }
 }

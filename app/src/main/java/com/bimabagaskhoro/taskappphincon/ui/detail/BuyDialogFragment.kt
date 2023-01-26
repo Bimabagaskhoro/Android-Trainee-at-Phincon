@@ -66,7 +66,7 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
             }
         }
 
-        viewModel.quantity.observe(requireActivity()) { results ->
+        viewModel.quantity.observe(viewLifecycleOwner) { results ->
             binding?.tvTotalNumber?.text = results.toString()
             if (results == data.stock) {
                 binding?.addFragmentDialog?.background =

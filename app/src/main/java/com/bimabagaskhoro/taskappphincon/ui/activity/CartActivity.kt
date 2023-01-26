@@ -1,22 +1,25 @@
 package com.bimabagaskhoro.taskappphincon.ui.activity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCartBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CartAdapter
 import com.bimabagaskhoro.taskappphincon.ui.detail.BuyDialogViewModel
+import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_cart.*
 
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCartBinding
-    private val roomViewModel: LocalViewModel by viewModels()
     private lateinit var adapter: CartAdapter
+    private val roomViewModel: LocalViewModel by viewModels()
     private val viewModel: BuyDialogViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,15 +27,44 @@ class CartActivity : AppCompatActivity() {
         binding = ActivityCartBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        adapter = CartAdapter { roomViewModel.deleteCart(it) }
-
+        doActionClicked()
         initData()
         binding.btnBack.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
-//
-//        binding.tvCheckAll.text = roomViewModel.countAllCart.toString()
+
+        /**
+         *
+         */
+
+        checkBox2.setOnClickListener {
+            if (checkBox2.isChecked) {
+//                categoryAdapter.selectAll()
+            } else {
+//                categoryAdapter.unselectall()
+            }
+        }
+    }
+
+    private fun doActionClicked() {
+        adapter = CartAdapter(
+            { roomViewModel.deleteCart(it) },
+            {
+                val priceChecked = roomViewModel.getPrice(it)
+                binding.tvAllPrice.text = priceChecked.formatterIdr()
+            },
+            {
+                val unChecked = null
+                binding.tvAllPrice.text = unChecked
+            },
+            {
+                viewModel.addQuantity(it)
+            },
+            {
+                viewModel.minQuantity()
+            }
+        )
     }
 
     private fun initData() {
@@ -50,15 +82,5 @@ class CartActivity : AppCompatActivity() {
                 Log.d("getDatabase", "Errr00r awokokwokwokwokw")
             }
         }
-    }
-
-    fun addQuantity() {
-        viewModel.quantity.observe(this@CartActivity) { results ->
-
-        }
-    }
-
-    fun minQuantity() {
-
     }
 }

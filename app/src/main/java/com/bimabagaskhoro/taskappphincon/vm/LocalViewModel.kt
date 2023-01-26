@@ -18,9 +18,11 @@ class LocalViewModel @Inject constructor(
 
     fun deleteCart(id: Int) = viewModelScope.launch(Dispatchers.IO) { repository.deleteCart(id) }
 
-    fun insertCart(cartEntity: CartEntity) = viewModelScope.launch(Dispatchers.IO) { repository.saveCart(cartEntity)}
+    fun insertCart(cartEntity: CartEntity) =
+        viewModelScope.launch(Dispatchers.IO) { repository.saveCart(cartEntity) }
 
     val getAllCart: LiveData<List<CartEntity>> = repository.getAllCarts().asLiveData()
     val countAllCart: Int = repository.countItems()
-
+    fun getPrice(id: Int): String = repository.getPrice(id)
+//    fun getPrice(id: Int)= viewModelScope.launch(Dispatchers.IO) { repository.getPrice(id) }
 }

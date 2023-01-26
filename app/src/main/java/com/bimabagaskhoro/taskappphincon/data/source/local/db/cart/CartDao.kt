@@ -19,6 +19,9 @@ interface CartDao {
     @Query("SELECT COUNT(*) FROM $CART_TABLE")
     fun countItems(): Int
 
+    @Query("SELECT harga FROM $CART_TABLE WHERE id = :id")
+    fun getPrice(id: Int): String
+
 //    @Update
 //    fun updateCart(cartEntity: CartEntity)
 //
