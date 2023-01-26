@@ -21,8 +21,8 @@ class CartAdapter(
     private val onDeleteItem: (Int) -> Unit,
     private val onCheckedItem: (CartEntity) -> Unit,
     private val onUnCheckedItem: (Any) -> Unit,
-    private val onAddQuantity: (Int) -> Unit,
-    private val onMinQuantity: (Int) -> Unit
+    private val onAddQuantity: (CartEntity) -> Unit,
+    private val onMinQuantity: (CartEntity) -> Unit
 ) :
     RecyclerView.Adapter<CartAdapter.ViewHolder>() {
     private var listData = ArrayList<CartEntity>()
@@ -74,10 +74,10 @@ class CartAdapter(
                     }
                 }
                 addFragmentDialog.setOnClickListener {
-                    onAddQuantity(data.quantity)
+                    onAddQuantity.invoke(listData[adapterPosition])
                 }
                 minFragmentDialog.setOnClickListener {
-                    onMinQuantity(data.quantity)
+                    onMinQuantity.invoke(listData[adapterPosition])
                 }
             }
         }

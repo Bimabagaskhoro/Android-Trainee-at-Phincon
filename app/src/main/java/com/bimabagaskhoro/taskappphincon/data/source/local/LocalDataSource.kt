@@ -31,4 +31,8 @@ class LocalDataSource @Inject constructor(private val dao: CartDao) {
     fun getPrice(id: Int): String {
         return dao.getPrice(id)
     }
+
+    fun updateQuantity(quantity: Int, id: Int): Int {
+        return dao.updateQuantity(quantity, id)
+    }
 }

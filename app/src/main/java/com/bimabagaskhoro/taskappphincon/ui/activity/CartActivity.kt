@@ -52,10 +52,9 @@ class CartActivity : AppCompatActivity() {
         adapter = CartAdapter(
             { roomViewModel.deleteCart(it) },
             {
-                val priceChecked = roomViewModel.getPrice(it.id)
                 val priceValue = it.harga.toInt()
                 val quantityValue = it.quantity
-                val resultz = (priceValue*quantityValue*2)
+                val resultz = (priceValue * quantityValue)
                 binding.tvAllPrice.text = resultz.toString().formatterIdr()
             },
             {
@@ -63,10 +62,14 @@ class CartActivity : AppCompatActivity() {
                 binding.tvAllPrice.text = unChecked
             },
             {
-                viewModel.addQuantity(it)
+                val id = it.id
+                val quantity = it.quantity
+                roomViewModel.updateQuantity((quantity + 1), id)
             },
             {
-                viewModel.minQuantity()
+                val id = it.id
+                val quantity = it.quantity
+                roomViewModel.updateQuantity((quantity - 1), id)
             }
         )
     }
