@@ -161,11 +161,10 @@
                 android:textOn=""
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:background="@drawable/ic_un_favorite"
+                android:background="@drawable/toggle_favorite"
                 android:src="@drawable/ic_favorite"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_detail_product"
-                app:layout_constraintEnd_toEndOf="@+id/tv_price"
-                app:srcCompat="@drawable/ic_un_favorite"/>
+                app:layout_constraintEnd_toEndOf="@+id/tv_price"/>
 
             <View
                 android:id="@+id/view2"

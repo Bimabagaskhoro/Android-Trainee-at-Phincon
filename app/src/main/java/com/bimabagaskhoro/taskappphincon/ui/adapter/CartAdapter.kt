@@ -59,11 +59,11 @@ class CartAdapter(
                     onDeleteItem(data.id)
                 }
                 addFragmentDialog.setOnClickListener {
-                    CartActivity().addQuantity()
-                    tvTotalNumber.text
+//                    CartActivity().addQuantity()
+//                    tvTotalNumber.text
                 }
                 minFragmentDialog.setOnClickListener {
-                    CartActivity().addQuantity()
+//                    CartActivity().addQuantity()
                 }
             }
         }

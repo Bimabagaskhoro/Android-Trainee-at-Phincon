@@ -60,6 +60,10 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
 
             tvPriceFragmentDialog.text = data.harga.formatterIdr()
             tvStockFragmentDialog.text = data.stock.toString()
+
+            if (data.stock == 1) {
+                tvStockFragmentDialog.text = getString(R.string.out_stock)
+            }
         }
 
         viewModel.quantity.observe(requireActivity()) { results ->

@@ -79,6 +79,10 @@ class DetailActivity : AppCompatActivity() {
                                 tvDesc.text = data.desc
                                 imgFavorite.isChecked = data.isFavorite
 
+                                if (data.stock == 1) {
+                                    tvStock.text = getString(R.string.out_stock)
+                                }
+
                             }
                             binding.btnCart.setOnClickListener {
                                 doActionCart(results.data.success.data)
@@ -135,7 +139,11 @@ class DetailActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this@DetailActivity, R.string.succes_favorite, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@DetailActivity,
+                        R.string.succes_favorite,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 is Resource.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -148,7 +156,7 @@ class DetailActivity : AppCompatActivity() {
                         val errorResponse =
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
-                        Toast.makeText(this@DetailActivity, messageErr, Toast.LENGTH_SHORT).show()
+                        Log.d("Error Body", messageErr)
                     } catch (e: java.lang.Exception) {
                         val err = results.errorCode
                         Log.d("ErrorCode", "$err")
@@ -172,7 +180,11 @@ class DetailActivity : AppCompatActivity() {
                 }
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    Toast.makeText(this@DetailActivity, R.string.delete_favorite, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@DetailActivity,
+                        R.string.delete_favorite,
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 is Resource.Error -> {
                     binding.progressBar.visibility = View.GONE
@@ -185,7 +197,7 @@ class DetailActivity : AppCompatActivity() {
                         val errorResponse =
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
-                        Toast.makeText(this@DetailActivity, messageErr, Toast.LENGTH_SHORT).show()
+                        Log.d("Error Body", messageErr)
                     } catch (e: java.lang.Exception) {
                         val err = results.errorCode
                         Log.d("ErrorCode", "$err")
