@@ -2,6 +2,7 @@ package com.bimabagaskhoro.taskappphincon.ui.activity
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -38,6 +39,7 @@ class DetailActivity : AppCompatActivity() {
     private val viewModel: AuthViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val roomViewModel: LocalViewModel by viewModels()
+    private var idProduct : Int? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,10 +55,20 @@ class DetailActivity : AppCompatActivity() {
 
     private fun initDataDetail() {
         val productId = intent.getIntExtra(EXTRA_DATA_DETAIL, 0)
+
+        idProduct = productId
+        if (idProduct == 0){
+            val data: Uri? = intent?.data
+            val id = data?.getQueryParameter("id")
+            if (id != null) {
+                idProduct = id.toInt()
+            }
+        }
+
         dataStoreViewModel.apply {
             getUserId.observe(this@DetailActivity) {
                 val userId = it
-                viewModel.getDetail(productId, userId).observe(this@DetailActivity) { results ->
+                viewModel.getDetail(idProduct!!.toInt(), userId).observe(this@DetailActivity) { results ->
                     when (results) {
                         is Resource.Loading -> {
                             binding.apply {
@@ -75,6 +87,7 @@ class DetailActivity : AppCompatActivity() {
                                 ratingBar.visibility = View.GONE
                                 tvDetailProduct.visibility = View.GONE
                                 imgFavorite.visibility =View.GONE
+                                tvNameDetail.visibility = View.GONE
 
                             }
                         }
@@ -82,6 +95,7 @@ class DetailActivity : AppCompatActivity() {
                             val data = results.data!!.success.data
                             binding.apply {
                                 progressBar.visibility = View.GONE
+                                tvNameDetail.visibility = View.VISIBLE
                                 tvDescHelpers.visibility = View.VISIBLE
                                 tvWeightHelpers.visibility = View.VISIBLE
                                 tvSizeHelpers.visibility = View.VISIBLE
@@ -97,6 +111,8 @@ class DetailActivity : AppCompatActivity() {
                                 tvDetailProduct.visibility = View.VISIBLE
                                 imgFavorite.visibility =View.VISIBLE
 
+                                tvNameDetail.isSelected = true
+                                tvNameDetail.text = data.name_product
                                 tvTittle.isSelected = true
                                 tvTittle.text = data.name_product
                                 ratingBar.rating = data.rate.toFloat()
@@ -113,6 +129,13 @@ class DetailActivity : AppCompatActivity() {
 
                                 if (data.stock == 1) {
                                     tvStock.text = getString(R.string.out_stock)
+                                }
+                                btnShare.setOnClickListener {
+                                    val shareIntent = Intent(Intent.ACTION_SEND)
+                                    shareIntent.type = "text/plain"
+                                    shareIntent.putExtra(Intent.EXTRA_TEXT, "https://bimabk.com/deeplink?id=${data.id}")
+                                    startActivity(Intent.createChooser(shareIntent, "Share link using"))
+
                                 }
 
                             }

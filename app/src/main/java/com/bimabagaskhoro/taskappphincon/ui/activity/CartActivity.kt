@@ -7,6 +7,7 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCartBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CartAdapter
 import com.bimabagaskhoro.taskappphincon.ui.detail.BuyDialogViewModel
@@ -51,8 +52,11 @@ class CartActivity : AppCompatActivity() {
         adapter = CartAdapter(
             { roomViewModel.deleteCart(it) },
             {
-                val priceChecked = roomViewModel.getPrice(it)
-                binding.tvAllPrice.text = priceChecked.formatterIdr()
+                val priceChecked = roomViewModel.getPrice(it.id)
+                val priceValue = it.harga.toInt()
+                val quantityValue = it.quantity
+                val resultz = (priceValue*quantityValue*2)
+                binding.tvAllPrice.text = resultz.toString().formatterIdr()
             },
             {
                 val unChecked = null

@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide
 @Suppress("DEPRECATION")
 class CartAdapter(
     private val onDeleteItem: (Int) -> Unit,
-    private val onCheckedItem: (Int) -> Unit,
+    private val onCheckedItem: (CartEntity) -> Unit,
     private val onUnCheckedItem: (Any) -> Unit,
     private val onAddQuantity: (Int) -> Unit,
     private val onMinQuantity: (Int) -> Unit
@@ -66,9 +66,11 @@ class CartAdapter(
                 }
                 checkBox.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
-                        onCheckedItem(data.id)
+                        checkBox.isChecked = true
+                        onCheckedItem.invoke(listData[adapterPosition])
                     } else if (!isChecked) {
-                        onUnCheckedItem(data.id)
+                        checkBox.isChecked = false
+                        onUnCheckedItem(data)
                     }
                 }
                 addFragmentDialog.setOnClickListener {
@@ -77,15 +79,6 @@ class CartAdapter(
                 minFragmentDialog.setOnClickListener {
                     onMinQuantity(data.quantity)
                 }
-            }
-        }
-
-        init {
-            binding.addFragmentDialog.setOnClickListener {
-                onItemClick?.invoke(listData[adapterPosition])
-            }
-            binding.addFragmentDialog.setOnClickListener {
-                onItemClick?.invoke(listData[adapterPosition])
             }
         }
     }

@@ -41,11 +41,27 @@
         </activity>
         <activity
             android:name=".ui.activity.DetailActivity"
-            android:exported="false"
+            android:exported="true"
             android:theme="@style/Theme.SplashScreen">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                    android:host="bimabk.com"
+                    android:pathPrefix="/deeplink" />
+                <data android:scheme="app" android:host="www.bimabk.com" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http"
+                    android:host="bimabk" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.activity.PasswordActivity"

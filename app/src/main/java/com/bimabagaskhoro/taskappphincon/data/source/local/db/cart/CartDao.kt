@@ -13,6 +13,9 @@ interface CartDao {
     @Query("DELETE FROM $CART_TABLE WHERE id = :id")
     suspend fun deleteCart(id: Int)
 
+//    @Query("UPDATE quantity FROM $CART_TABLE WHERE id = :id")
+//    suspend fun updateQuantity(id: Int)
+
     @Query("SELECT * FROM $CART_TABLE ORDER BY id ASC")
     fun getAllCarts(): Flow<List<CartEntity>>
 
