@@ -1,4 +1,3 @@
-
 package com.bimabagaskhoro.taskappphincon.ui.activity
 
 import android.app.AlertDialog
@@ -150,8 +149,9 @@ class DetailActivity : AppCompatActivity() {
                                     }
 
                                 }
+                                val isInsert = false
                                 binding.btnCart.setOnClickListener {
-                                    doActionCart(results.data.success.data, (true))
+                                    doActionCart(results.data.success.data, (isInsert))
                                 }
                                 initFavorite(userId, results.data.success.data, productId)
 //                            doAction(results.data.success.data.image_product)
@@ -284,7 +284,16 @@ class DetailActivity : AppCompatActivity() {
         val priceProduct = data.harga
         val imageProduct = data.image
         val quantityProduct = 1
-        val cart = CartEntity(idProduct, nameProduct, priceProduct, imageProduct, quantityProduct)
+        val stockProduct = data.stock
+        val cart = CartEntity(
+            idProduct,
+            nameProduct,
+            priceProduct,
+            imageProduct,
+            quantityProduct,
+            isUpdate,
+            stockProduct
+        )
         roomViewModel.insertCart(cart)
         Toast.makeText(this, R.string.succes_trolley, Toast.LENGTH_SHORT).show()
         startActivity(Intent(this@DetailActivity, MainActivity::class.java))

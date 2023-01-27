@@ -8,14 +8,14 @@ import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CART_TABLE
 
 @Entity(tableName = CART_TABLE)
 data class CartEntity(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey()
     val id: Int,
 
     @ColumnInfo(name = "name_product")
     val name_product: String = "",
 
     @ColumnInfo(name = "harga")
-    val harga: String= "",
+    val harga: String = "",
 
     @ColumnInfo(name = "image")
     val image: String = "",
@@ -23,6 +23,12 @@ data class CartEntity(
     @ColumnInfo(name = "quantity")
     val quantity: Int = 0,
 
-//    @ColumnInfo(name = "is_check")
-//    val isCheck: Boolean
+    @ColumnInfo(name = "is_check")
+    var isCheck: Boolean,
+
+    @ColumnInfo(name = "stock")
+    val stock: Int = 0,
+
+//    @ColumnInfo(name = "set_selected")
+//    var setSelected: Boolean
 )

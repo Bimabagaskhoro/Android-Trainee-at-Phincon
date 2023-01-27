@@ -48,6 +48,7 @@ class OnSuccessActivity : AppCompatActivity() {
                     Toast.makeText(this@OnSuccessActivity, R.string.succes_rating, Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
+                    finishAffinity()
                 }
                 is Resource.Error -> {
                     binding.progressbar.visibility = View.GONE

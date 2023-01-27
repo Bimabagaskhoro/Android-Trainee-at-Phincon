@@ -1,6 +1,8 @@
 package com.bimabagaskhoro.taskappphincon.ui.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,14 +21,17 @@ import com.bumptech.glide.Glide
 @Suppress("DEPRECATION")
 class CartAdapter(
     private val onDeleteItem: (Int) -> Unit,
-    private val onCheckedItem: (CartEntity) -> Unit,
+    private val onCheckedItem: (Any) -> Unit,
     private val onUnCheckedItem: (Any) -> Unit,
     private val onAddQuantity: (CartEntity) -> Unit,
-    private val onMinQuantity: (CartEntity) -> Unit
+    private val onMinQuantity: (CartEntity) -> Unit,
+    private val onInitData: (CartEntity) -> Unit
 ) :
     RecyclerView.Adapter<CartAdapter.ViewHolder>() {
     private var listData = ArrayList<CartEntity>()
     var onItemClick: ((CartEntity) -> Unit)? = null
+    var totalValue: Int = 0
+    var isCheckedAll: Boolean = false
 
     fun setData(newListData: List<CartEntity>?) {
         if (newListData == null) return
@@ -64,13 +69,24 @@ class CartAdapter(
                 btnDelete.setOnClickListener {
                     onDeleteItem(data.id)
                 }
+                binding.checkBox.isChecked = isCheckedAll
+
+
                 checkBox.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
-                        checkBox.isChecked = true
-                        onCheckedItem.invoke(listData[adapterPosition])
+                        val priceValue = data.harga.toInt()
+                        val quantityValue = data.quantity
+                        val result = (priceValue * quantityValue)
+                        totalValue += result
+                        onCheckedItem(totalValue)
+                        onInitData.invoke(listData[adapterPosition])
                     } else if (!isChecked) {
-                        checkBox.isChecked = false
-                        onUnCheckedItem(data)
+                        val priceValue = data.harga.toInt()
+                        val quantityValue = data.quantity
+                        val result = (priceValue * quantityValue)
+                        totalValue -= result
+                        onUnCheckedItem(totalValue)
+                        onInitData.invoke(listData[adapterPosition])
                     }
                 }
                 addFragmentDialog.setOnClickListener {
@@ -82,4 +98,10 @@ class CartAdapter(
             }
         }
     }
+
+    fun selectAll(isChecked: Boolean) {
+        isCheckedAll = isChecked
+        notifyDataSetChanged()
+    }
+
 }
