@@ -50,6 +50,7 @@ class CartAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val data = listData[position]
         holder.bind(data)
+
     }
 
     override fun getItemCount(): Int = listData.size
@@ -70,16 +71,18 @@ class CartAdapter(
                 btnDelete.setOnClickListener {
                     onDeleteItem(data.id)
                 }
-                checkBox.isChecked = isCheckedAll
 
+                checkBox.isChecked = isCheckedAll
                 checkBox.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
+                        listData.add(data)
                         val priceValue = data.harga.toInt()
                         val quantityValue = data.quantity
                         val result = (priceValue * quantityValue)
                         totalValue += result
                         onCheckedItem(totalValue, data.id.toString(), data.quantity)
                     } else if (!isChecked) {
+                        listData.remove(data)
                         val priceValue = data.harga.toInt()
                         val quantityValue = data.quantity
                         val result = (priceValue * quantityValue)
@@ -126,4 +129,7 @@ class CartAdapter(
         notifyDataSetChanged()
     }
 
+    fun getCheckedAll(): ArrayList<CartEntity> {
+        return listData
+    }
 }

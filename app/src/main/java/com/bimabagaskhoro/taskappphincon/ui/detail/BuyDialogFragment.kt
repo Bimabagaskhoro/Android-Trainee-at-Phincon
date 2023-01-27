@@ -99,10 +99,9 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
             } else if (stock != buy){
                 cardBuy.isClickable = true
                 cardBuy.setOnClickListener {
-                    val reqParams = "data_stock"
                     val idProduct = data.id.toString()
                     val stockProduct = binding?.tvTotalNumber?.text.toString()
-                    doActionUpdate(reqParams, idProduct, stockProduct.toInt())
+                    doActionUpdate(idProduct, stockProduct.toInt())
                 }
             }
         }
@@ -110,11 +109,11 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
         setActionData()
     }
 
-    private fun doActionUpdate(reqParams: String, idProduct: String, stockProduct: Int)  {
+    private fun doActionUpdate(idProduct: String, stockProduct: Int)  {
         viewModelStock.updateStock(
-            reqParams,
-            idProduct,
-            stockProduct,
+//            "data_stock",
+//            (listOf(DataStockItem(idProduct, stockProduct)))
+            (RequestStock(listOf(DataStockItem(idProduct, stockProduct))))
         ).observe(viewLifecycleOwner) { results ->
             when (results) {
                 is Resource.Loading -> {

@@ -7,6 +7,9 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCartBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CartAdapter
@@ -20,6 +23,7 @@ import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_cart.*
 import org.json.JSONObject
+import kotlin.math.log
 
 @Suppress("UnusedEquals")
 @AndroidEntryPoint
@@ -42,9 +46,85 @@ class CartActivity : AppCompatActivity() {
         }
         binding.checkBox2.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                adapter.selectAll(isChecked)
+                adapter.selectAll(true)
+                val dataArray = adapter.getCheckedAll()
+//                dataArray
+//                    .map {
+//                        it.harga
+//                    }
+
+                /**
+                 *
+                 * bener nich
+                 */
+                Log.d("CheckedDataRoom", "CheckData = ${
+                    dataArray.map { it.harga }
+                }")
+//                Log.d("CheckedDataRoom", "CheckData = $dataArray")
+//                dataArray.forEach { temp ->
+////                    val schema = "data_stock"
+//                    val idProduct = temp.id
+//                    val quantity = temp.quantity
+//                    val postData = ArrayList<DataStockItem>()
+////                    Log.d("CheckedDataRoom", "CheckData = $idProduct")
+//                    postData.apply {
+//                        add(DataStockItem(idProduct.toString(), quantity))
+//                        add(DataStockItem(idProduct.toString(), quantity))
+//                        add(DataStockItem(idProduct.toString(), quantity))
+//                        add(DataStockItem(idProduct.toString(), quantity))
+//                        add(DataStockItem(idProduct.toString(), quantity))
+//                    }
+//
+//                    Log.d("valueOnArray", "$postData")
+////                    Log.d("valueOnArray", "($schema + $idProduct + $quantity)")
+////
+////                    val arrayList = idProduct.split(",").map { it }.toMutableList()
+//                    binding.btnBuy.setOnClickListener {
+//                        doActionBusy(postData)
+//                        roomViewModel.deleteCart(idProduct)
+//                    }
+//                }
             } else if (!isChecked) {
                 recreate()
+            }
+        }
+    }
+
+    private fun doActionBusy(postData: ArrayList<DataStockItem>) {
+        viewModel.updateStock(RequestStock(postData)).observe(this@CartActivity) { results ->
+            when (results) {
+                is Resource.Loading -> {
+                }
+                is Resource.Success -> {
+                    postData.forEach { temp ->
+                        val productId = temp.id_product
+                        val intent = Intent(this@CartActivity, OnSuccessActivity::class.java)
+
+                        intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, productId.toInt())
+                        startActivity(intent)
+                        Log.d("Teststockkkkkkk", "doActionUpdate: ")
+                    }
+
+                }
+                is Resource.Error -> {
+                    try {
+                        val err =
+                            results.errorBody?.string()
+                                ?.let { it1 -> JSONObject(it1).toString() }
+                        val gson = Gson()
+                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                        val errorResponse =
+                            gson.fromJson(jsonObject, ResponseError::class.java)
+                        val messageErr = errorResponse.error.message
+                        Toast.makeText(this@CartActivity, messageErr, Toast.LENGTH_SHORT).show()
+                    } catch (e: java.lang.Exception) {
+                        val err = results.errorCode
+                        Log.d("ErrorCode", "$err")
+                    }
+                }
+                is Resource.Empty -> {
+                    Log.d("unFavorite", "Empty Data")
+                }
             }
         }
     }
@@ -57,8 +137,18 @@ class CartActivity : AppCompatActivity() {
                 val result = adapter.totalValue
                 binding.tvAllPrice.text = result.toString().formatterIdr()
                 binding.btnBuy.setOnClickListener {
-                    doActionBuy(schema, idProduct, quantity)
-                    roomViewModel.deleteCart(idProduct.toInt())
+//                    doActionBuy(idProduct, quantity)
+//                    roomViewModel.deleteCart(idProduct.toInt())
+                    val postData = ArrayList<DataStockItem>()
+                    postData.apply {
+                        add(DataStockItem(idProduct, quantity))
+                        add(DataStockItem(idProduct, quantity))
+                        add(DataStockItem(idProduct, quantity))
+                        add(DataStockItem(idProduct, quantity))
+                        add(DataStockItem(idProduct, quantity))
+                    }
+                    Log.d("valueOnArray", "$postData")
+                    doActionBusy(postData)
                 }
             },
             { _, idProduct, quantity ->
@@ -66,8 +156,19 @@ class CartActivity : AppCompatActivity() {
                 val result = adapter.totalValue
                 binding.tvAllPrice.text = result.toString().formatterIdr()
                 binding.btnBuy.setOnClickListener {
-                    doActionBuy(schema, idProduct, quantity)
-                    roomViewModel.deleteCart(idProduct.toInt())
+//                    doActionBuy(idProduct, quantity)
+//                    roomViewModel.deleteCart(idProduct.toInt())
+
+                    val postData = ArrayList<DataStockItem>()
+                    postData.apply {
+                        add(DataStockItem(idProduct, quantity))
+                        add(DataStockItem(idProduct, quantity))
+                        add(DataStockItem(idProduct, quantity))
+                        add(DataStockItem(idProduct, quantity))
+                        add(DataStockItem(idProduct, quantity))
+                    }
+                    Log.d("valueOnArray", "$postData")
+                    doActionBusy(postData)
                 }
             },
             { id, quantity ->
@@ -97,14 +198,18 @@ class CartActivity : AppCompatActivity() {
     }
 
 
-    private fun doActionBuy(schema: String, idProduct: String, buyProduct: Int) {
-        viewModel.updateStock(schema, idProduct, buyProduct).observe(this@CartActivity) { results ->
+    private fun doActionBuy(productId: String, stock: Int) {
+        viewModel.updateStock(
+//            "data_stock",
+//            (listOf(DataStockItem(productId, stock)))
+            RequestStock(listOf(DataStockItem(productId, stock)))
+        ).observe(this@CartActivity) { results ->
             when (results) {
                 is Resource.Loading -> {
                 }
                 is Resource.Success -> {
                     val intent = Intent(this@CartActivity, OnSuccessActivity::class.java)
-                    intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, idProduct.toInt())
+                    intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, productId.toInt())
                     startActivity(intent)
                     Log.d("Teststockkkkkkk", "doActionUpdate: ")
                 }
