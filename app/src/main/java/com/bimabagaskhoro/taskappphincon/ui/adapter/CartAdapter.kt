@@ -6,7 +6,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
@@ -21,11 +23,10 @@ import com.bumptech.glide.Glide
 @Suppress("DEPRECATION")
 class CartAdapter(
     private val onDeleteItem: (Int) -> Unit,
-    private val onCheckedItem: (Any) -> Unit,
-    private val onUnCheckedItem: (Any) -> Unit,
-    private val onAddQuantity: (CartEntity) -> Unit,
-    private val onMinQuantity: (CartEntity) -> Unit,
-    private val onInitData: (CartEntity) -> Unit
+    private val onCheckedItem: (Any, String, Int) -> Unit,
+    private val onUnCheckedItem: (Any, String, Int) -> Unit,
+    private val onAddQuantity: (Int, Int) -> Unit,
+    private val onMinQuantity: (Int, Int) -> Unit,
 ) :
     RecyclerView.Adapter<CartAdapter.ViewHolder>() {
     private var listData = ArrayList<CartEntity>()
@@ -69,8 +70,7 @@ class CartAdapter(
                 btnDelete.setOnClickListener {
                     onDeleteItem(data.id)
                 }
-                binding.checkBox.isChecked = isCheckedAll
-
+                checkBox.isChecked = isCheckedAll
 
                 checkBox.setOnCheckedChangeListener { _, isChecked ->
                     if (isChecked) {
@@ -78,22 +78,44 @@ class CartAdapter(
                         val quantityValue = data.quantity
                         val result = (priceValue * quantityValue)
                         totalValue += result
-                        onCheckedItem(totalValue)
-                        onInitData.invoke(listData[adapterPosition])
+                        onCheckedItem(totalValue, data.id.toString(), data.quantity)
                     } else if (!isChecked) {
                         val priceValue = data.harga.toInt()
                         val quantityValue = data.quantity
                         val result = (priceValue * quantityValue)
                         totalValue -= result
-                        onUnCheckedItem(totalValue)
-                        onInitData.invoke(listData[adapterPosition])
+                        onUnCheckedItem(totalValue, data.id.toString(), data.quantity)
                     }
                 }
                 addFragmentDialog.setOnClickListener {
-                    onAddQuantity.invoke(listData[adapterPosition])
+                    val stock = data.stock
+                    val quantity = (data.quantity)
+                    if (quantity == stock) {
+                        addFragmentDialog.isClickable = false
+                        Toast.makeText(itemView.context, R.string.out_stock, Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        onAddQuantity(data.id, data.quantity)
+                        binding.addFragmentDialog.background =
+                            ContextCompat.getDrawable(
+                                itemView.context,
+                                R.drawable.bg_rounded_lightgrey
+                            )
+                    }
                 }
                 minFragmentDialog.setOnClickListener {
-                    onMinQuantity.invoke(listData[adapterPosition])
+                    val ids = data.id
+                    val quantity = (data.quantity)
+                    if (quantity != 1) {
+                        onMinQuantity(ids, quantity)
+                    } else {
+                        minFragmentDialog.isClickable = false
+                        binding.minFragmentDialog.background =
+                            ContextCompat.getDrawable(
+                                itemView.context,
+                                R.drawable.bg_rounded_lightgrey
+                            )
+                    }
                 }
             }
         }

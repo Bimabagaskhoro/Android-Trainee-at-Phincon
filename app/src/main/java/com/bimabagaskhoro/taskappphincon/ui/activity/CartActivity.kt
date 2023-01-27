@@ -3,17 +3,13 @@ package com.bimabagaskhoro.taskappphincon.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCartBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CartAdapter
-import com.bimabagaskhoro.taskappphincon.ui.detail.BuyDialogViewModel
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
@@ -45,38 +41,40 @@ class CartActivity : AppCompatActivity() {
             startActivity(intent)
         }
         binding.checkBox2.setOnCheckedChangeListener { _, isChecked ->
-            adapter.selectAll(isChecked)
+            if (isChecked) {
+                adapter.selectAll(isChecked)
+            } else if (!isChecked) {
+                recreate()
+            }
         }
     }
 
     private fun doActionClicked() {
         adapter = CartAdapter(
             { roomViewModel.deleteCart(it) },
-            {
+            { _, idProduct, quantity ->
+                val schema = "data_stock"
                 val result = adapter.totalValue
                 binding.tvAllPrice.text = result.toString().formatterIdr()
+                binding.btnBuy.setOnClickListener {
+                    doActionBuy(schema, idProduct, quantity)
+                    roomViewModel.deleteCart(idProduct.toInt())
+                }
             },
-            {
+            { _, idProduct, quantity ->
+                val schema = "data_stock"
                 val result = adapter.totalValue
                 binding.tvAllPrice.text = result.toString().formatterIdr()
+                binding.btnBuy.setOnClickListener {
+                    doActionBuy(schema, idProduct, quantity)
+                    roomViewModel.deleteCart(idProduct.toInt())
+                }
             },
-            {
-                val id = it.id
-                val quantity = it.quantity
+            { id, quantity ->
                 roomViewModel.updateQuantity((quantity + 1), id)
             },
-            {
-                val id = it.id
-                val quantity = it.quantity
+            { id, quantity ->
                 roomViewModel.updateQuantity((quantity - 1), id)
-            },
-            {
-                val schema = "data_stock"
-                val idProduct = it.id
-                val buyProduct = it.quantity
-                binding.btnBuy.setOnClickListener {
-                    doActionBuy(schema, idProduct.toString(), buyProduct)
-                }
             }
         )
     }

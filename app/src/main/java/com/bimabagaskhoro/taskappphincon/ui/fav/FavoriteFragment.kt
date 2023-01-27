@@ -59,6 +59,7 @@ class FavoriteFragment : Fragment() {
         dataStoreViewModel.apply {
             getUserId.observe(viewLifecycleOwner) {
                 val idUser = it
+                Log.d("FAvUserId", idUser.toString())
                 setData(queryString, idUser, 0)
                 binding.edtSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
