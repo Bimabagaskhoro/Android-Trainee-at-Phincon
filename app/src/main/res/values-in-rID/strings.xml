@@ -61,5 +61,7 @@
     <string name="succes_rating">Berhasil Menambahkan Rate</string>
     <string name="succes_favorite">Berhasil Menambahkan Kesukaan</string>
     <string name="delete_favorite">Berhasil Menghapus Kesukaan</string>
-    <string name="out_stock">Kosong</string>
+    <string name="out_stock">Kosong</string>>
+    <string name="trolley">Keranjang</string>
+    <string name="failed_trolley">Maaf Item Sudah Habis</string>
 </resources>

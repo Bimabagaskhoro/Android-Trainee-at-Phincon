@@ -62,4 +62,6 @@
     <string name="succes_favorite">Success Adding to Favorite</string>
     <string name="delete_favorite">Success Un Favorite Item</string>
     <string name="out_stock">Out Of Stock</string>
+    <string name="trolley">Trolley</string>
+    <string name="failed_trolley">Sorry Your item Out of Stock</string>
 </resources>

@@ -294,10 +294,16 @@ class DetailActivity : AppCompatActivity() {
             isUpdate,
             stockProduct
         )
-        roomViewModel.insertCart(cart)
-        Toast.makeText(this, R.string.succes_trolley, Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this@DetailActivity, MainActivity::class.java))
-        finish()
+
+        if (stockProduct != 1) {
+            roomViewModel.insertCart(cart)
+            Toast.makeText(this, R.string.succes_trolley, Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this@DetailActivity, MainActivity::class.java))
+            finish()
+        } else {
+            Toast.makeText(this, R.string.failed_trolley, Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun setActionDialog(data: DataDetail) {
