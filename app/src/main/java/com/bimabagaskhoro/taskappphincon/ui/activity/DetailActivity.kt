@@ -151,7 +151,7 @@ class DetailActivity : AppCompatActivity() {
                                 }
                                 val isInsert = false
                                 binding.btnCart.setOnClickListener {
-                                    doActionCart(results.data.success.data, (isInsert))
+                                    doActionCart(results.data.success.data )
                                 }
                                 initFavorite(userId, results.data.success.data, productId)
 //                            doAction(results.data.success.data.image_product)
@@ -278,21 +278,26 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun doActionCart(data: DataDetail, isUpdate: Boolean) {
+    private fun doActionCart(data: DataDetail) {
         val idProduct = data.id
         val nameProduct = data.name_product
         val priceProduct = data.harga
         val imageProduct = data.image
         val quantityProduct = 1
         val stockProduct = data.stock
+        val isCheck = 0
+        val totalPrice = data.harga.toInt()
+        val firstPrice = data.harga
         val cart = CartEntity(
             idProduct,
             nameProduct,
             priceProduct,
             imageProduct,
             quantityProduct,
-            isUpdate,
-            stockProduct
+            isCheck,
+            stockProduct,
+            totalPrice,
+            firstPrice
         )
 
         if (stockProduct != 1) {

@@ -144,15 +144,14 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun updateStock(
-//        dataStock: String,
-        dataStockItem: RequestStock
+        data: RequestStock
     ): Flow<Resource<ResponseAddFavorite>> {
         return flow {
             emit(Resource.Loading())
             try {
                 val response = apiService.updateStock(
 //                    dataStock,
-                    dataStockItem)
+                    data)
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {

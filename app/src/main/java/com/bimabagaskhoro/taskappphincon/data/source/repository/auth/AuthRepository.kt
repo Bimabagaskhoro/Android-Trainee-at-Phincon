@@ -54,7 +54,7 @@ interface AuthRepository {
     ): Flow<Resource<ResponseDetail>>
 
     fun updateStock(
-        dataStockItem : RequestStock
+        data: RequestStock
     ): Flow<Resource<ResponseAddFavorite>>
 
     fun unFavorite(

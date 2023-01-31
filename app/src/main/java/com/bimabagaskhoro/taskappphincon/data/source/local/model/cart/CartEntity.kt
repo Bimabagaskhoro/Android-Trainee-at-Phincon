@@ -1,10 +1,12 @@
 package com.bimabagaskhoro.taskappphincon.data.source.local.model.cart
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CART_TABLE
+import kotlinx.android.parcel.Parcelize
 
 @Entity(tableName = CART_TABLE)
 data class CartEntity(
@@ -24,11 +26,22 @@ data class CartEntity(
     val quantity: Int = 0,
 
     @ColumnInfo(name = "is_check")
-    var isCheck: Boolean,
+    var is_check: Int = 0,
 
     @ColumnInfo(name = "stock")
     val stock: Int = 0,
 
-//    @ColumnInfo(name = "set_selected")
-//    var setSelected: Boolean
+    @ColumnInfo(name = "total_harga")
+    val totalPrice: Int,
+
+    @ColumnInfo(name = "first_price")
+    val firstPrice: String = ""
 )
+
+@Parcelize
+data class DataTrolley(
+    @ColumnInfo(name = "id")
+    val id: Int,
+    @ColumnInfo(name = "quantity")
+    val quantity: Int,
+) : Parcelable

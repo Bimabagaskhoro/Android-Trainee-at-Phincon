@@ -23,16 +23,14 @@ import com.bumptech.glide.Glide
 @Suppress("DEPRECATION")
 class CartAdapter(
     private val onDeleteItem: (Int) -> Unit,
-    private val onCheckedItem: (Any, String, Int) -> Unit,
-    private val onUnCheckedItem: (Any, String, Int) -> Unit,
-    private val onAddQuantity: (Int, Int) -> Unit,
-    private val onMinQuantity: (Int, Int) -> Unit,
+    private val onAddQuantity: (CartEntity) -> Unit,
+    private val onMinQuantity: (CartEntity) -> Unit,
+    private val onCheckedItem: (CartEntity) -> Unit,
+    private val onUnCheckedItem: (CartEntity) -> Unit,
 ) :
     RecyclerView.Adapter<CartAdapter.ViewHolder>() {
     private var listData = ArrayList<CartEntity>()
     var onItemClick: ((CartEntity) -> Unit)? = null
-    var totalValue: Int = 0
-    var isCheckedAll: Boolean = false
 
     fun setData(newListData: List<CartEntity>?) {
         if (newListData == null) return
@@ -68,28 +66,11 @@ class CartAdapter(
                 tvTittleProduct.text = data.name_product
                 tvPriceProduct.text = data.harga.formatterIdr()
                 tvTotalNumber.text = data.quantity.toString()
+
                 btnDelete.setOnClickListener {
                     onDeleteItem(data.id)
                 }
 
-                checkBox.isChecked = isCheckedAll
-                checkBox.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        listData.add(data)
-                        val priceValue = data.harga.toInt()
-                        val quantityValue = data.quantity
-                        val result = (priceValue * quantityValue)
-                        totalValue += result
-                        onCheckedItem(totalValue, data.id.toString(), data.quantity)
-                    } else if (!isChecked) {
-                        listData.remove(data)
-                        val priceValue = data.harga.toInt()
-                        val quantityValue = data.quantity
-                        val result = (priceValue * quantityValue)
-                        totalValue -= result
-                        onUnCheckedItem(totalValue, data.id.toString(), data.quantity)
-                    }
-                }
                 addFragmentDialog.setOnClickListener {
                     val stock = data.stock
                     val quantity = (data.quantity)
@@ -98,7 +79,7 @@ class CartAdapter(
                         Toast.makeText(itemView.context, R.string.out_stock, Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        onAddQuantity(data.id, data.quantity)
+                        onAddQuantity.invoke(listData[adapterPosition])
                         binding.addFragmentDialog.background =
                             ContextCompat.getDrawable(
                                 itemView.context,
@@ -107,10 +88,9 @@ class CartAdapter(
                     }
                 }
                 minFragmentDialog.setOnClickListener {
-                    val ids = data.id
                     val quantity = (data.quantity)
                     if (quantity != 1) {
-                        onMinQuantity(ids, quantity)
+                        onMinQuantity.invoke(listData[adapterPosition])
                     } else {
                         minFragmentDialog.isClickable = false
                         binding.minFragmentDialog.background =
@@ -120,16 +100,20 @@ class CartAdapter(
                             )
                     }
                 }
+                if (data.is_check == 1) {
+                    binding.checkBox.isChecked = true
+                } else if (data.is_check == 0) {
+                    binding.checkBox.isChecked = false
+                }
+
+                checkBox.setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        onCheckedItem.invoke(listData[adapterPosition])
+                    } else if (!isChecked) {
+                        onUnCheckedItem.invoke(listData[adapterPosition])
+                    }
+                }
             }
         }
-    }
-
-    fun selectAll(isChecked: Boolean) {
-        isCheckedAll = isChecked
-        notifyDataSetChanged()
-    }
-
-    fun getCheckedAll(): ArrayList<CartEntity> {
-        return listData
     }
 }

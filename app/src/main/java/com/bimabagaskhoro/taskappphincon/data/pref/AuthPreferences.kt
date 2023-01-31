@@ -172,6 +172,20 @@ class AuthPreferences @Inject constructor(@ApplicationContext context: Context) 
         }
     }
 
+    /**
+     * isChecked
+     */
+    val trolleyChecked = dataStore.data.map { preferences ->
+        preferences[IS_CHECKED] ?: false
+    }.distinctUntilChanged().asLiveData()
+
+    suspend fun saveTrolleyChecked(checked: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[IS_CHECKED] = checked
+        }
+    }
+
+
 
     /**
      * for interceptor
@@ -207,6 +221,7 @@ class AuthPreferences @Inject constructor(@ApplicationContext context: Context) 
         private val USER_PATH = stringPreferencesKey("user_path")
         private val USER_IMAGE = stringPreferencesKey("user_image")
         private val IS_LANGUAGE = stringPreferencesKey("is_language")
+        private val IS_CHECKED = booleanPreferencesKey("is_checked")
     }
 
 }

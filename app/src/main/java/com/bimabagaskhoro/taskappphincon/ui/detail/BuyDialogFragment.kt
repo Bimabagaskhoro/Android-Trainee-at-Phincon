@@ -40,6 +40,7 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
     override fun getTheme(): Int {
         return R.style.NoBackgroundDialogTheme
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -83,7 +84,7 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
 
         viewModel.setPrice(data.harga.toInt())
 
-        viewModel.price.observe(requireActivity()) {data ->
+        viewModel.price.observe(requireActivity()) { data ->
             binding?.tvTotalPrice?.text = data.toString().formatterIdr()
         }
 
@@ -96,7 +97,7 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
                     Toast.makeText(requireActivity(), R.string.out_stock, Toast.LENGTH_SHORT).show()
 //                    Log.d("checkingCar", "onViewCreated: ")
                 }
-            } else if (stock != buy){
+            } else if (stock != buy) {
                 cardBuy.isClickable = true
                 cardBuy.setOnClickListener {
                     val idProduct = data.id.toString()
@@ -109,11 +110,12 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
         setActionData()
     }
 
-    private fun doActionUpdate(idProduct: String, stockProduct: Int)  {
+    private fun doActionUpdate(idProduct: String, stockProduct: Int) {
         viewModelStock.updateStock(
 //            "data_stock",
 //            (listOf(DataStockItem(idProduct, stockProduct)))
-            (RequestStock(listOf(DataStockItem(idProduct, stockProduct))))
+//            "data_stock"
+            (listOf(DataStockItem(idProduct, stockProduct)))
         ).observe(viewLifecycleOwner) { results ->
             when (results) {
                 is Resource.Loading -> {

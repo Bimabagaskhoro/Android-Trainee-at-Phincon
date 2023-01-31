@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.home.HomeFragment">
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/edt_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="35dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_search"
+        android:elevation="1.5dp"
+        android:inputType="text"
+        app:iconifiedByDefault="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:queryHint="@string/search"
+        tools:ignore="Autofill" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_product"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_search"
+        tools:listitem="@layout/item_product" />
+
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_search"
+        app:shimmer_auto_start="true">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <include
+                    android:id="@+id/include1"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                    android:id="@+id/include2"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/include1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                    android:id="@+id/include3"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/include2"
+                    app:layout_constraintStart_toStartOf="@+id/include1"
+                    app:layout_constraintTop_toBottomOf="@+id/include1" />
+
+                <include
+                    android:id="@+id/include4"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/include2"
+                    app:layout_constraintStart_toStartOf="@+id/include2"
+                    app:layout_constraintTop_toBottomOf="@+id/include1" />
+
+                <include
+                    android:id="@+id/include5"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/include3"
+                    app:layout_constraintStart_toStartOf="@+id/include3"
+                    app:layout_constraintTop_toBottomOf="@+id/include3" />
+
+                <include
+                    android:id="@+id/include6"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/include4"
+                    app:layout_constraintStart_toEndOf="@+id/include3"
+                    app:layout_constraintTop_toTopOf="@+id/include5" />
+
+                <include
+                    android:id="@+id/include7"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/include5"
+                    app:layout_constraintStart_toStartOf="@+id/include5"
+                    app:layout_constraintTop_toBottomOf="@+id/include5" />
+
+                <include
+                    android:id="@+id/include8"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/include6"
+                    app:layout_constraintStart_toEndOf="@+id/include7"
+                    app:layout_constraintTop_toBottomOf="@+id/include6" />
+
+                <include
+                    android:id="@+id/include9"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="@+id/include7"
+                    app:layout_constraintTop_toBottomOf="@+id/include7" />
+
+
+                <include
+                    android:id="@+id/include10"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/include9"
+                    app:layout_constraintStart_toEndOf="@+id/include9"
+                    app:layout_constraintTop_toBottomOf="@+id/include8" />
+
+                <include
+                    android:id="@+id/include11"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="@+id/include9"
+                    app:layout_constraintTop_toBottomOf="@+id/include9" />
+
+                <include
+                    android:id="@+id/include12"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="450dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toEndOf="@+id/include11"
+                    app:layout_constraintTop_toTopOf="@+id/include11" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_shorting"
+        android:layout_width="120dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/background_pink"
+        android:gravity="center"
+        android:text="@string/sort_by"
+        android:textSize="8sp"
+        app:icon="@drawable/ic_shorting"
+        app:iconGravity="end"
+        app:iconSize="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="SmallSp" />
+
+    <include
+        android:id="@+id/view_empty_datas"
+        layout="@layout/view_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
+</androidx.constraintlayout.widget.ConstraintLayout>

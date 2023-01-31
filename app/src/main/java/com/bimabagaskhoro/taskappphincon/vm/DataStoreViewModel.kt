@@ -61,6 +61,10 @@ class DataStoreViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) { dataPreference.clear() }
     }
 
+    fun saveUserLanguage(isChecked: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveTrolleyChecked(isChecked) }
+    }
+
     val isLoggedIn = dataPreference.isLoggedIn.asLiveData()
     val getToken = dataPreference.userToken
     val getRefreshToken = dataPreference.userRefreshToken
@@ -72,5 +76,6 @@ class DataStoreViewModel @Inject constructor(
     val getUserPath = dataPreference.userPath
     val getUserImage = dataPreference.userImage
     val getUserLanguage = dataPreference.userLanguage
+    val getUserChecked = dataPreference.trolleyChecked
 
 }

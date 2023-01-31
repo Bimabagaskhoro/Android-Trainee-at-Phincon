@@ -1,17 +1,14 @@
 package com.bimabagaskhoro.taskappphincon.data.source.local
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import com.bimabagaskhoro.taskappphincon.data.source.local.db.cart.CartDao
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.DataTrolley
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class LocalDataSource @Inject constructor(private val dao: CartDao) {
-//    fun saveCart(cart: CartEntity) = dao.insertCart(cart)
-//    fun updateCart(cart: CartEntity) = dao.updateCart(cart)
-//    fun deleteCart(cart: CartEntity) = dao.deleteCart(cart)
-//    fun getCart(id : Int) : CartEntity = dao.getCarts(id)
-//    fun getAllCarts() = dao.getAllCarts()
-
     suspend fun saveCart(cart: CartEntity) {
         dao.insertCart(cart)
     }
@@ -28,11 +25,36 @@ class LocalDataSource @Inject constructor(private val dao: CartDao) {
         return dao.countItems()
     }
 
-    fun getPrice(id: Int): String {
-        return dao.getPrice(id)
+    fun updateQuantity(quantity: Int, id: Int, newTotalPrice: Int): Int {
+        return dao.updateQuantity(quantity, id, newTotalPrice)
     }
 
-    fun updateQuantity(quantity: Int, id: Int): Int {
-        return dao.updateQuantity(quantity, id)
+    fun updatePriceCard(price: Int, id: Int): Int {
+        return dao.updatePriceCard(price, id)
     }
+
+    fun getCheckedTrolley(): List<DataTrolley>? {
+        return dao.getTrolleyChecked()
+    }
+
+    fun checkALl(state: Int): Int {
+        return dao.checkAll(state)
+    }
+
+    fun updateCheck(id: Int, state: Int): Int {
+        return dao.updateCheck(id, state)
+    }
+
+    fun getTotalHarga(): Int {
+        return dao.getTotalPriceChecked()
+    }
+
+    fun deleteCheckedTrolley(): Int? {
+        return dao.deleteTrolley()
+    }
+
+    fun getAllCheckedProductFromTrolly(): Flow<List<CartEntity>> {
+        return dao.getAllCheckedProduct()
+    }
+
 }

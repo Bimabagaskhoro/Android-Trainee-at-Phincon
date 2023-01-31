@@ -220,7 +220,7 @@ class HomeFragment : Fragment() {
             progressBar.visibility = View.GONE
             rvProduct.adapter = adapter
             binding.viewEmptyDatas.root.visibility = View.GONE
-            rvProduct.layoutManager = LinearLayoutManager(context)
+//            rvProduct.layoutManager = LinearLayoutManager(context)
             rvProduct.setHasFixedSize(true)
             adapter.onItemClick = {
                 val intent = Intent(context, DetailActivity::class.java)

@@ -229,7 +229,7 @@ class FavoriteFragment : Fragment() {
             progressBar.visibility = View.GONE
             rvProduct.adapter = adapter
             binding.viewEmptyData.root.visibility = View.GONE
-            rvProduct.layoutManager = LinearLayoutManager(context)
+//            rvProduct.layoutManager = LinearLayoutManager(context)
             rvProduct.setHasFixedSize(true)
             adapter.onItemClick = {
 //                val bundle = Bundle().apply { putParcelable(DetailItemFragment.EXTRA_DATA, it) }

@@ -72,7 +72,7 @@ interface ApiService {
 //    @Multipart
     @POST("update-stock")
     suspend fun updateStock(
-        @Body dataStockItem : RequestStock
+        @Body data: RequestStock
     ): ResponseAddFavorite
 
     @PUT("update_rate/{id}")

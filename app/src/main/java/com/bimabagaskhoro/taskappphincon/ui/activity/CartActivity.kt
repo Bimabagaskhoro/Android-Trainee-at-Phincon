@@ -3,180 +3,115 @@ package com.bimabagaskhoro.taskappphincon.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCartBinding
+import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS
+import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_ID
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CartAdapter
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
-import com.google.android.material.button.MaterialButton
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_cart.*
 import org.json.JSONObject
-import kotlin.math.log
 
-@Suppress("UnusedEquals")
+@Suppress("UnusedEquals", "UNUSED_EXPRESSION")
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCartBinding
     private lateinit var adapter: CartAdapter
     private val roomViewModel: LocalViewModel by viewModels()
     private val viewModel: AuthViewModel by viewModels()
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
+//    private lateinit var mutableListItem: MutableList<DataStockItem>
+//    private lateinit var id: MutableList<Int>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCartBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        doActionClicked()
+        doActionAdapter()
         initData()
-        binding.btnBack.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-        }
-        binding.checkBox2.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                adapter.selectAll(true)
-                val dataArray = adapter.getCheckedAll()
-//                dataArray
-//                    .map {
-//                        it.harga
-//                    }
+//        mutableListItem = mutableListOf()
+//        id = mutableListOf<Int>()
 
-                /**
-                 *
-                 * bener nich
-                 */
-                Log.d("CheckedDataRoom", "CheckData = ${
-                    dataArray.map { it.harga }
-                }")
-//                Log.d("CheckedDataRoom", "CheckData = $dataArray")
-//                dataArray.forEach { temp ->
-////                    val schema = "data_stock"
-//                    val idProduct = temp.id
-//                    val quantity = temp.quantity
-//                    val postData = ArrayList<DataStockItem>()
-////                    Log.d("CheckedDataRoom", "CheckData = $idProduct")
-//                    postData.apply {
-//                        add(DataStockItem(idProduct.toString(), quantity))
-//                        add(DataStockItem(idProduct.toString(), quantity))
-//                        add(DataStockItem(idProduct.toString(), quantity))
-//                        add(DataStockItem(idProduct.toString(), quantity))
-//                        add(DataStockItem(idProduct.toString(), quantity))
-//                    }
-//
-//                    Log.d("valueOnArray", "$postData")
-////                    Log.d("valueOnArray", "($schema + $idProduct + $quantity)")
-////
-////                    val arrayList = idProduct.split(",").map { it }.toMutableList()
-//                    binding.btnBuy.setOnClickListener {
-//                        doActionBusy(postData)
-//                        roomViewModel.deleteCart(idProduct)
-//                    }
-//                }
-            } else if (!isChecked) {
-                recreate()
+        binding.apply {
+            btnBack.setOnClickListener {
+                val intent = Intent(this@CartActivity, MainActivity::class.java)
+                startActivity(intent)
+            }
+            checkBox2.setOnCheckedChangeListener { _, isChecked ->
+                initCheckBox(isChecked)
+            }
+            btnBuy.setOnClickListener {
+                setActionPost()
             }
         }
     }
 
-    private fun doActionBusy(postData: ArrayList<DataStockItem>) {
-        viewModel.updateStock(RequestStock(postData)).observe(this@CartActivity) { results ->
-            when (results) {
-                is Resource.Loading -> {
-                }
-                is Resource.Success -> {
-                    postData.forEach { temp ->
-                        val productId = temp.id_product
-                        val intent = Intent(this@CartActivity, OnSuccessActivity::class.java)
-
-                        intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, productId.toInt())
-                        startActivity(intent)
-                        Log.d("Teststockkkkkkk", "doActionUpdate: ")
-                    }
-
-                }
-                is Resource.Error -> {
-                    try {
-                        val err =
-                            results.errorBody?.string()
-                                ?.let { it1 -> JSONObject(it1).toString() }
-                        val gson = Gson()
-                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                        val errorResponse =
-                            gson.fromJson(jsonObject, ResponseError::class.java)
-                        val messageErr = errorResponse.error.message
-                        Toast.makeText(this@CartActivity, messageErr, Toast.LENGTH_SHORT).show()
-                    } catch (e: java.lang.Exception) {
-                        val err = results.errorCode
-                        Log.d("ErrorCode", "$err")
-                    }
-                }
-                is Resource.Empty -> {
-                    Log.d("unFavorite", "Empty Data")
-                }
-            }
+    private fun initCheckBox(checked: Boolean) {
+        if (checked) {
+            dataStoreViewModel.getUserChecked.observe(this@CartActivity) { true }
+            roomViewModel.checkAll(1)
+            val resultPrice = roomViewModel.getTotalPrice()
+            binding.tvAllPrice.text = resultPrice.toString().formatterIdr()
+        } else {
+            dataStoreViewModel.getUserChecked.observe(this@CartActivity) { false }
+            roomViewModel.checkAll(0)
+            val resultPrice = roomViewModel.getTotalPrice()
+            binding.tvAllPrice.text = resultPrice.toString().formatterIdr()
         }
     }
 
-    private fun doActionClicked() {
+    private fun doActionAdapter() {
         adapter = CartAdapter(
             { roomViewModel.deleteCart(it) },
-            { _, idProduct, quantity ->
-                val schema = "data_stock"
-                val result = adapter.totalValue
-                binding.tvAllPrice.text = result.toString().formatterIdr()
-                binding.btnBuy.setOnClickListener {
-//                    doActionBuy(idProduct, quantity)
-//                    roomViewModel.deleteCart(idProduct.toInt())
-                    val postData = ArrayList<DataStockItem>()
-                    postData.apply {
-                        add(DataStockItem(idProduct, quantity))
-                        add(DataStockItem(idProduct, quantity))
-                        add(DataStockItem(idProduct, quantity))
-                        add(DataStockItem(idProduct, quantity))
-                        add(DataStockItem(idProduct, quantity))
-                    }
-                    Log.d("valueOnArray", "$postData")
-                    doActionBusy(postData)
-                }
-            },
-            { _, idProduct, quantity ->
-                val schema = "data_stock"
-                val result = adapter.totalValue
-                binding.tvAllPrice.text = result.toString().formatterIdr()
-                binding.btnBuy.setOnClickListener {
-//                    doActionBuy(idProduct, quantity)
-//                    roomViewModel.deleteCart(idProduct.toInt())
+            { data ->
+                val totalQty = (data.quantity + 1)
+                val totalPrice = (totalQty * data.firstPrice.toInt())
+                val id = data.id
+                val newPrice = (totalQty * data.firstPrice.toInt())
 
-                    val postData = ArrayList<DataStockItem>()
-                    postData.apply {
-                        add(DataStockItem(idProduct, quantity))
-                        add(DataStockItem(idProduct, quantity))
-                        add(DataStockItem(idProduct, quantity))
-                        add(DataStockItem(idProduct, quantity))
-                        add(DataStockItem(idProduct, quantity))
-                    }
-                    Log.d("valueOnArray", "$postData")
-                    doActionBusy(postData)
-                }
+                roomViewModel.updateQuantity(totalQty, id, newPrice)
+                roomViewModel.updatePriceCard(totalPrice, id)
+
+                val resultPrice = roomViewModel.getTotalPrice()
+                binding.tvAllPrice.text = resultPrice.toString().formatterIdr()
             },
-            { id, quantity ->
-                roomViewModel.updateQuantity((quantity + 1), id)
+            { data ->
+                val totalQty = (data.quantity - 1)
+                val totalPrice = (totalQty * data.firstPrice.toInt())
+                val id = data.id
+                val newPrice = (totalQty * data.firstPrice.toInt())
+
+                roomViewModel.updateQuantity(totalQty, id, newPrice)
+                roomViewModel.updatePriceCard(totalPrice, id)
+
+                val resultPrice = roomViewModel.getTotalPrice()
+                binding.tvAllPrice.text = resultPrice.toString().formatterIdr()
             },
-            { id, quantity ->
-                roomViewModel.updateQuantity((quantity - 1), id)
-            }
+            { data ->
+                val id = data.id
+                roomViewModel.updateCheck(id, 1)
+                val result = roomViewModel.getTotalPrice()
+                binding.tvAllPrice.text = result.toString().formatterIdr()
+            },
+            { data ->
+                val id = data.id
+                roomViewModel.updateCheck(id, 0)
+                val result = roomViewModel.getTotalPrice()
+                binding.tvAllPrice.text = result.toString().formatterIdr()
+            },
         )
     }
 
@@ -191,49 +126,66 @@ class CartActivity : AppCompatActivity() {
                     adapter.onItemClick = {
                     }
                 }
-            } else {
-                Log.d("getDatabase", "Errr00r awokokwokwokwokw")
             }
         }
     }
 
+    private fun setActionPost() {
+        roomViewModel.getTrolleyChecked.observe(this@CartActivity) { result ->
+            Log.d("testid", "$result")
+            val dataStockItems = arrayListOf<DataStockItem>()
+            val listOfProductId = arrayListOf<String>()
+            for (i in result.indices) {
+                dataStockItems.add(DataStockItem(result[i].id.toString(), result[i].quantity))
+                listOfProductId.add(result[i].id.toString())
+            }
+            buyProduct(dataStockItems, listOfProductId)
+        }
+    }
 
-    private fun doActionBuy(productId: String, stock: Int) {
-        viewModel.updateStock(
-//            "data_stock",
-//            (listOf(DataStockItem(productId, stock)))
-            RequestStock(listOf(DataStockItem(productId, stock)))
-        ).observe(this@CartActivity) { results ->
-            when (results) {
+    private fun buyProduct(requestBody: List<DataStockItem>, listOfProductId: ArrayList<String>) {
+        viewModel.updateStock(requestBody).observe(this@CartActivity) { todo ->
+            when (todo) {
                 is Resource.Loading -> {
+                    binding.progressbar.visibility = View.VISIBLE
+                    binding.cardProgressbar.visibility = View.VISIBLE
+                    binding.tvWaiting.visibility = View.VISIBLE
                 }
                 is Resource.Success -> {
-                    val intent = Intent(this@CartActivity, OnSuccessActivity::class.java)
-                    intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, productId.toInt())
+                    binding.progressbar.visibility = View.GONE
+                    binding.cardProgressbar.visibility = View.GONE
+                    binding.tvWaiting.visibility = View.GONE
+                    Log.d("testidtestt", "$listOfProductId")
+                    roomViewModel.deleteTrolleyChecked()
+
+                    val intent = Intent(this, OnSuccessActivity::class.java)
+                    intent.putExtra(EXTRA_DATA_SUCCESS_ID, listOfProductId)
+                    Log.d("listProductId", "$listOfProductId")
                     startActivity(intent)
-                    Log.d("Teststockkkkkkk", "doActionUpdate: ")
                 }
                 is Resource.Error -> {
+                    binding.progressbar.visibility = View.GONE
+                    binding.cardProgressbar.visibility = View.GONE
+                    binding.tvWaiting.visibility = View.GONE
                     try {
                         val err =
-                            results.errorBody?.string()
+                            todo.errorBody?.string()
                                 ?.let { it1 -> JSONObject(it1).toString() }
                         val gson = Gson()
                         val jsonObject = gson.fromJson(err, JsonObject::class.java)
                         val errorResponse =
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
-                        Toast.makeText(this@CartActivity, messageErr, Toast.LENGTH_SHORT).show()
+                        Log.d("Error Body", messageErr)
                     } catch (e: java.lang.Exception) {
-                        val err = results.errorCode
+                        val err = todo.errorCode
                         Log.d("ErrorCode", "$err")
                     }
                 }
                 is Resource.Empty -> {
-                    Log.d("unFavorite", "Empty Data")
+                    Log.d("Empty Data", "Empty")
                 }
             }
         }
     }
-
 }
