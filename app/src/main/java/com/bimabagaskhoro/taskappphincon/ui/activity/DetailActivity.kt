@@ -84,21 +84,7 @@ class DetailActivity : AppCompatActivity() {
                             is Resource.Loading -> {
                                 binding.apply {
                                     progressBar.visibility = View.VISIBLE
-                                    tvDescHelpers.visibility = View.GONE
-                                    tvWeightHelpers.visibility = View.GONE
-                                    tvSizeHelpers.visibility = View.GONE
-                                    tvTypeHelpers.visibility = View.GONE
-                                    tvStockHelpers.visibility = View.GONE
-                                    textView12.visibility = View.GONE
-                                    textView13.visibility = View.GONE
-                                    textView14.visibility = View.GONE
-                                    textView15.visibility = View.GONE
-                                    textView16.visibility = View.GONE
-                                    view2.visibility = View.GONE
-                                    ratingBar.visibility = View.GONE
-                                    tvDetailProduct.visibility = View.GONE
-                                    imgFavorite.visibility = View.GONE
-                                    tvNameDetail.visibility = View.GONE
+                                    scrollView2.visibility = View.GONE
 
                                 }
                             }
@@ -107,21 +93,7 @@ class DetailActivity : AppCompatActivity() {
                                 binding.apply {
                                     progressBar.visibility = View.GONE
                                     swipeRefresh.isRefreshing = false
-                                    tvNameDetail.visibility = View.VISIBLE
-                                    tvDescHelpers.visibility = View.VISIBLE
-                                    tvWeightHelpers.visibility = View.VISIBLE
-                                    tvSizeHelpers.visibility = View.VISIBLE
-                                    tvTypeHelpers.visibility = View.VISIBLE
-                                    tvStockHelpers.visibility = View.VISIBLE
-                                    view2.visibility = View.VISIBLE
-                                    textView12.visibility = View.VISIBLE
-                                    textView13.visibility = View.VISIBLE
-                                    textView14.visibility = View.VISIBLE
-                                    textView15.visibility = View.VISIBLE
-                                    textView16.visibility = View.VISIBLE
-                                    ratingBar.visibility = View.VISIBLE
-                                    tvDetailProduct.visibility = View.VISIBLE
-                                    imgFavorite.visibility = View.VISIBLE
+                                    scrollView2.visibility = View.VISIBLE
 
                                     tvNameDetail.isSelected = true
                                     tvNameDetail.text = data.name_product

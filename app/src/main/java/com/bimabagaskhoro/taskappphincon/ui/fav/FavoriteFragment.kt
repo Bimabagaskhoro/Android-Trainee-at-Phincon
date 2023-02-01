@@ -54,49 +54,45 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = ProductFavAdapter()
-        initSearchingKey()
+        dataStoreViewModel.getUserId.observe(viewLifecycleOwner) {
+            val idUser = it
+            initSearchingKey(idUser)
+            binding.swipeRefresh.setOnRefreshListener {
+                initSearchingKey(idUser)
+                setData(null, idUser, 0)
+                binding.progressBar.visibility = View.VISIBLE
+                binding.edtSearch.setQuery("", false)
+                binding.edtSearch.clearFocus()
+            }
+        }
     }
 
-    private fun initSearchingKey() {
-        dataStoreViewModel.apply {
-            getUserId.observe(viewLifecycleOwner) {
-                val idUser = it
-                Log.d("FAvUserId", idUser.toString())
-                setData(queryString, idUser, 0)
-                binding.edtSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                    override fun onQueryTextSubmit(query: String?): Boolean {
-                        hideKeyboard(requireActivity())
-                        return false
-                    }
+    private fun initSearchingKey(idUser: Int?) {
+        setData(queryString, idUser!!, 0)
+        binding.edtSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                hideKeyboard(requireActivity())
+                return false
+            }
 
-                    override fun onQueryTextChange(q: String?): Boolean {
-                        searchJob?.cancel()
-                        searchJob = coroutineScope.launch {
-                            q?.let {
-                                delay(2000)
-                                if (q.isEmpty() || q.toString() == "") {
-                                    setData("", idUser, 0)
-                                } else {
-                                    setData(q, idUser, 0)
-                                }
-                            }
+            override fun onQueryTextChange(q: String?): Boolean {
+                searchJob?.cancel()
+                searchJob = coroutineScope.launch {
+                    q?.let {
+                        delay(2000)
+                        if (q.isEmpty() || q.toString() == "") {
+                            setData("", idUser, 0)
+                        } else {
+                            setData(q, idUser, 0)
                         }
-                        return false
-                    }
-                })
-                binding.apply {
-                    fabShorting.setOnClickListener {
-                        showFilterDialog(idUser)
                     }
                 }
-                binding.swipeRefresh.setOnRefreshListener {
-                    initSearchingKey()
-                    setData(null, idUser, 0)
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.edtSearch.setQuery("", false)
-                    binding.edtSearch.clearFocus()
-                }
-
+                return false
+            }
+        })
+        binding.apply {
+            fabShorting.setOnClickListener {
+                showFilterDialog(idUser)
             }
         }
     }
@@ -159,7 +155,6 @@ class FavoriteFragment : Fragment() {
                             setProductRv(data.data, i)
                         } else {
                             binding.rvProduct.visibility = View.GONE
-                            binding.viewEmptyData.root.visibility = View.GONE
                         }
 
                     }
