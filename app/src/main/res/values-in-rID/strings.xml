@@ -64,4 +64,5 @@
     <string name="out_stock">Kosong</string>>
     <string name="trolley">Keranjang</string>
     <string name="failed_trolley">Maaf Item Sudah Habis</string>
+    <string name="url">Url</string>
 </resources>

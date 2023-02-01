@@ -108,4 +108,14 @@ dependencies {
     // Datastore Preferences
     def datastoreVersion = '1.0.0'
     implementation "androidx.datastore:datastore-preferences:$datastoreVersion"
+
+    //Swipe to Refresh
+    def swipeRefreshVersion = '1.1.0'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swipeRefreshVersion"
+
+    //Picasso
+    def picassoVersion = '2.8'
+    implementation "com.squareup.picasso:picasso:$picassoVersion"
+
+
 }

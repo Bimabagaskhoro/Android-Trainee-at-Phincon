@@ -92,7 +92,7 @@
                 <androidx.viewpager.widget.ViewPager
                     android:id="@+id/card_image"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="400dp"
                     android:layout_marginStart="32dp"
                     android:layout_marginTop="24dp"
                     android:layout_marginEnd="32dp"
@@ -372,7 +372,6 @@
                     tools:text="@tools:sample/lorem/random" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
-
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <androidx.cardview.widget.CardView
@@ -385,7 +384,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="57dp">
 
             <Button
                 android:id="@+id/btn_buy"

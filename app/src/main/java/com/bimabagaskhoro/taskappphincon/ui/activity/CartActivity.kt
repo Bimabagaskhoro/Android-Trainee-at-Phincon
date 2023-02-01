@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCartBinding
-import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_ID
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CartAdapter
 import com.bimabagaskhoro.taskappphincon.utils.Resource
@@ -21,7 +20,6 @@ import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_cart.*
 import org.json.JSONObject
 
 @Suppress("UnusedEquals", "UNUSED_EXPRESSION")
@@ -32,8 +30,6 @@ class CartActivity : AppCompatActivity() {
     private val roomViewModel: LocalViewModel by viewModels()
     private val viewModel: AuthViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-//    private lateinit var mutableListItem: MutableList<DataStockItem>
-//    private lateinit var id: MutableList<Int>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +38,6 @@ class CartActivity : AppCompatActivity() {
 
         doActionAdapter()
         initData()
-//        mutableListItem = mutableListOf()
-//        id = mutableListOf<Int>()
 
         binding.apply {
             btnBack.setOnClickListener {
@@ -132,7 +126,6 @@ class CartActivity : AppCompatActivity() {
 
     private fun setActionPost() {
         roomViewModel.getTrolleyChecked.observe(this@CartActivity) { result ->
-            Log.d("testid", "$result")
             val dataStockItems = arrayListOf<DataStockItem>()
             val listOfProductId = arrayListOf<String>()
             for (i in result.indices) {
@@ -155,12 +148,10 @@ class CartActivity : AppCompatActivity() {
                     binding.progressbar.visibility = View.GONE
                     binding.cardProgressbar.visibility = View.GONE
                     binding.tvWaiting.visibility = View.GONE
-                    Log.d("testidtestt", "$listOfProductId")
                     roomViewModel.deleteTrolleyChecked()
 
                     val intent = Intent(this, OnSuccessActivity::class.java)
                     intent.putExtra(EXTRA_DATA_SUCCESS_ID, listOfProductId)
-                    Log.d("listProductId", "$listOfProductId")
                     startActivity(intent)
                 }
                 is Resource.Error -> {

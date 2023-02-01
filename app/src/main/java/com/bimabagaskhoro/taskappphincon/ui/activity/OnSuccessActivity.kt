@@ -29,14 +29,13 @@ class OnSuccessActivity : AppCompatActivity() {
         binding = ActivityOnSuccessBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val productId = intent.getStringExtra(EXTRA_DATA_SUCCESS)
+        val productId = intent.getIntExtra(EXTRA_DATA_SUCCESS, 0)
         val listProductId = intent.getStringArrayListExtra(EXTRA_DATA_SUCCESS_ID)
-        Log.d("listProductId", "$listProductId")
 
         binding.button.setOnClickListener {
             val rating = binding.ratingBar.rating
-            if (!productId.isNullOrEmpty()) {
-                viewModel.updateRating(productId.toInt(), RequestRating(rating.toString()))
+            if (productId != 0) {
+                viewModel.updateRating(productId, RequestRating(rating.toString()))
                     .observe(this@OnSuccessActivity) { result ->
                         when (result) {
                             is Resource.Loading -> {
@@ -57,8 +56,7 @@ class OnSuccessActivity : AppCompatActivity() {
                                 binding.progressbar.visibility = View.GONE
                                 try {
                                     val err =
-                                        result.errorBody?.string()
-                                            ?.let { it1 -> JSONObject(it1).toString() }
+                                        result.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
                                     val gson = Gson()
                                     val jsonObject = gson.fromJson(err, JsonObject::class.java)
                                     val errorResponse =
@@ -80,8 +78,10 @@ class OnSuccessActivity : AppCompatActivity() {
                     }
             } else {
                 for (i in listProductId!!.indices) {
-//                    trollyViewModel.deleteProductByIdFromTrolly(this@OnSuccessActivity, listProductId[i].toInt())
-                    viewModel.updateRating(listProductId[i].toInt(), RequestRating(rating.toString()))
+                    viewModel.updateRating(
+                        listProductId[i].toInt(),
+                        RequestRating(rating.toString())
+                    )
                         .observe(this@OnSuccessActivity) { result ->
                             when (result) {
                                 is Resource.Loading -> {
@@ -109,8 +109,10 @@ class OnSuccessActivity : AppCompatActivity() {
                                         val errorResponse =
                                             gson.fromJson(jsonObject, ResponseError::class.java)
                                         val messageErr = errorResponse.error.message
-                                        AlertDialog.Builder(this@OnSuccessActivity).setTitle("Failed")
-                                            .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
+                                        AlertDialog.Builder(this@OnSuccessActivity)
+                                            .setTitle("Failed")
+                                            .setMessage(messageErr)
+                                            .setPositiveButton("Ok") { _, _ ->
                                             }.show()
                                     } catch (e: java.lang.Exception) {
                                         val err = result.errorCode

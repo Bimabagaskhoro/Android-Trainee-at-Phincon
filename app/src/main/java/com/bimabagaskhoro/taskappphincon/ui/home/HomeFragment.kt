@@ -48,10 +48,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         adapter = ProductAdapter()
         initSearchingKey()
-        setData(queryString, 0)
     }
 
     private fun initSearchingKey() {
@@ -84,6 +82,14 @@ class HomeFragment : Fragment() {
                 showFilterDialog()
             }
         }
+
+        binding.swipeRefresh.setOnRefreshListener {
+            initSearchingKey()
+            setData(null, 0)
+            binding.progressBar.visibility = View.VISIBLE
+            binding.edtSearch.setQuery("", false)
+            binding.edtSearch.clearFocus()
+        }
     }
 
     private fun setData(q: String?, i: Int?) {
@@ -98,11 +104,11 @@ class HomeFragment : Fragment() {
                         if (data.data!!.success.data.isNotEmpty()) {
                             binding.rvProduct.visibility = View.VISIBLE
                             binding.fabShorting.visibility = View.VISIBLE
+                            binding.swipeRefresh.isRefreshing = false
                             setProductRv(data.data, i)
                         } else {
                             binding.rvProduct.visibility = View.GONE
                         }
-
                     }
                     is Resource.Error -> {
                         binding.progressBar.visibility = View.GONE
@@ -124,7 +130,7 @@ class HomeFragment : Fragment() {
                     is Resource.Empty -> {
                         binding.apply {
                             progressBar.visibility = View.GONE
-                            viewEmptyDatas.root.visibility = View.VISIBLE
+                            binding.viewEmptyDatas.root.visibility = View.VISIBLE
                             binding.rvProduct.visibility = View.GONE
                         }
                     }

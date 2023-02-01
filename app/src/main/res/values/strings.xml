@@ -46,7 +46,7 @@
     <string name="helpers">:</string>
     <string name="description">Description</string>
     <string name="buy">Buy</string>
-    <string name="cart">+Cart</string>
+    <string name="cart">+Trolley</string>
     <string name="buy_now">Buy Now -</string>
     <string name="total">Total</string>
     <string name="_1">1</string>
@@ -63,4 +63,5 @@
     <string name="delete_favorite">Success Un Favorite Item</string>
     <string name="out_stock">Out Of Stock</string>
     <string name="failed_trolley">Sorry Your item Out of Stock</string>
+    <string name="url">Url</string>
 </resources>

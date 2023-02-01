@@ -2,24 +2,23 @@ package com.bimabagaskhoro.taskappphincon.ui.activity
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Html
-import android.text.Html.fromHtml
+import android.os.StrictMode
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
-import androidx.viewpager2.widget.ViewPager2
+import androidx.core.content.FileProvider
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.DataDetail
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ImageProductItem
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityDetailBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ImageSliderAdapter
 import com.bimabagaskhoro.taskappphincon.ui.detail.BuyDialogFragment
@@ -30,8 +29,13 @@ import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.lang.Exception
 
 @AndroidEntryPoint
 class DetailActivity : AppCompatActivity() {
@@ -51,6 +55,12 @@ class DetailActivity : AppCompatActivity() {
         binding.apply {
             btnBack.setOnClickListener { finish() }
         }
+        binding.swipeRefresh.setOnRefreshListener {
+            initDataDetail()
+            binding.progressBar.visibility = View.VISIBLE
+        }
+        val builder: StrictMode.VmPolicy.Builder = StrictMode.VmPolicy.Builder()
+        StrictMode.setVmPolicy(builder.build())
     }
 
     private fun initDataDetail() {
@@ -96,6 +106,7 @@ class DetailActivity : AppCompatActivity() {
                                 val data = results.data!!.success.data
                                 binding.apply {
                                     progressBar.visibility = View.GONE
+                                    swipeRefresh.isRefreshing = false
                                     tvNameDetail.visibility = View.VISIBLE
                                     tvDescHelpers.visibility = View.VISIBLE
                                     tvWeightHelpers.visibility = View.VISIBLE
@@ -132,29 +143,22 @@ class DetailActivity : AppCompatActivity() {
                                     if (data.stock == 1) {
                                         tvStock.text = getString(R.string.out_stock)
                                     }
+
                                     btnShare.setOnClickListener {
-                                        val shareIntent = Intent(Intent.ACTION_SEND)
-                                        shareIntent.type = "text/plain"
-                                        shareIntent.putExtra(
-                                            Intent.EXTRA_TEXT,
+                                        shareDeepLink(
+                                            data.image,
+                                            data.name_product,
+                                            data.stock.toString(),
+                                            data.weight,
+                                            data.size,
                                             "https://bimabk.com/deeplink?id=${data.id}"
                                         )
-                                        startActivity(
-                                            Intent.createChooser(
-                                                shareIntent,
-                                                "Share link using"
-                                            )
-                                        )
-
                                     }
-
                                 }
-                                val isInsert = false
                                 binding.btnCart.setOnClickListener {
-                                    doActionCart(results.data.success.data )
+                                    doActionCart(results.data.success.data)
                                 }
                                 initFavorite(userId, results.data.success.data, productId)
-//                            doAction(results.data.success.data.image_product)
                                 setActionDialog(results.data.success.data)
                             }
                             is Resource.Error -> {
@@ -186,6 +190,42 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
+    private fun shareDeepLink(
+        images: String,
+        name: String,
+        stock: String,
+        weight: String,
+        size: String,
+        link: String
+    ) {
+
+        Picasso.get().load(images).into(object : com.squareup.picasso.Target {
+            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                val intent = Intent(Intent.ACTION_SEND)
+                intent.type = "image/*"
+                intent.putExtra(
+                    Intent.EXTRA_TEXT,
+                    "${getString(R.string.name)} : $name\n${getString(R.string.stock)} : $stock\n${
+                        getString(
+                            R.string.weight
+                        )
+                    } : $weight\n${getString(R.string.size)} : $size\n${getString(R.string.url)} : $link"
+                )
+                intent.putExtra(Intent.EXTRA_STREAM, getBitmapFromView(bitmap))
+                startActivity(Intent.createChooser(intent, "Share To"))
+
+            }
+
+            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                Log.d("IMG Downloader", "Bitmap Failed...")
+            }
+
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                Log.d("IMG Downloader", "Bitmap Preparing Load...")
+            }
+        })
+    }
+
     private fun initFavorite(userId: Int, data: DataDetail, productId: Int) {
         binding.imgFavorite.setOnClickListener {
             if (data.isFavorite) {
@@ -195,6 +235,22 @@ class DetailActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun getBitmapFromView(bmp: Bitmap?): Uri? {
+        var bmpUri: Uri? = null
+        try {
+            val file = File(this.externalCacheDir, System.currentTimeMillis().toString() + ".jpg")
+
+            val out = FileOutputStream(file)
+            bmp?.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            out.close()
+            bmpUri = Uri.fromFile(file)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return bmpUri
+    }
+
 
     private fun addFavorite(userId: Int, productId: Int) {
         viewModel.addFavorite(userId, productId).observe(this@DetailActivity) { results ->
@@ -232,7 +288,6 @@ class DetailActivity : AppCompatActivity() {
                     binding.progressBar.visibility = View.GONE
                     Log.d("addFavorite", "Empty Data")
                 }
-
             }
         }
     }
@@ -308,7 +363,6 @@ class DetailActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, R.string.failed_trolley, Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private fun setActionDialog(data: DataDetail) {
@@ -316,7 +370,6 @@ class DetailActivity : AppCompatActivity() {
             val showData = BuyDialogFragment(data)
             showData.show(supportFragmentManager, DetailActivity::class.java.simpleName)
         }
-
     }
 
     companion object {

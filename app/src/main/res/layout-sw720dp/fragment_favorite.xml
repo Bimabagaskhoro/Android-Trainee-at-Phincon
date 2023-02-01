@@ -23,22 +23,43 @@
         app:queryHint="@string/search"
         tools:ignore="Autofill" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_product"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/rv_product"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginStart="8dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_marginEnd="8dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"-->
+<!--        app:spanCount="2"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/edt_search"-->
+<!--        tools:listitem="@layout/item_product" />-->
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edt_search"
-        tools:listitem="@layout/item_product" />
+        app:layout_constraintTop_toBottomOf="@+id/edt_search">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_product"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:spanCount="2"
+            tools:listitem="@layout/item_product" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/progress_bar"
@@ -76,6 +97,7 @@
                     layout="@layout/item_product_placeholder"
                     android:layout_width="450dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/include1"
@@ -87,7 +109,7 @@
                     android:layout_width="450dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    app:layout_constraintEnd_toStartOf="@+id/include2"
+                    app:layout_constraintEnd_toEndOf="@+id/include1"
                     app:layout_constraintStart_toStartOf="@+id/include1"
                     app:layout_constraintTop_toBottomOf="@+id/include1" />
 
@@ -117,7 +139,7 @@
                     android:layout_width="450dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="@+id/include4"
-                    app:layout_constraintStart_toEndOf="@+id/include3"
+                    app:layout_constraintStart_toStartOf="@+id/include4"
                     app:layout_constraintTop_toTopOf="@+id/include5" />
 
                 <include
@@ -137,7 +159,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     app:layout_constraintEnd_toEndOf="@+id/include6"
-                    app:layout_constraintStart_toEndOf="@+id/include7"
+                    app:layout_constraintStart_toStartOf="@+id/include6"
                     app:layout_constraintTop_toBottomOf="@+id/include6" />
 
                 <include
@@ -157,7 +179,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     app:layout_constraintBottom_toBottomOf="@+id/include9"
-                    app:layout_constraintStart_toEndOf="@+id/include9"
+                    app:layout_constraintStart_toStartOf="@+id/include8"
                     app:layout_constraintTop_toBottomOf="@+id/include8" />
 
                 <include
@@ -174,7 +196,7 @@
                     layout="@layout/item_product_placeholder"
                     android:layout_width="450dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toEndOf="@+id/include11"
+                    app:layout_constraintStart_toStartOf="@+id/include10"
                     app:layout_constraintTop_toTopOf="@+id/include11" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
