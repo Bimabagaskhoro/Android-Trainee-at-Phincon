@@ -9,6 +9,9 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.Respon
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ResponseDetail
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseAddFavorite
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseFavorite
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.DataItemProduct
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.ResponseProduct
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -80,4 +83,26 @@ interface ApiService {
         @Path("id") id: Int,
         @Body requestRating: RequestRating
     ): ResponseAddFavorite
+
+    @GET("get_list_product_favorite")
+    suspend fun getListFav(
+        @Query("id_user") id_user: Int,
+        @Query("search") search: String? = null
+    ): ResponseFavorite
+
+    @GET("get_list_product_paging")
+    suspend fun getListProduct(
+        @Query("search") search: String? = null,
+        @Query("offset") offset: Int
+    ): ResponseProduct
+
+    @GET("get_list_product_other")
+    suspend fun getOtherProduct(
+        @Query("id_user") idUser: Int
+    ): ResponseProduct
+
+    @GET("get_list_product_riwayat")
+    suspend fun getHistoryProduct(
+        @Query("id_user") idUser: Int
+    ): ResponseProduct
 }

@@ -58,5 +58,9 @@ data class Success(
     val message: String,
 
     @SerializedName("status")
-    val status: Int
+    val status: Int,
+
+    @SerializedName("total_row")
+    val total_row : Int
+
 ) : Parcelable

@@ -10,18 +10,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseFavorite
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentFavoriteBinding
-import com.bimabagaskhoro.taskappphincon.databinding.FragmentHomeBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductFavAdapter
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.hideKeyboard
+import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
-import com.bimabagaskhoro.taskappphincon.vm.ProductViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -34,7 +32,7 @@ class FavoriteFragment : Fragment() {
     private var _binding: FragmentFavoriteBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: ProductViewModel by viewModels()
+    private val viewModel: AuthViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private lateinit var adapter: ProductFavAdapter
 
@@ -233,18 +231,12 @@ class FavoriteFragment : Fragment() {
             progressBar.visibility = View.GONE
             rvProduct.adapter = adapter
             binding.viewEmptyData.root.visibility = View.GONE
-//            rvProduct.layoutManager = LinearLayoutManager(context)
             rvProduct.setHasFixedSize(true)
 
             adapter.onItemClick = {
                 val intent = Intent(context, DetailActivity::class.java)
                 intent.putExtra(DetailActivity.EXTRA_DATA_DETAIL, it.id)
                 startActivity(intent)
-//                val bundle = Bundle().apply { putParcelable(DetailItemFragment.EXTRA_DATA, it) }
-//                findNavController().navigate(
-//                    R.id.action_navigation_dashboard_to_detailItemFragment,
-//                    bundle
-//                )
             }
         }
     }

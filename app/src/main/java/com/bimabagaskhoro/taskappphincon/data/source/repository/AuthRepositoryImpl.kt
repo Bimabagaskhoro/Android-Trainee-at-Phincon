@@ -1,7 +1,10 @@
-package com.bimabagaskhoro.taskappphincon.data.source.repository.auth
+package com.bimabagaskhoro.taskappphincon.data.source.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.bimabagaskhoro.taskappphincon.data.source.remote.ProductPagingSource
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
@@ -11,6 +14,9 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.Respon
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ResponseDetail
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseAddFavorite
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseFavorite
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.DataItemProduct
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.ResponseProduct
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
@@ -21,6 +27,20 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : AuthRepository {
+    override fun getDataProduct(
+        search: String?
+    ): Flow<PagingData<DataItemProduct>> {
+        return Pager(
+            config = PagingConfig(
+                enablePlaceholders = false,
+                pageSize = 5
+            ),
+            pagingSourceFactory = {
+                ProductPagingSource(search, apiService)
+            },
+        ).flow
+    }
+
     override fun login(
         email: String,
         password: String
@@ -151,7 +171,8 @@ class AuthRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.updateStock(
 //                    dataStock,
-                    data)
+                    data
+                )
                 emit(Resource.Success(response))
             } catch (t: HttpException) {
                 when (t.code()) {
@@ -187,6 +208,75 @@ class AuthRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.updateRating(userId, rate)
                 emit(Resource.Success(response))
+            } catch (t: HttpException) {
+                when (t.code()) {
+                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                }
+            }
+        }
+    }
+
+    override fun getDataFavProduct(
+        userId: Int,
+        search: String?
+    ): Flow<Resource<ResponseFavorite>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val response = apiService.getListFav(userId, search)
+                val data = response.success.data
+                if (data.isNotEmpty()) {
+                    emit(Resource.Success(response))
+                } else {
+                    emit(Resource.Empty())
+                }
+            } catch (t: HttpException) {
+                when (t.code()) {
+                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                }
+            }
+        }
+    }
+
+    override fun getOtherProduct(userId: Int): Flow<Resource<ResponseProduct>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val response = apiService.getOtherProduct(userId)
+                val data = response.success.data
+                if (data.isNotEmpty()) {
+                    emit(Resource.Success(response))
+                } else {
+                    emit(Resource.Empty())
+                }
+            } catch (t: HttpException) {
+                when (t.code()) {
+                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    404 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    500 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                }
+            }
+        }
+    }
+
+    override fun getHistoryProduct(userId: Int): Flow<Resource<ResponseProduct>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val response = apiService.getHistoryProduct(userId)
+                val data = response.success.data
+                if (data.isNotEmpty()) {
+                    emit(Resource.Success(response))
+                } else {
+                    emit(Resource.Empty())
+                }
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))

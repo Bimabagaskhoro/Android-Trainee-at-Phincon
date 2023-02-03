@@ -12,11 +12,11 @@ import com.bimabagaskhoro.taskappphincon.utils.formatDate
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bumptech.glide.Glide
 
-class ProductAdapter : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
+@SuppressLint("NotifyDataSetChanged")
+class ProductOtherAdapter : RecyclerView.Adapter<ProductOtherAdapter.ViewHolder>() {
     private var listData = ArrayList<DataItemProduct>()
     var onItemClick: ((DataItemProduct) -> Unit)? = null
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setData(newListData: List<DataItemProduct>?) {
         if (newListData == null) return
         listData.clear()
@@ -25,7 +25,7 @@ class ProductAdapter : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ViewHolder (
+        ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.item_product, parent, false)
         )
 
@@ -34,7 +34,7 @@ class ProductAdapter : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
         holder.bind(data)
     }
 
-    override fun getItemCount()= listData.size
+    override fun getItemCount() = listData.size
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = ItemProductBinding.bind(itemView)
@@ -49,13 +49,15 @@ class ProductAdapter : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
                 tvPriceProduct.text = data.harga.formatterIdr()
                 tvDateProduct.text = formatDate(data.date)
                 ratingBar.rating = data.rate.toFloat()
-                imgBtnFavorite.visibility = View.INVISIBLE
+                imgBtnFavorite.visibility = View.VISIBLE
             }
         }
+
         init {
             binding.root.setOnClickListener {
                 onItemClick?.invoke(listData[adapterPosition])
             }
         }
     }
+
 }

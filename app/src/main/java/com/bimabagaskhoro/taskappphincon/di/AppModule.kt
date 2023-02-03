@@ -4,14 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import com.bimabagaskhoro.taskappphincon.BuildConfig
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
-import com.bimabagaskhoro.taskappphincon.data.source.local.db.cart.CartDatabase
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
-import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiPaging
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.CartDatabase
+import com.bimabagaskhoro.taskappphincon.data.source.remote.ProductPagingSource
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
-import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthRepository
-import com.bimabagaskhoro.taskappphincon.data.source.repository.auth.AuthRepositoryImpl
-import com.bimabagaskhoro.taskappphincon.data.source.repository.product.ProductRepository
-import com.bimabagaskhoro.taskappphincon.data.source.repository.product.ProductRepositoryImpl
+import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
+import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepositoryImpl
 import com.bimabagaskhoro.taskappphincon.utils.AuthAuthenticator
 import com.bimabagaskhoro.taskappphincon.utils.AuthBadResponse
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
@@ -108,40 +105,24 @@ object AppModule {
         return retrofit.create(ApiService::class.java)
     }
 
-    @Singleton
-    @Provides
-    fun provideApiPaging(retrofit: Retrofit): ApiPaging {
-        return retrofit.create(ApiPaging::class.java)
-    }
-
     @Provides
     @Singleton
-    fun provideUserRepository(apiService: ApiService): AuthRepository {
+    fun provideUserRepository(
+        apiService: ApiService
+    ): AuthRepository {
         return AuthRepositoryImpl(apiService)
     }
 
     @Provides
     @Singleton
-    fun provideProductRepository(
-        apiPaging: ApiPaging,
-        //database: ProductDatabase
-    ): ProductRepository {
-        return ProductRepositoryImpl(apiPaging
-            //, database
-        )
-    }
-    @Provides
-    @Singleton
     fun provideDataStore(@ApplicationContext context: Context): AuthPreferences =
         AuthPreferences(context)
 
-    /**
-     * for room cart
-     */
     @Provides
     @Singleton
     fun provideCartDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
-        context, CartDatabase::class.java, CART_DATABASE)
+        context, CartDatabase::class.java, CART_DATABASE
+    )
         .allowMainThreadQueries()
         .fallbackToDestructiveMigration()
         .build()
@@ -150,7 +131,5 @@ object AppModule {
     @Singleton
     fun provideCartDao(db: CartDatabase) = db.cartDao()
 
-//    @Provides
-//    fun provideCartEntity() = CartEntity()
 
 }
