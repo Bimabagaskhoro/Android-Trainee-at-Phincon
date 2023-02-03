@@ -65,4 +65,7 @@
     <string name="trolley">Trolley</string>
     <string name="failed_trolley">Sorry Your item Out of Stock</string>
     <string name="url">Url</string>
+    <string name="try_again">Try Again</string>
+    <string name="other_product">Other Product</string>
+    <string name="history_product">History</string>
 </resources>

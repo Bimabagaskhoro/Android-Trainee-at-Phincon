@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.ContentResolver
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
@@ -125,5 +126,9 @@ fun formatDate(date: String): String{
     val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale("in", "ID"))
     return dateFormat.format(inputDate!!)
 
+}
+
+fun dpToPx(dp: Float): Int {
+    return (dp * Resources.getSystem().displayMetrics.density).toInt()
 }
 

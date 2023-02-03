@@ -96,7 +96,7 @@
             android:id="@+id/img_favorite"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/toggle_favorite"
+            android:background="@color/shimmer_a"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:src="@drawable/ic_favorite"
@@ -273,82 +273,4 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_desc_helpers"
             android:background="@color/shimmer_a" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="match_parent"
-        android:layout_height="57dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="57dp">
-
-            <Button
-                android:id="@+id/btn_buy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:text="@string/buy"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/btn_cart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:text="@string/cart"
-                app:layout_constraintBottom_toBottomOf="@+id/btn_buy"
-                app:layout_constraintEnd_toStartOf="@+id/btn_buy"
-                app:layout_constraintTop_toTopOf="@+id/btn_buy" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
-
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_progressbar"
-        android:layout_width="186dp"
-        android:layout_height="160dp"
-        android:visibility="gone"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ProgressBar
-                android:id="@+id/progressbar_add_fav"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="45dp"
-                android:progress="200"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_waiting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/waiting"
-                android:textSize="23sp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="@+id/progressbar_add_fav"
-                app:layout_constraintStart_toStartOf="@+id/progressbar_add_fav"
-                app:layout_constraintTop_toBottomOf="@+id/progressbar_add_fav" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

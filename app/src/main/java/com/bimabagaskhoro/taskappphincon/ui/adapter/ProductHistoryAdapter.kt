@@ -50,7 +50,7 @@ class ProductHistoryAdapter : RecyclerView.Adapter<ProductHistoryAdapter.ViewHol
                 tvPriceProduct.text = data.harga.formatterIdr()
                 tvDateProduct.text = formatDate(data.date)
                 ratingBar.rating = data.rate.toFloat()
-                imgBtnFavorite.visibility = View.VISIBLE
+                imgBtnFavorite.visibility = View.INVISIBLE
             }
         }
 

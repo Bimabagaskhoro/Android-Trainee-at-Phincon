@@ -65,4 +65,7 @@
     <string name="trolley">Keranjang</string>
     <string name="failed_trolley">Maaf Item Sudah Habis</string>
     <string name="url">Url</string>
+    <string name="try_again">Coba Lagi</string>
+    <string name="other_product">Produk Lainnya</string>
+    <string name="history_product">Riwayat</string>
 </resources>

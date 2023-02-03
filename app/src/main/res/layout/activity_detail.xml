@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -76,7 +77,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
-        <androidx.core.widget.NestedScrollView
+        <ScrollView
             android:id="@+id/scrollView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -354,19 +355,120 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_desc_helpers"
                     tools:text="@tools:sample/lorem/random" />
 
-                <include
-                    layout="@layout/fragment_other_product"
+                <View
+                    android:id="@+id/view_helper_1"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    app:defaultNavHost="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_height="12dp"
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_desc"
+                    app:layout_constraintStart_toStartOf="@+id/tv_desc"
                     app:layout_constraintTop_toBottomOf="@+id/tv_desc"
-                    />
+                    android:background="@color/lighter_grey"/>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_other_product"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="@+id/view_helper_1"
+                    app:layout_constraintStart_toStartOf="@+id/view_helper_1"
+                    app:layout_constraintTop_toBottomOf="@+id/view_helper_1"
+                    tools:listitem="@layout/item_product" />
+
+
+                <!--                <TextView-->
+<!--                    android:id="@+id/tv_tittle_other_product"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginTop="24dp"-->
+<!--                    android:layout_marginEnd="16dp"-->
+<!--                    android:ellipsize="marquee"-->
+<!--                    android:fadingEdge="horizontal"-->
+<!--                    android:fontFamily="@font/poppinsbold"-->
+<!--                    android:scrollHorizontally="true"-->
+<!--                    android:singleLine="true"-->
+<!--                    android:text="@string/other_product"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="20sp"-->
+<!--                    app:layout_constraintEnd_toEndOf="@+id/view_helper_1"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/view_helper_1"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/view_helper_1" />-->
+
+<!--                <androidx.recyclerview.widget.RecyclerView-->
+<!--                    android:id="@+id/rv_other_product"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:layout_marginEnd="8dp"-->
+<!--                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--                    app:layout_constraintEnd_toEndOf="@+id/tv_tittle_other_product"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/tv_tittle_other_product"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/tv_tittle_other_product"-->
+<!--                    tools:listitem="@layout/item_product" />-->
+
+<!--                <View-->
+<!--                    android:id="@+id/view_helper_2"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="12dp"-->
+<!--                    android:layout_marginTop="24dp"-->
+<!--                    android:background="@color/lighter_grey"-->
+<!--                    app:layout_constraintEnd_toEndOf="@+id/rv_other_product"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/rv_other_product"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/rv_other_product" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_tittle_history"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:layout_marginTop="24dp"-->
+<!--                    android:layout_marginEnd="16dp"-->
+<!--                    android:ellipsize="marquee"-->
+<!--                    android:fadingEdge="horizontal"-->
+<!--                    android:fontFamily="@font/poppinsbold"-->
+<!--                    android:scrollHorizontally="true"-->
+<!--                    android:singleLine="true"-->
+<!--                    android:text="@string/history_product"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="20sp"-->
+<!--                    app:layout_constraintEnd_toEndOf="@+id/view_helper_2"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/view_helper_2"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/view_helper_2" />-->
+
+<!--                <androidx.recyclerview.widget.RecyclerView-->
+<!--                    android:id="@+id/rv_history"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="0dp"-->
+<!--                    android:layout_marginStart="8dp"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:layout_marginEnd="8dp"-->
+<!--                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--                    app:layout_constraintEnd_toEndOf="@+id/tv_tittle_history"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/tv_tittle_history"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/tv_tittle_history"-->
+<!--                    tools:listitem="@layout/item_product" />-->
+
+<!--                <View-->
+<!--                    android:id="@+id/view_helper_3"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="12dp"-->
+<!--                    android:layout_marginTop="24dp"-->
+<!--                    android:layout_marginBottom="32dp"-->
+<!--                    android:background="@color/lighter_grey"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintEnd_toEndOf="@+id/rv_history"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/rv_history"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/rv_history" />-->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
+        </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <androidx.cardview.widget.CardView
