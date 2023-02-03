@@ -101,7 +101,7 @@ class DetailActivity : AppCompatActivity() {
                             is Resource.Loading -> {
                                 binding.apply {
                                     progressBar.visibility = View.VISIBLE
-                                    scrollView2.visibility = View.GONE
+                                    toolbar.visibility = View.GONE
 
                                 }
                             }
@@ -110,7 +110,7 @@ class DetailActivity : AppCompatActivity() {
                                 binding.apply {
                                     progressBar.visibility = View.GONE
                                     swipeRefresh.isRefreshing = false
-                                    scrollView2.visibility = View.VISIBLE
+                                    toolbar.visibility = View.VISIBLE
 
                                     tvNameDetail.isSelected = true
                                     tvNameDetail.text = data.name_product
