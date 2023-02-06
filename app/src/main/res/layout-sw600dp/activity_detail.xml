@@ -4,7 +4,66 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background_pink"
+        android:tag="sticky"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_back"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_name_detail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_name_detail" />
+
+            <TextView
+                android:id="@+id/tv_name_detail"
+                android:layout_width="300dp"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_marginStart="24dp"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:fontFamily="@font/poppinsbold"
+                android:gravity="start|center"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintStart_toEndOf="@+id/btn_back"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Jam tangan" />
+
+            <ImageButton
+                android:id="@+id/btn_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="16dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_share"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_name_detail"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_name_detail" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.Toolbar>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_marginTop="?attr/actionBarSize"
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -22,68 +81,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="@color/background_pink"
-                    android:tag="sticky"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <ImageButton
-                            android:id="@+id/btn_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:background="@android:color/transparent"
-                            android:src="@drawable/ic_back"
-                            app:layout_constraintBottom_toBottomOf="@+id/tv_name_detail"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/tv_name_detail" />
-
-                        <TextView
-                            android:id="@+id/tv_name_detail"
-                            android:layout_width="300dp"
-                            android:layout_height="?attr/actionBarSize"
-                            android:layout_marginStart="24dp"
-                            android:ellipsize="marquee"
-                            android:fadingEdge="horizontal"
-                            android:fontFamily="@font/poppinsbold"
-                            android:gravity="start|center"
-                            android:scrollHorizontally="true"
-                            android:singleLine="true"
-                            android:textColor="@color/black"
-                            android:textSize="20sp"
-                            app:layout_constraintStart_toEndOf="@+id/btn_back"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Jam tangan" />
-
-                        <ImageButton
-                            android:id="@+id/btn_share"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginEnd="16dp"
-                            android:background="@android:color/transparent"
-                            android:src="@drawable/ic_share"
-                            app:layout_constraintBottom_toBottomOf="@+id/tv_name_detail"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/tv_name_detail" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.appcompat.widget.Toolbar>
-
                 <androidx.viewpager.widget.ViewPager
                     android:id="@+id/card_image"
-                    android:layout_width="355dp"
-                    android:layout_height="196dp"
-                    android:layout_marginTop="55dp"
+                    android:layout_width="0dp"
+                    android:layout_height="250dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="32dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

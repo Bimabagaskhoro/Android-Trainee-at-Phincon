@@ -9,6 +9,5 @@ class Constant {
         const val PRODUCT_KEYS = "product_key"
         const val CART_DATABASE = "cart_database"
         const val INITIAL_INDEX = 0
-        const val LIMIT = 4
     }
 }

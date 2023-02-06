@@ -101,63 +101,28 @@ class FavoriteFragment : Fragment() {
             viewModel.getFavProduct(idUser, q).observe(viewLifecycleOwner) { data ->
                 when (data) {
                     is Resource.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
+                        binding.apply {
+                            progressBar.visibility = View.VISIBLE
+                            fabShorting.visibility = View.GONE
+                        }
                     }
                     is Resource.Success -> {
                         if (data.data!!.success.data.isNotEmpty()) {
                             binding.rvProduct.visibility = View.VISIBLE
                             binding.fabShorting.visibility = View.VISIBLE
                             binding.swipeRefresh.isRefreshing = false
-                            setProductRv(data.data, i)
-                        } else {
-                            binding.rvProduct.visibility = View.GONE
-                        }
-                    }
-                    is Resource.Error -> {
-                        binding.progressBar.visibility = View.GONE
-                        try {
-                            val err =
-                                data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
-                            val gson = Gson()
-                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                            val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
-                            val messageErr = errorResponse.error.message
-                            AlertDialog.Builder(requireActivity()).setTitle("Failed")
-                                .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
-                                }.show()
-                        } catch (e: java.lang.Exception) {
-                            val err = data.errorCode
-                            Log.d("ErrorCode", "$err")
-                        }
-                    }
-                    is Resource.Empty -> {
-                        binding.apply {
-                            progressBar.visibility = View.GONE
-                            viewEmptyData.root.visibility = View.VISIBLE
-                            binding.rvProduct.visibility = View.GONE
-                        }
-                    }
-                }
-            }
-        } else {
-            viewModel.getFavProduct(idUser).observe(viewLifecycleOwner) { data ->
-                when (data) {
-                    is Resource.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                    }
-                    is Resource.Success -> {
-                        if (data.data!!.success.data.isNotEmpty()) {
-                            binding.rvProduct.visibility = View.VISIBLE
-                            binding.fabShorting.visibility = View.VISIBLE
+                            binding.progressBar.visibility = View.GONE
                             binding.viewEmptyData.root.visibility = View.GONE
+                            binding.fabShorting.visibility = View.VISIBLE
                             setProductRv(data.data, i)
                         } else {
                             binding.rvProduct.visibility = View.GONE
+                            binding.fabShorting.visibility = View.GONE
                         }
-
                     }
                     is Resource.Error -> {
                         binding.progressBar.visibility = View.GONE
+                        binding.fabShorting.visibility = View.GONE
                         try {
                             val err =
                                 data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
@@ -178,6 +143,56 @@ class FavoriteFragment : Fragment() {
                             progressBar.visibility = View.GONE
                             viewEmptyData.root.visibility = View.VISIBLE
                             rvProduct.visibility = View.GONE
+                            fabShorting.visibility = View.GONE
+
+                        }
+                    }
+                }
+            }
+        } else {
+            viewModel.getFavProduct(idUser).observe(viewLifecycleOwner) { data ->
+                when (data) {
+                    is Resource.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.fabShorting.visibility = View.GONE
+                    }
+                    is Resource.Success -> {
+                        if (data.data!!.success.data.isNotEmpty()) {
+                            binding.rvProduct.visibility = View.VISIBLE
+                            binding.fabShorting.visibility = View.VISIBLE
+                            binding.viewEmptyData.root.visibility = View.GONE
+                            binding.progressBar.visibility = View.GONE
+                            binding.fabShorting.visibility = View.VISIBLE
+                            setProductRv(data.data, i)
+                        } else {
+                            binding.rvProduct.visibility = View.GONE
+                        }
+
+                    }
+                    is Resource.Error -> {
+                        binding.progressBar.visibility = View.GONE
+                        binding.fabShorting.visibility = View.GONE
+                        try {
+                            val err =
+                                data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                            val gson = Gson()
+                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                            val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                            val messageErr = errorResponse.error.message
+                            AlertDialog.Builder(requireActivity()).setTitle("Failed")
+                                .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
+                                }.show()
+                        } catch (e: java.lang.Exception) {
+                            val err = data.errorCode
+                            Log.d("ErrorCode", "$err")
+                        }
+                    }
+                    is Resource.Empty -> {
+                        binding.apply {
+                            progressBar.visibility = View.GONE
+                            viewEmptyData.root.visibility = View.VISIBLE
+                            rvProduct.visibility = View.GONE
+                            fabShorting.visibility = View.GONE
                         }
                     }
                 }

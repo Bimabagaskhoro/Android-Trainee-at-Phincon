@@ -19,6 +19,7 @@ import com.bimabagaskhoro.taskappphincon.databinding.FragmentHomeBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 import com.bimabagaskhoro.taskappphincon.ui.adapter.paging.LoadPagingAdapter
 import com.bimabagaskhoro.taskappphincon.ui.adapter.paging.ProductAdapter
+import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.INITIAL_INDEX
 import com.bimabagaskhoro.taskappphincon.utils.hideKeyboard
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -112,13 +113,17 @@ class HomeFragment : Fragment() {
                                     viewEmptyDatas.root.visibility = View.GONE
                                 }
                                 is LoadState.NotLoading -> {
-                                    progressBar.visibility = View.GONE
-                                    rvProduct.visibility = View.VISIBLE
-                                    binding.swipeRefresh.isRefreshing = false
-                                    viewEmptyDatas.root.visibility = View.GONE
+                                    if (adapterProduct.itemCount == 0) {
+                                        viewEmptyDatas.root.visibility = View.VISIBLE
+                                    } else {
+                                        progressBar.visibility = View.GONE
+                                        rvProduct.visibility = View.VISIBLE
+                                        binding.swipeRefresh.isRefreshing = false
+                                        viewEmptyDatas.root.visibility = View.GONE
+                                    }
                                 }
                                 is LoadState.Error -> {
-                                    if (adapterProduct.itemCount == 0) {
+                                    if (adapterProduct.itemCount == INITIAL_INDEX) {
                                         progressBar.visibility = View.GONE
                                         viewEmptyDatas.root.visibility = View.VISIBLE
                                     } else {
@@ -146,10 +151,14 @@ class HomeFragment : Fragment() {
                                     viewEmptyDatas.root.visibility = View.GONE
                                 }
                                 is LoadState.NotLoading -> {
-                                    progressBar.visibility = View.GONE
-                                    rvProduct.visibility = View.VISIBLE
-                                    binding.swipeRefresh.isRefreshing = false
-                                    viewEmptyDatas.root.visibility = View.GONE
+                                    if (adapterProduct.itemCount == 0) {
+                                        viewEmptyDatas.root.visibility = View.VISIBLE
+                                    } else {
+                                        progressBar.visibility = View.GONE
+                                        rvProduct.visibility = View.VISIBLE
+                                        binding.swipeRefresh.isRefreshing = false
+                                        viewEmptyDatas.root.visibility = View.GONE
+                                    }
                                 }
                                 is LoadState.Error -> {
                                     if (adapterProduct.itemCount == 0) {
