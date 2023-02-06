@@ -10,23 +10,17 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.DataDetail
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.DataItemProduct
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityDetailBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ImageSliderAdapter
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductHistoryAdapter
-import com.bimabagaskhoro.taskappphincon.ui.adapter.sticky.StickyAdapter
-import com.bimabagaskhoro.taskappphincon.ui.adapter.sticky.StickyHeaderDecoration
 import com.bimabagaskhoro.taskappphincon.ui.detail.BuyDialogFragment
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.utils.StickyModel
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
@@ -48,19 +42,14 @@ class DetailActivity : AppCompatActivity() {
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val roomViewModel: LocalViewModel by viewModels()
     private var idProduct: Int? = null
-//    private lateinit var adapter: ProductHistoryAdapter
-//    private lateinit var adapter: StickyAdapter
+    private lateinit var adapter: ProductHistoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        adapter = StickyAdapter()
-
-        binding.rvOtherProduct.adapter = StickyAdapter(getItems())
-        binding.rvOtherProduct.addItemDecoration(StickyHeaderDecoration())
-        binding.rvOtherProduct.addItemDecoration(DividerItemDecoration(this, LinearLayout.VERTICAL))
+        adapter = ProductHistoryAdapter()
 
         initDataDetail()
         binding.apply {
@@ -75,8 +64,8 @@ class DetailActivity : AppCompatActivity() {
 
         dataStoreViewModel.getUserId.observe(this@DetailActivity) {
             val idUser = it
-//            initViewModelHistory(idUser)
-//            initViewModelOther(idUser)
+            initViewModelHistory(idUser)
+            initViewModelOther(idUser)
         }
     }
 
@@ -102,7 +91,8 @@ class DetailActivity : AppCompatActivity() {
                                 binding.apply {
                                     progressBar.visibility = View.VISIBLE
                                     toolbar.visibility = View.GONE
-
+                                    layBtn.visibility = View.GONE
+                                    swipeRefresh.visibility = View.GONE
                                 }
                             }
                             is Resource.Success -> {
@@ -111,6 +101,8 @@ class DetailActivity : AppCompatActivity() {
                                     progressBar.visibility = View.GONE
                                     swipeRefresh.isRefreshing = false
                                     toolbar.visibility = View.VISIBLE
+                                    layBtn.visibility = View.VISIBLE
+                                    swipeRefresh.visibility = View.VISIBLE
 
                                     tvNameDetail.isSelected = true
                                     tvNameDetail.text = data.name_product
@@ -367,8 +359,8 @@ class DetailActivity : AppCompatActivity() {
                     Log.d("getHistoryProduct", "isLoading")
                 }
                 is Resource.Success -> {
-//                    adapter.setData(data.data!!.success.data.sortedBy { it.name_product })
-//                    initRecyclerViewHistory()
+                    adapter.setData(data.data!!.success.data.sortedBy { it.name_product })
+                    initRecyclerViewHistory()
                 }
                 is Resource.Error -> {
                     try {
@@ -393,114 +385,64 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun getItems(): List<StickyModel> {
-        val items: ArrayList<StickyModel> = ArrayList()
-        items.add(
-            StickyModel(
-                getString(R.string.other_product),
-                DataItemProduct(
-                    1,
-                    "123",
-                    "test123",
-                    "test123",
-                    "test123",
-                    "test123",
-                    1,
-                    "test123",
-                    1,
-                    "test123",
-                    "test123",
-                ), true
-            )
-        )
-        for (i in 1..10) {
-            items.add(
-                StickyModel(
-                    "",
-                    DataItemProduct(
-                        1,
-                        "123",
-                        "test123",
-                        "test123",
-                        "test123",
-                        "test123",
-                        1,
-                        "test123",
-                        1,
-                        "test123",
-                        "test123",
-
-                        ), false
-                )
-            )
+    private fun initViewModelOther(idUser: Int?) {
+        viewModel.getOtherProduct(idUser!!).observe(this) { data ->
+            when (data) {
+                is Resource.Loading -> {
+                    Log.d("getHistoryProduct", "isLoading")
+                }
+                is Resource.Success -> {
+                    adapter.setData(data.data!!.success.data.sortedBy { it.name_product })
+                    initRecyclerViewOther()
+                }
+                is Resource.Error -> {
+                    try {
+                        val err =
+                            data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                        val gson = Gson()
+                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                        val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                        val messageErr = errorResponse.error.message
+                        AlertDialog.Builder(this).setTitle("Failed")
+                            .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
+                            }.show()
+                    } catch (e: java.lang.Exception) {
+                        val err = data.errorCode
+                        Log.d("ErrorCode", "$err")
+                    }
+                }
+                is Resource.Empty -> {
+                    Log.d("getHistoryProduct", "isEmpty")
+                }
+            }
         }
-        items.add(
-            StickyModel(
-                getString(R.string.history_product),
-                DataItemProduct(
-                    1,
-                    "123",
-                    "test123",
-                    "test123",
-                    "test123",
-                    "test123",
-                    1,
-                    "test123",
-                    1,
-                    "test123",
-                    "test123",
-                ), true
-            )
-        )
-        for (i in 1..10) {
-            items.add(
-                StickyModel(
-                    "",
-                    DataItemProduct(
-                        1,
-                        "123",
-                        "test123",
-                        "test123",
-                        "test123",
-                        "test123",
-                        1,
-                        "test123",
-                        1,
-                        "test123",
-                        "test123",
-
-                        ), false
-                )
-            )
-        }
-        return items
     }
 
-//    private fun initRecyclerViewHistory() {
-//        binding.apply {
-//            rvHistory.adapter = adapter
-//            rvHistory.setHasFixedSize(true)
-//
-////            adapter.onItemClick = {
-////                val intent = Intent(this@DetailActivity, DetailActivity::class.java)
-////                intent.putExtra(EXTRA_DATA_DETAIL, it.id)
-////                startActivity(intent)
-////            }
-//        }
-//    }
-//
-//    private fun initRecyclerViewOther() {
-//        binding.apply {
-//            rvOtherProduct.adapter = adapter
-//            rvOtherProduct.setHasFixedSize(true)
-//
-////            adapter.onItemClick = {
-////                val intent = Intent(this@DetailActivity, DetailActivity::class.java)
-////                intent.putExtra(EXTRA_DATA_DETAIL, it.id)
-////                startActivity(intent)
-////            }
-//        }
-//    }
+    private fun initRecyclerViewHistory() {
+        binding.apply {
+            rvHistoryProduct.adapter = adapter
+            rvHistoryProduct.setHasFixedSize(true)
+
+            adapter.onItemClick = {
+                val intent = Intent(this@DetailActivity, DetailActivity::class.java)
+                intent.putExtra(EXTRA_DATA_DETAIL, it.id)
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun initRecyclerViewOther() {
+        binding.apply {
+            rvOtherProduct.adapter = adapter
+            rvOtherProduct.setHasFixedSize(true)
+
+            adapter.onItemClick = {
+                val intent = Intent(this@DetailActivity, DetailActivity::class.java)
+                intent.putExtra(EXTRA_DATA_DETAIL, it.id)
+                startActivity(intent)
+            }
+        }
+    }
 
     companion object {
         const val EXTRA_DATA_DETAIL = "extra_data_detail"

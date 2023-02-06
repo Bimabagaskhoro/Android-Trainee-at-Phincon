@@ -117,5 +117,8 @@ dependencies {
     def picassoVersion = '2.8'
     implementation "com.squareup.picasso:picasso:$picassoVersion"
 
+    def stickyVersion = "1.0.1"
+    implementation "com.github.didikk:sticky-nestedscrollview:$stickyVersion"
+
 
 }
