@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,16 +40,21 @@ class CartActivity : AppCompatActivity() {
         doActionAdapter()
         initData()
 
+
         binding.apply {
             btnBack.setOnClickListener {
                 val intent = Intent(this@CartActivity, MainActivity::class.java)
                 startActivity(intent)
             }
             checkBox2.setOnCheckedChangeListener { _, isChecked ->
-                initCheckBox(isChecked)
-            }
-            btnBuy.setOnClickListener {
-                setActionPost()
+                if (!isChecked) {
+                    btnBuy.isClickable = false
+                } else if (isChecked) {
+                    initCheckBox(isChecked)
+                    binding.btnBuy.setOnClickListener {
+                        setActionPost()
+                    }
+                }
             }
         }
     }
@@ -99,6 +105,9 @@ class CartActivity : AppCompatActivity() {
                 roomViewModel.updateCheck(id, 1)
                 val result = roomViewModel.getTotalPrice()
                 binding.tvAllPrice.text = result.toString().formatterIdr()
+                binding.btnBuy.setOnClickListener {
+                    setActionPost()
+                }
             },
             { data ->
                 val id = data.id

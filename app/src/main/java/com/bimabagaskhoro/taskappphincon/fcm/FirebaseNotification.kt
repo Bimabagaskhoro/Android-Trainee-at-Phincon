@@ -48,7 +48,7 @@ class FirebaseNotification : FirebaseMessagingService() {
         val notificationBuilder = NotificationCompat.Builder(applicationContext,
             NOTIFICATION_CHANNEL_ID
         )
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_notif)
             .setContentTitle(title)
             .setContentText(messageBody)
             .setContentIntent(contentPendingIntent)
