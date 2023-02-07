@@ -7,16 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
 import com.bimabagaskhoro.taskappphincon.databinding.ItemCartBinding
-import com.bimabagaskhoro.taskappphincon.ui.activity.CartActivity
-import com.bimabagaskhoro.taskappphincon.ui.detail.BuyDialogViewModel
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
-import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.bumptech.glide.Glide
 
 @SuppressLint("NotifyDataSetChanged")

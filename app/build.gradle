@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -117,8 +118,16 @@ dependencies {
     def picassoVersion = '2.8'
     implementation "com.squareup.picasso:picasso:$picassoVersion"
 
+    //sticky
     def stickyVersion = "1.0.1"
     implementation "com.github.didikk:sticky-nestedscrollview:$stickyVersion"
 
+    //touch image view
+    def touchImageViewVersion = "1.4.1"
+    implementation "com.github.MikeOrtiz:TouchImageView:$touchImageViewVersion"
 
+    //firebase
+    implementation platform('com.google.firebase:firebase-bom:31.2.0')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
 }

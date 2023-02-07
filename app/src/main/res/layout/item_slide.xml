@@ -17,6 +17,13 @@
             android:layout_width="match_parent"
             android:layout_height="200dp">
 
+<!--            <com.github.chrisbanes.photoview.PhotoView-->
+<!--                android:id="@+id/tv_item_img_slider"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                tools:src="@tools:sample/backgrounds/scenic"-->
+<!--                android:scaleType="centerCrop"/>-->
+
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/tv_item_img_slider"
                 android:layout_width="match_parent"

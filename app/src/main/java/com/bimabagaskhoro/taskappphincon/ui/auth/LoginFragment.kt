@@ -19,6 +19,7 @@ import com.bimabagaskhoro.taskappphincon.databinding.FragmentLoginBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.MainActivity
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,12 +45,25 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            btnLogin.setOnClickListener { onButtonPressed() }
+            btnLogin.setOnClickListener {
+                onButtonPressed()
+                getTokenFcm()
+            }
             btnSignup.setOnClickListener {
                 findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
             }
         }
+
+
     }
+
+    private fun getTokenFcm() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            val token = task.result
+            Log.d("tokenFcm", "$token")
+        }
+    }
+
 
     private fun onButtonPressed() {
         val email = binding.edtEmail.text.toString().trim()

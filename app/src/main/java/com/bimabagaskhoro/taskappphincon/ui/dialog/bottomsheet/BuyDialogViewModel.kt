@@ -1,9 +1,8 @@
-package com.bimabagaskhoro.taskappphincon.ui.detail
+package com.bimabagaskhoro.taskappphincon.ui.dialog.bottomsheet
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 class BuyDialogViewModel: ViewModel() {
     private var _quantity = MutableLiveData<Int>()

@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.ui.detail
+package com.bimabagaskhoro.taskappphincon.ui.dialog.bottomsheet
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,12 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.DataDetail
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentBuyDialogBinding
-import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
@@ -26,10 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import kotlin.math.log
 
 @AndroidEntryPoint
 class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragment() {
@@ -37,6 +31,7 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
     private val binding get() = _binding
     private val viewModel: BuyDialogViewModel by viewModels()
     private val viewModelStock: AuthViewModel by viewModels()
+
     override fun getTheme(): Int {
         return R.style.NoBackgroundDialogTheme
     }

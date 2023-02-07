@@ -19,7 +19,8 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.Data
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityDetailBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ImageSliderAdapter
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductHistoryAdapter
-import com.bimabagaskhoro.taskappphincon.ui.detail.BuyDialogFragment
+import com.bimabagaskhoro.taskappphincon.ui.dialog.bottomsheet.BuyDialogFragment
+import com.bimabagaskhoro.taskappphincon.ui.dialog.photoview.PhotoViewFragment
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
@@ -36,13 +37,15 @@ import java.io.IOException
 import java.lang.Exception
 
 @AndroidEntryPoint
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity() , ImageSliderAdapter.OnPageClickListener {
     private lateinit var binding: ActivityDetailBinding
     private val viewModel: AuthViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val roomViewModel: LocalViewModel by viewModels()
     private var idProduct: Int? = null
     private lateinit var adapter: ProductHistoryAdapter
+    private lateinit var seePhoto: PhotoViewFragment
+    private lateinit var imageSliderAdapter: ImageSliderAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +70,8 @@ class DetailActivity : AppCompatActivity() {
             initViewModelHistory(idUser)
             initViewModelOther(idUser)
         }
+
+        seePhoto = PhotoViewFragment(this)
     }
 
     private fun initDataDetail() {
@@ -115,8 +120,8 @@ class DetailActivity : AppCompatActivity() {
                                     tvWeight.text = data.weight
                                     tvType.text = data.type
                                     tvDesc.text = data.desc
-                                    cardImage.adapter =
-                                        ImageSliderAdapter(this@DetailActivity, data.image_product)
+
+                                    cardImage.adapter = ImageSliderAdapter(this@DetailActivity, data.image_product , this@DetailActivity)
                                     dotsIndicator.attachTo(cardImage)
 
                                     imgFavorite.isChecked = data.isFavorite
@@ -446,5 +451,9 @@ class DetailActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_DATA_DETAIL = "extra_data_detail"
+    }
+
+    override fun onClick(image: String) {
+        seePhoto.showPhoto(image)
     }
 }
