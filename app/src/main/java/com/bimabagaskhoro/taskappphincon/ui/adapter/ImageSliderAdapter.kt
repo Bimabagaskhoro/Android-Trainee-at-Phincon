@@ -1,22 +1,15 @@
 package com.bimabagaskhoro.taskappphincon.ui.adapter
 
-import android.app.Dialog
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ImageProductItem
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.DataItemFavorite
-import com.bimabagaskhoro.taskappphincon.databinding.ItemSlideBinding
 import com.bumptech.glide.Glide
 import java.util.*
 

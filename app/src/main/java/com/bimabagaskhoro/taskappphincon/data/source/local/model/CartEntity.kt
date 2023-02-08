@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.data.source.local.model.cart
+package com.bimabagaskhoro.taskappphincon.data.source.local.model
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo

@@ -12,6 +12,11 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.Re
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -20,13 +25,11 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
-
-    fun getProduct(search: String?) = authRepository.getDataProduct(search).cachedIn(viewModelScope)
-
     fun login(
         email: String,
-        password: String
-    ) = authRepository.login(email, password).asLiveData()
+        password: String,
+        tokenFcm: String
+    ) = authRepository.login(email, password, tokenFcm).asLiveData()
 
     fun register(
         image: MultipartBody.Part,
@@ -70,10 +73,11 @@ class AuthViewModel @Inject constructor(
         authRepository.unFavorite(userId, idProduct).asLiveData()
 
     fun updateStock(
-        data: List<DataStockItem>
+        data: List<DataStockItem>,
+        idUser: String
     ): LiveData<Resource<ResponseAddFavorite>> =
         authRepository.updateStock(
-            RequestStock(data)
+            RequestStock(idUser, data)
 //            RequestStock(listOf(DataStockItem(idProduct,stock)))
         ).asLiveData()
 
@@ -95,5 +99,31 @@ class AuthViewModel @Inject constructor(
     fun getHistoryProduct(
         userId: Int
     ) = authRepository.getHistoryProduct(userId).asLiveData()
+
+    /**
+     * for home fragment
+     */
+    private var searchJob: Job? = null
+    private val currentQuery = MutableStateFlow("")
+
+    fun onSearch(query: String) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            if (query.isEmpty()) {
+                currentQuery.value = query
+            } else {
+                delay(2000)
+                currentQuery.value = query
+            }
+        }
+    }
+
+    val productList = currentQuery.flatMapLatest {
+        authRepository.getDataProduct(it).cachedIn(viewModelScope)
+    }
+
+    /**
+     * until here home fragment
+     */
 
 }

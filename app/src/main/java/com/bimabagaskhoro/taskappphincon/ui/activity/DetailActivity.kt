@@ -13,7 +13,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.DataDetail
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityDetailBinding

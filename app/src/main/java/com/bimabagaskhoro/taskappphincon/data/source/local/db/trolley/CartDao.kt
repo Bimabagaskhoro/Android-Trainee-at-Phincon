@@ -1,8 +1,8 @@
-package com.bimabagaskhoro.taskappphincon.data.source.local.db
+package com.bimabagaskhoro.taskappphincon.data.source.local.db.trolley
 
 import androidx.room.*
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.DataTrolley
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.DataTrolley
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CART_TABLE
 import kotlinx.coroutines.flow.Flow
 

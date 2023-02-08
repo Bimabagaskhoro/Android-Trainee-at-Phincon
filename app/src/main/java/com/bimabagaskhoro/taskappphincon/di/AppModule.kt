@@ -4,15 +4,18 @@ import android.content.Context
 import androidx.room.Room
 import com.bimabagaskhoro.taskappphincon.BuildConfig
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
-import com.bimabagaskhoro.taskappphincon.data.source.local.db.CartDatabase
-import com.bimabagaskhoro.taskappphincon.data.source.remote.ProductPagingSource
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.notification.NotificationDao
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.notification.NotificationDatabase
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.trolley.CartDatabase
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepositoryImpl
+import com.bimabagaskhoro.taskappphincon.fcm.FirebaseNotification
 import com.bimabagaskhoro.taskappphincon.utils.AuthAuthenticator
 import com.bimabagaskhoro.taskappphincon.utils.AuthBadResponse
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CART_DATABASE
+import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.NOTIFICATION_DATABASE
 import com.bimabagaskhoro.taskappphincon.utils.HeaderInterceptor
 import dagger.Module
 import dagger.Provides
@@ -117,7 +120,9 @@ object AppModule {
     @Singleton
     fun provideDataStore(@ApplicationContext context: Context): AuthPreferences =
         AuthPreferences(context)
-
+    /**
+     * trolley database
+     */
     @Provides
     @Singleton
     fun provideCartDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
@@ -132,4 +137,19 @@ object AppModule {
     fun provideCartDao(db: CartDatabase) = db.cartDao()
 
 
+    /**
+     * notification database
+     */
+    @Provides
+    @Singleton
+    fun provideNotificationDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
+        context, NotificationDatabase::class.java, NOTIFICATION_DATABASE
+    )
+        .allowMainThreadQueries()
+        .fallbackToDestructiveMigration()
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideNotificationDao(db: NotificationDatabase) = db.notificationDao()
 }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.bimabagaskhoro.taskappphincon.R
@@ -18,6 +19,7 @@ import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
@@ -31,6 +33,7 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
     private val binding get() = _binding
     private val viewModel: BuyDialogViewModel by viewModels()
     private val viewModelStock: AuthViewModel by viewModels()
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun getTheme(): Int {
         return R.style.NoBackgroundDialogTheme
@@ -97,7 +100,11 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
                 cardBuy.setOnClickListener {
                     val idProduct = data.id.toString()
                     val stockProduct = binding?.tvTotalNumber?.text.toString()
-                    doActionUpdate(idProduct, stockProduct.toInt())
+
+                    dataStoreViewModel.getUserId.observe(viewLifecycleOwner) {
+                        val idUser = it
+                        doActionUpdate(idProduct, stockProduct.toInt(), idUser.toString())
+                    }
                 }
             }
         }
@@ -105,12 +112,12 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
         setActionData()
     }
 
-    private fun doActionUpdate(idProduct: String, stockProduct: Int) {
+    private fun doActionUpdate(idProduct: String, stockProduct: Int, idUser: String) {
         viewModelStock.updateStock(
 //            "data_stock",
 //            (listOf(DataStockItem(idProduct, stockProduct)))
 //            "data_stock"
-            (listOf(DataStockItem(idProduct, stockProduct)))
+            (listOf(DataStockItem(idProduct, stockProduct))), idUser
         ).observe(viewLifecycleOwner) { results ->
             when (results) {
                 is Resource.Loading -> {

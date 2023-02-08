@@ -47,7 +47,6 @@ class LoginFragment : Fragment() {
         binding.apply {
             btnLogin.setOnClickListener {
                 onButtonPressed()
-                getTokenFcm()
             }
             btnSignup.setOnClickListener {
                 findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
@@ -56,14 +55,6 @@ class LoginFragment : Fragment() {
 
 
     }
-
-    private fun getTokenFcm() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            val token = task.result
-            Log.d("tokenFcm", "$token")
-        }
-    }
-
 
     private fun onButtonPressed() {
         val email = binding.edtEmail.text.toString().trim()
@@ -87,13 +78,17 @@ class LoginFragment : Fragment() {
 
                 binding.edtEmail.error = null
                 binding.edtPassword.error = null
-                initData(email, password)
+                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                    val tokenFcm = task.result
+                    Log.d("tokenFcm", tokenFcm)
+                    initData(email, password, tokenFcm)
+                }
             }
         }
     }
 
-    private fun initData(email: String, password: String) {
-        viewModel.login(email, password).observe(viewLifecycleOwner) {
+    private fun initData(email: String, password: String, tokenFcm: String) {
+        viewModel.login(email, password, tokenFcm).observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Loading -> {
                     binding.progressbar.visibility = View.VISIBLE

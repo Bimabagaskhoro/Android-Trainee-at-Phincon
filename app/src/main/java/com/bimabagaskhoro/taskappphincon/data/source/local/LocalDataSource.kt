@@ -1,12 +1,17 @@
 package com.bimabagaskhoro.taskappphincon.data.source.local
 
-import com.bimabagaskhoro.taskappphincon.data.source.local.db.CartDao
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.DataTrolley
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.notification.NotificationDao
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.trolley.CartDao
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.DataTrolley
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class LocalDataSource @Inject constructor(private val dao: CartDao) {
+class LocalDataSource @Inject constructor(
+    private val dao: CartDao,
+    private val notificationDao: NotificationDao
+) {
     suspend fun saveCart(cart: CartEntity) {
         dao.insertCart(cart)
     }
@@ -55,4 +60,20 @@ class LocalDataSource @Inject constructor(private val dao: CartDao) {
         return dao.getAllCheckedProduct()
     }
 
+
+    /**
+     * notification
+     */
+
+    suspend fun saveNotification(notification: NotificationEntity) {
+        notificationDao.insertNotification(notification)
+    }
+
+    fun getAllNotification(): Flow<List<NotificationEntity>> {
+        return notificationDao.getAllNotification()
+    }
+
+    fun countItemNotification(): Int {
+        return notificationDao.countItems()
+    }
 }

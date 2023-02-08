@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
 import com.bimabagaskhoro.taskappphincon.data.source.local.LocalDataSource
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.DataTrolley
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,4 +47,13 @@ class LocalViewModel @Inject constructor(
     }
 
     val getTrolleyChecked: LiveData<List<CartEntity>> = repository.getAllCheckedProductFromTrolly().asLiveData()
+
+    /**
+     * notification
+     */
+
+    val getAllNotification: LiveData<List<NotificationEntity>> = repository.getAllNotification().asLiveData()
+
+    val countAllNotification: Int = repository.countItemNotification()
+
 }

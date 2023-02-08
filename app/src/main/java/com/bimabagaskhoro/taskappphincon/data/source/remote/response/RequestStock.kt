@@ -6,15 +6,18 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class RequestStock(
-	@SerializedName("data_stock")
-	val data_stock: List<DataStockItem>
+    @SerializedName("id_user")
+    val id_user: String,
+
+    @SerializedName("data_stock")
+    val data_stock: List<DataStockItem>
 ) : Parcelable
 
 @Parcelize
 data class DataStockItem(
-	@SerializedName("id_product")
-	val id_product: String,
+    @SerializedName("id_product")
+    val id_product: String,
 
-	@SerializedName("stock")
-	val stock: Int
+    @SerializedName("stock")
+    val stock: Int
 ) : Parcelable

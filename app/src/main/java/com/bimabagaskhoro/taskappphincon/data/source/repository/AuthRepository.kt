@@ -24,7 +24,8 @@ interface AuthRepository {
 
     fun login(
         email: String,
-        password: String
+        password: String,
+        tokenFcm: String
     ): Flow<Resource<ResponseLogin>>
 
     fun register(

@@ -1,8 +1,6 @@
 package com.bimabagaskhoro.taskappphincon.ui.adapter
 
 import android.annotation.SuppressLint
-import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +8,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.cart.CartEntity
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
 import com.bimabagaskhoro.taskappphincon.databinding.ItemCartBinding
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bumptech.glide.Glide

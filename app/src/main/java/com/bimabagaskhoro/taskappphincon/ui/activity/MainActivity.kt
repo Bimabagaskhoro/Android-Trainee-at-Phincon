@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         setupWindow()
 
         val countBadges = roomViewModel.countAllCart
+        val countBadgesNotification = roomViewModel.countAllNotification
 
         binding.apply {
             if (countBadges == 0) {
@@ -55,8 +56,25 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this@MainActivity, CartActivity::class.java))
                 finish()
             }
+
+            /**
+             *
+             */
+            if (countBadgesNotification == 0) {
+                imgBadgesNotification.visibility = View.INVISIBLE
+                tvBadgesNotification.visibility = View.INVISIBLE
+            } else {
+                imgBadgesNotification.visibility = View.VISIBLE
+                tvBadgesNotification.visibility = View.VISIBLE
+                tvBadgesNotification.text = countBadgesNotification.toString()
+            }
+            icNotification.setOnClickListener {
+                startActivity(Intent(this@MainActivity, NotificationActivity::class.java))
+                finish()
+            }
         }
     }
+
     private fun setupWindow() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)

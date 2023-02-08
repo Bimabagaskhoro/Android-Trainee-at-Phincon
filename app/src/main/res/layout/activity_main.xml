@@ -62,6 +62,38 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="1" />
 
+                <ImageView
+                    android:id="@+id/ic_notification"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/ic_cart"
+                    app:layout_constraintEnd_toStartOf="@+id/ic_cart"
+                    app:layout_constraintTop_toTopOf="@+id/ic_cart"
+                    app:srcCompat="@drawable/ic_notifications" />
+
+
+                <ImageView
+                    android:id="@+id/img_badges_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/ic_notification"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_circle" />
+
+                <TextView
+                    android:id="@+id/tv_badges_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/poppinsbold"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_badges_notification"
+                    app:layout_constraintEnd_toEndOf="@+id/img_badges_notification"
+                    app:layout_constraintStart_toStartOf="@+id/img_badges_notification"
+                    app:layout_constraintTop_toTopOf="@+id/img_badges_notification"
+                    tools:text="1" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.appcompat.widget.Toolbar>

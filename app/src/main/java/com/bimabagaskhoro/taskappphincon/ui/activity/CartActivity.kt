@@ -137,16 +137,23 @@ class CartActivity : AppCompatActivity() {
         roomViewModel.getTrolleyChecked.observe(this@CartActivity) { result ->
             val dataStockItems = arrayListOf<DataStockItem>()
             val listOfProductId = arrayListOf<String>()
-            for (i in result.indices) {
-                dataStockItems.add(DataStockItem(result[i].id.toString(), result[i].quantity))
-                listOfProductId.add(result[i].id.toString())
+            dataStoreViewModel.getUserId.observe(this@CartActivity) {
+                val idUser = it
+                for (i in result.indices) {
+                    dataStockItems.add(DataStockItem(result[i].id.toString(), result[i].quantity))
+                    listOfProductId.add(result[i].id.toString())
+                }
+                buyProduct(idUser.toString(), dataStockItems, listOfProductId)
             }
-            buyProduct(dataStockItems, listOfProductId)
         }
     }
 
-    private fun buyProduct(requestBody: List<DataStockItem>, listOfProductId: ArrayList<String>) {
-        viewModel.updateStock(requestBody).observe(this@CartActivity) { todo ->
+    private fun buyProduct(
+        idUser: String,
+        requestBody: List<DataStockItem>,
+        listOfProductId: ArrayList<String>
+    ) {
+        viewModel.updateStock(requestBody, idUser).observe(this@CartActivity) { todo ->
             when (todo) {
                 is Resource.Loading -> {
                     binding.progressbar.visibility = View.VISIBLE
