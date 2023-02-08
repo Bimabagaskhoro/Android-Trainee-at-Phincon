@@ -21,6 +21,9 @@ data class NotificationEntity(
     val timestamp_notification: String = "",
 
     @ColumnInfo(name = "isRead")
-    val isRead: Boolean = false,
+    val isRead: Int = 0,
+
+    @ColumnInfo(name = "total_notification")
+    val total_notification: Int = 0
 
 )

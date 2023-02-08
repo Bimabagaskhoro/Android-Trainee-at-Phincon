@@ -76,4 +76,21 @@ class LocalDataSource @Inject constructor(
     fun countItemNotification(): Int {
         return notificationDao.countItems()
     }
+
+    fun getTotalNotification(): Int {
+        return notificationDao.getTotalNotification()
+    }
+
+    fun getTotalIsReadNotification(): Int {
+        return notificationDao.getTotalIsReadNotification()
+    }
+
+
+    fun updateTotalNotification(totalNotification: Int, id: Int): Int {
+        return notificationDao.updateTotalNotification(totalNotification, id)
+    }
+
+    fun isRead(state: Int, id: Int): Int {
+        return notificationDao.isRead(state, id)
+    }
 }

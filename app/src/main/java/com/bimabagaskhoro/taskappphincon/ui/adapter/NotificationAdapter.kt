@@ -1,19 +1,23 @@
 package com.bimabagaskhoro.taskappphincon.ui.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
 import com.bimabagaskhoro.taskappphincon.databinding.ItemNotificationBinding
 
+@Suppress("DEPRECATION")
 @SuppressLint("NotifyDataSetChanged")
-class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
+class NotificationAdapter(
+    private val onClicked: (NotificationEntity) -> Unit
+) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
     private var listData = ArrayList<NotificationEntity>()
-    var onItemClick: ((NotificationEntity) -> Unit)? = null
 
     fun setData(newListData: List<NotificationEntity>?) {
         if (newListData == null) return
@@ -42,13 +46,19 @@ class NotificationAdapter : RecyclerView.Adapter<NotificationAdapter.ViewHolder>
                 tvTittleNotif.text = data.tittle_notification
                 tvBodyNotif.text = data.body_notification
                 tvCalendarNotif.text = data.timestamp_notification
-            }
-        }
+                if (data.isRead == 1) {
+                    cardNotif.setBackgroundColor(
+                        Color.parseColor("#FFFFFF")
+                    )
+                } else if (data.isRead == 0) {
+                    cardNotif.setBackgroundColor(
+                        Color.parseColor("#A7CFFF")
+                    )
+                }
 
-        init {
-            binding.root.setOnClickListener {
-                itemView.setBackgroundColor(Color.BLUE)
-//                onItemClick?.invoke(listData[adapterPosition])
+                cardNotif.setOnClickListener {
+                    onClicked.invoke(listData[adapterPosition])
+                }
             }
         }
     }

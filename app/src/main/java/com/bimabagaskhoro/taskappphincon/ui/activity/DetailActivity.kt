@@ -30,6 +30,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_detail.view.*
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
@@ -37,7 +38,7 @@ import java.io.IOException
 import java.lang.Exception
 
 @AndroidEntryPoint
-class DetailActivity : AppCompatActivity() , ImageSliderAdapter.OnPageClickListener {
+class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListener {
     private lateinit var binding: ActivityDetailBinding
     private val viewModel: AuthViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
@@ -121,7 +122,11 @@ class DetailActivity : AppCompatActivity() , ImageSliderAdapter.OnPageClickListe
                                     tvType.text = data.type
                                     tvDesc.text = data.desc
 
-                                    cardImage.adapter = ImageSliderAdapter(this@DetailActivity, data.image_product , this@DetailActivity)
+                                    cardImage.adapter = ImageSliderAdapter(
+                                        this@DetailActivity,
+                                        data.image_product,
+                                        this@DetailActivity
+                                    )
                                     dotsIndicator.attachTo(cardImage)
 
                                     imgFavorite.isChecked = data.isFavorite
@@ -364,8 +369,19 @@ class DetailActivity : AppCompatActivity() , ImageSliderAdapter.OnPageClickListe
                     Log.d("getHistoryProduct", "isLoading")
                 }
                 is Resource.Success -> {
-                    adapter.setData(data.data!!.success.data.sortedBy { it.name_product })
-                    initRecyclerViewHistory()
+                    if (data.data!!.success.data.isNotEmpty()) {
+                        adapter.setData(data.data.success.data.sortedBy { it.name_product })
+                        initRecyclerViewHistory()
+                    } else if (data.data.success.data.isEmpty()) {
+                        binding.apply {
+                            viewHelper1.visibility = View.INVISIBLE
+                            viewHelper2.visibility = View.INVISIBLE
+                            rvOtherProduct.visibility = View.INVISIBLE
+                            rvHistoryProduct.visibility = View.INVISIBLE
+                            tvTittleSticky.visibility = View.INVISIBLE
+                            tvTittleSticky2.visibility = View.INVISIBLE
+                        }
+                    }
                 }
                 is Resource.Error -> {
                     try {
@@ -397,8 +413,19 @@ class DetailActivity : AppCompatActivity() , ImageSliderAdapter.OnPageClickListe
                     Log.d("getHistoryProduct", "isLoading")
                 }
                 is Resource.Success -> {
-                    adapter.setData(data.data!!.success.data.sortedBy { it.name_product })
-                    initRecyclerViewOther()
+                    if (data.data!!.success.data.isNotEmpty()) {
+                        adapter.setData(data.data.success.data.sortedBy { it.name_product })
+                        initRecyclerViewOther()
+                    } else if (data.data.success.data.isEmpty()) {
+                        binding.apply {
+                            viewHelper1.visibility = View.INVISIBLE
+                            viewHelper2.visibility = View.INVISIBLE
+                            rvOtherProduct.visibility = View.INVISIBLE
+                            rvHistoryProduct.visibility = View.INVISIBLE
+                            tvTittleSticky.visibility = View.INVISIBLE
+                            tvTittleSticky2.visibility = View.INVISIBLE
+                        }
+                    }
                 }
                 is Resource.Error -> {
                     try {

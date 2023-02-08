@@ -46,14 +46,29 @@ class LocalViewModel @Inject constructor(
         return repository.deleteCheckedTrolley()
     }
 
-    val getTrolleyChecked: LiveData<List<CartEntity>> = repository.getAllCheckedProductFromTrolly().asLiveData()
+    val getTrolleyChecked: LiveData<List<CartEntity>> =
+        repository.getAllCheckedProductFromTrolly().asLiveData()
 
     /**
      * notification
      */
 
-    val getAllNotification: LiveData<List<NotificationEntity>> = repository.getAllNotification().asLiveData()
+    val getAllNotification: LiveData<List<NotificationEntity>> =
+        repository.getAllNotification().asLiveData()
 
     val countAllNotification: Int = repository.countItemNotification()
+
+    fun getTotalNotification(): Int {
+        return repository.getTotalNotification()
+    }
+
+    fun getTotalIsReadNotification(): Int {
+        return repository.getTotalIsReadNotification()
+    }
+
+    fun updateTotalNotification(totalNotification: Int, id: Int): Int =
+        repository.updateTotalNotification(totalNotification, id)
+
+    fun isRead(state: Int, id: Int): Int = repository.isRead(state, id)
 
 }

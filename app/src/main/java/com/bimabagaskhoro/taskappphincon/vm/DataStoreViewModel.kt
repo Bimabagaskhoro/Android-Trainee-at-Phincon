@@ -65,6 +65,10 @@ class DataStoreViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) { dataPreference.saveTrolleyChecked(isChecked) }
     }
 
+    fun saveIsRead(isRead: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) { dataPreference.saveIsRead(isRead) }
+    }
+
     val isLoggedIn = dataPreference.isLoggedIn.asLiveData()
     val getToken = dataPreference.userToken
     val getRefreshToken = dataPreference.userRefreshToken
@@ -77,5 +81,6 @@ class DataStoreViewModel @Inject constructor(
     val getUserImage = dataPreference.userImage
     val getUserLanguage = dataPreference.userLanguage
     val getUserChecked = dataPreference.trolleyChecked
+    val getUserIsRead = dataPreference.isRead
 
 }

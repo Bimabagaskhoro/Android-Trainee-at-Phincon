@@ -209,6 +209,20 @@ class AuthPreferences @Inject constructor(@ApplicationContext context: Context) 
         }
     }
 
+    /**
+     * isRead
+     */
+    val isRead = dataStore.data.map { preferences ->
+        preferences[IS_READ] ?: false
+    }.distinctUntilChanged().asLiveData()
+
+    suspend fun saveIsRead(isRead: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[IS_READ] = isRead
+        }
+    }
+
+
     companion object {
         private val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         private val ACCESS_TOKEN = stringPreferencesKey("access_token")
@@ -222,6 +236,7 @@ class AuthPreferences @Inject constructor(@ApplicationContext context: Context) 
         private val USER_IMAGE = stringPreferencesKey("user_image")
         private val IS_LANGUAGE = stringPreferencesKey("is_language")
         private val IS_CHECKED = booleanPreferencesKey("is_checked")
+        private val IS_READ = booleanPreferencesKey("is_read")
     }
 
 }

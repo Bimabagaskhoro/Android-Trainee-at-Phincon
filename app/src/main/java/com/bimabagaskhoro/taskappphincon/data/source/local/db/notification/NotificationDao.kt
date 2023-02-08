@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
+import com.bimabagaskhoro.taskappphincon.utils.Constant
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.NOTIFICATION_TABLE
 import kotlinx.coroutines.flow.Flow
 
@@ -18,4 +19,16 @@ interface NotificationDao {
 
     @Query("SELECT COUNT(*) FROM $NOTIFICATION_TABLE")
     fun countItems(): Int
+
+    @Query("SELECT SUM(total_notification) FROM $NOTIFICATION_TABLE")
+    fun getTotalNotification(): Int
+
+    @Query("UPDATE $NOTIFICATION_TABLE SET total_notification = :total_notification WHERE id = :id")
+    fun updateTotalNotification(total_notification: Int, id: Int): Int
+
+    @Query("UPDATE $NOTIFICATION_TABLE SET isRead = :state WHERE id = :id")
+    fun isRead(state: Int, id: Int): Int
+
+    @Query("SELECT SUM(isRead) FROM $NOTIFICATION_TABLE")
+    fun getTotalIsReadNotification(): Int
 }

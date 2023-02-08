@@ -50,7 +50,9 @@ class FirebaseNotification : FirebaseMessagingService() {
                 0,
                 remoteMessage.notification!!.title.toString(),
                 remoteMessage.notification!!.body.toString(),
-                timeStamp
+                timeStamp,
+                0,
+                1
             )
         )
     }

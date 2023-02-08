@@ -41,8 +41,8 @@ class MainActivity : AppCompatActivity() {
         setupWindow()
 
         val countBadges = roomViewModel.countAllCart
-        val countBadgesNotification = roomViewModel.countAllNotification
-
+//        val countBadgesNotification = roomViewModel.countAllNotification
+        val countBadgesNotification = roomViewModel.getTotalNotification()
         binding.apply {
             if (countBadges == 0) {
                 imgBadges.visibility = View.INVISIBLE
