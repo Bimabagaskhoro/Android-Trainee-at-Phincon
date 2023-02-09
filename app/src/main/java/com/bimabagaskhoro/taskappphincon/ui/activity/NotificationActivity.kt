@@ -49,7 +49,7 @@ class NotificationActivity : AppCompatActivity() {
             }
             checkBoxNotification.setOnCheckedChangeListener { _, isChecked ->
                 if (!isChecked) {
-                    roomViewModel.checkAllNotification(0)
+//                    roomViewModel.checkAllNotification(0)
                     btnDelete.isClickable = false
                 } else if (isChecked) {
                     initCheckBox(isChecked)
@@ -65,18 +65,18 @@ class NotificationActivity : AppCompatActivity() {
                 checkAllNotification(1)
 //                updateCheckNotification(0, 1)
             }
-            binding.btnDelete.setOnClickListener {
-                AlertDialog.Builder(this)
-                    .setTitle("Delete")
-                    .setMessage("Are U Sure Wanna Clear All Notification")
-                    .setPositiveButton(R.string.ok) { _, _ ->
-                        roomViewModel.deleteNotification()
-                        val intent = Intent(this@NotificationActivity, MainActivity::class.java)
-                        startActivity(intent)
-                    }
-                    .show()
-                Log.d("afterdelete", "${roomViewModel.deleteNotification()}")
-            }
+//            binding.btnDelete.setOnClickListener {
+//                AlertDialog.Builder(this)
+//                    .setTitle("Delete")
+//                    .setMessage("Are U Sure Wanna Clear All Notification")
+//                    .setPositiveButton(R.string.ok) { _, _ ->
+//                        roomViewModel.deleteNotification()
+//                        val intent = Intent(this@NotificationActivity, MainActivity::class.java)
+//                        startActivity(intent)
+//                    }
+//                    .show()
+//                Log.d("afterdelete", "${roomViewModel.deleteNotification()}")
+//            }
         }
     }
 
@@ -102,7 +102,8 @@ class NotificationActivity : AppCompatActivity() {
                         .setTitle("Delete")
                         .setMessage("Are U Sure Wanna Delete This Notification")
                         .setPositiveButton(R.string.ok) { _, _ ->
-                            roomViewModel.deleteNotifications(id)
+//                            roomViewModel.deleteNotifications(id)
+                            roomViewModel.deleteNotification()
                         }
                         .show()
                 }

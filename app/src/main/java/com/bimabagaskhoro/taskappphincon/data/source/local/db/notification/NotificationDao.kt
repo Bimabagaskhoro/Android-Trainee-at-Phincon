@@ -45,7 +45,7 @@ interface NotificationDao {
     @Query("SELECT * FROM $NOTIFICATION_TABLE WHERE is_check = 1")
     fun getAllCheckedNotification(): Flow<List<NotificationEntity>>
 
-    @Query("UPDATE $NOTIFICATION_TABLE SET is_check = :state")
+    @Query("UPDATE $NOTIFICATION_TABLE SET isRead = :state")
     fun checkAllNotification(state: Int) : Int
 
     @Query("UPDATE $NOTIFICATION_TABLE SET is_state = :state")

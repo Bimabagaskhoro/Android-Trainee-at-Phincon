@@ -372,16 +372,17 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                     if (data.data!!.success.data.isNotEmpty()) {
                         adapter.setData(data.data.success.data.sortedBy { it.name_product })
                         initRecyclerViewHistory()
-                    } else if (data.data.success.data.isEmpty()) {
-                        binding.apply {
-                            viewHelper1.visibility = View.INVISIBLE
-                            viewHelper2.visibility = View.INVISIBLE
-                            rvOtherProduct.visibility = View.INVISIBLE
-                            rvHistoryProduct.visibility = View.INVISIBLE
-                            tvTittleSticky.visibility = View.INVISIBLE
-                            tvTittleSticky2.visibility = View.INVISIBLE
-                        }
                     }
+//                    else if (data.data.success.data.isEmpty()) {
+//                        binding.apply {
+//                            viewHelper1.visibility = View.INVISIBLE
+//                            viewHelper2.visibility = View.INVISIBLE
+//                            rvOtherProduct.visibility = View.INVISIBLE
+//                            rvHistoryProduct.visibility = View.INVISIBLE
+//                            tvTittleSticky.visibility = View.INVISIBLE
+//                            tvTittleSticky2.visibility = View.INVISIBLE
+//                        }
+//                    }
                 }
                 is Resource.Error -> {
                     try {
@@ -416,16 +417,17 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                     if (data.data!!.success.data.isNotEmpty()) {
                         adapter.setData(data.data.success.data.sortedBy { it.name_product })
                         initRecyclerViewOther()
-                    } else if (data.data.success.data.isEmpty()) {
-                        binding.apply {
-                            viewHelper1.visibility = View.INVISIBLE
-                            viewHelper2.visibility = View.INVISIBLE
-                            rvOtherProduct.visibility = View.INVISIBLE
-                            rvHistoryProduct.visibility = View.INVISIBLE
-                            tvTittleSticky.visibility = View.INVISIBLE
-                            tvTittleSticky2.visibility = View.INVISIBLE
-                        }
                     }
+//                    else if (data.data.success.data.isEmpty()) {
+//                        binding.apply {
+//                            viewHelper1.visibility = View.INVISIBLE
+//                            viewHelper2.visibility = View.INVISIBLE
+//                            rvOtherProduct.visibility = View.INVISIBLE
+//                            rvHistoryProduct.visibility = View.INVISIBLE
+//                            tvTittleSticky.visibility = View.INVISIBLE
+//                            tvTittleSticky2.visibility = View.INVISIBLE
+//                        }
+//                    }
                 }
                 is Resource.Error -> {
                     try {
