@@ -93,4 +93,28 @@ class LocalDataSource @Inject constructor(
     fun isRead(state: Int, id: Int): Int {
         return notificationDao.isRead(state, id)
     }
+
+    fun deleteNotification(): Int {
+        return notificationDao.deleteNotification()
+    }
+
+    fun getAllCheckedNotification(): Flow<List<NotificationEntity>> {
+        return notificationDao.getAllCheckedNotification()
+    }
+
+    fun updateCheckNotification(id: Int, state: Int): Int {
+        return notificationDao.updateCheckNotification(id, state)
+    }
+
+    fun checkAllNotification(state: Int): Int {
+        return notificationDao.checkAllNotification(state)
+    }
+
+    fun viewCheckBoxAnimation(state: Int): Int {
+        return notificationDao.viewCheckBoxAnimation(state)
+    }
+
+    suspend fun deleteNotification(id: Int) {
+        notificationDao.deleteNotification(id)
+    }
 }

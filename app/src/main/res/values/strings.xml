@@ -69,4 +69,5 @@
     <string name="history_product">History</string>
     <string name="tittle">Tittle</string>
     <string name="notification">Notification</string>
+    <string name="multiple_select">Multiple Select</string>
 </resources>

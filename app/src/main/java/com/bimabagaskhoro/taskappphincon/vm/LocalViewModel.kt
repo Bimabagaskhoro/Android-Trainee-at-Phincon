@@ -71,4 +71,20 @@ class LocalViewModel @Inject constructor(
 
     fun isRead(state: Int, id: Int): Int = repository.isRead(state, id)
 
+    fun deleteNotification(): Int? {
+        return repository.deleteNotification()
+    }
+
+    val getAllCheckedNotification: LiveData<List<NotificationEntity>> =
+        repository.getAllCheckedNotification().asLiveData()
+
+    fun updateCheckNotification(id: Int, state: Int): Int = repository.updateCheckNotification(id, state)
+
+    fun checkAllNotification(state: Int): Int = repository.checkAllNotification(state)
+
+    fun viewCheckBoxAnimation(state: Int): Int = repository.viewCheckBoxAnimation(state)
+
+    fun deleteNotifications(id: Int) = viewModelScope.launch(Dispatchers.IO) { repository.deleteNotification(id) }
+
+
 }

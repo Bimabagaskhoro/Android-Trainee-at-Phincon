@@ -24,6 +24,11 @@ data class NotificationEntity(
     val isRead: Int = 0,
 
     @ColumnInfo(name = "total_notification")
-    val total_notification: Int = 0
+    val total_notification: Int = 0,
 
+    @ColumnInfo(name = "is_check")
+    var isCheck: Int = 0,
+
+    @ColumnInfo(name = "is_state")
+    var isState: Int = 0,
 )

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
 import com.bimabagaskhoro.taskappphincon.utils.Constant
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.NOTIFICATION_TABLE
@@ -31,4 +32,25 @@ interface NotificationDao {
 
     @Query("SELECT SUM(isRead) FROM $NOTIFICATION_TABLE")
     fun getTotalIsReadNotification(): Int
+
+    /**
+     *
+     */
+    @Query("DELETE FROM $NOTIFICATION_TABLE WHERE is_check = 1")
+    fun deleteNotification() : Int
+
+    @Query("UPDATE $NOTIFICATION_TABLE SET is_check = :state WHERE id = :id")
+    fun updateCheckNotification(id: Int, state : Int): Int
+
+    @Query("SELECT * FROM $NOTIFICATION_TABLE WHERE is_check = 1")
+    fun getAllCheckedNotification(): Flow<List<NotificationEntity>>
+
+    @Query("UPDATE $NOTIFICATION_TABLE SET is_check = :state")
+    fun checkAllNotification(state: Int) : Int
+
+    @Query("UPDATE $NOTIFICATION_TABLE SET is_state = :state")
+    fun viewCheckBoxAnimation(state : Int): Int
+
+    @Query("DELETE FROM $NOTIFICATION_TABLE WHERE id = :id")
+    suspend fun deleteNotification(id: Int)
 }

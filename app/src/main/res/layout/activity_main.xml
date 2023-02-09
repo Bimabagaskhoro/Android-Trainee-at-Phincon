@@ -53,9 +53,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:textSize="11sp"
                     android:fontFamily="@font/poppinsbold"
                     android:textColor="@color/white"
+                    android:textSize="11sp"
                     app:layout_constraintBottom_toBottomOf="@+id/img_badges"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/img_badges"
@@ -113,8 +113,10 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:layout_alignParentBottom="true"
+        android:background="@color/background_pink"
+        app:itemIconTint="@drawable/item_tint"
         app:menu="@menu/bottom_navigation" />
 
 </RelativeLayout>
