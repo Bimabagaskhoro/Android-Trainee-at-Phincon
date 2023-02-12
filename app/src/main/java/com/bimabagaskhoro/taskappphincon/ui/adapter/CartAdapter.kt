@@ -58,11 +58,11 @@ class CartAdapter(
                     .into(imgProduct)
                 tvTittleProduct.isSelected = true
                 tvTittleProduct.text = data.name_product
-                tvPriceProduct.text = data.harga.formatterIdr()
+                tvPriceProduct.text = data.harga?.formatterIdr()
                 tvTotalNumber.text = data.quantity.toString()
 
                 btnDelete.setOnClickListener {
-                    onDeleteItem(data.id)
+                    data.id?.let { it1 -> onDeleteItem(it1) }
                 }
 
                 addFragmentDialog.setOnClickListener {

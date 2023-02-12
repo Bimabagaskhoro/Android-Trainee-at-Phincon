@@ -7,5 +7,5 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class RequestRating(
 	@SerializedName("rate")
-	val rate: String
+	val rate: String? = null
 ) : Parcelable

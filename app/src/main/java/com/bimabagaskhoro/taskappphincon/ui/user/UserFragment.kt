@@ -277,8 +277,8 @@ class UserFragment : Fragment() {
                             binding.progressbar.visibility = View.GONE
                             binding.cardProgressbar.visibility = View.GONE
                             binding.tvWaiting.visibility = View.GONE
-                            saveUpdateImagePath(result.data!!.success)
-                            val dataMessages = result.data!!.success.message
+                            result.data?.success?.let { saveUpdateImagePath(it) }
+                            val dataMessages = result.data?.success?.message
                             AlertDialog.Builder(requireActivity())
                                 .setTitle("Change Image Success")
                                 .setMessage(dataMessages)
@@ -321,7 +321,7 @@ class UserFragment : Fragment() {
     private fun saveUpdateImagePath(data: SuccessImage) {
         val path = data.path
         dataStoreViewModel.apply {
-            saveUserPath(path)
+            path?.let { saveUserPath(it) }
         }
     }
 

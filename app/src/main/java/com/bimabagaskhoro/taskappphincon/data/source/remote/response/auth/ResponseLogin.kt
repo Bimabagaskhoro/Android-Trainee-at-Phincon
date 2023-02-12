@@ -14,42 +14,42 @@ data class ResponseLogin(
 data class SuccessLogin(
 
     @SerializedName("access_token")
-    val access_token: String,
+    val access_token: String? = null,
 
     @SerializedName("refresh_token")
-    val refresh_token: String,
+    val refresh_token: String? = null,
 
     @SerializedName("data_user")
     val data_user: DataUser,
 
     @SerializedName("message")
-    val message: String,
+    val message: String? = null,
 
     @SerializedName("status")
-    val status: Int
+    val status: Int? = null
 ) : Parcelable
 
 @Parcelize
 data class DataUser(
 
     @SerializedName("image")
-    val image: String,
+    val image: String? = null,
 
     @SerializedName("path")
-    val path: String,
+    val path: String? = null,
 
     @SerializedName("gender")
-    val gender: Int,
+    val gender: Int? = null,
 
     @SerializedName("phone")
-    val phone: String,
+    val phone: String? = null,
 
     @SerializedName("name")
-    val name: String,
+    val name: String? = null,
 
     @SerializedName("id")
-    val id: Int,
+    val id: Int? = null,
 
     @SerializedName("email")
-    val email: String
+    val email: String? = null
 ) : Parcelable

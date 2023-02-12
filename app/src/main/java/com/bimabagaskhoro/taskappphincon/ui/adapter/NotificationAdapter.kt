@@ -1,15 +1,10 @@
 package com.bimabagaskhoro.taskappphincon.ui.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
-import android.view.animation.AnimationUtils
-import android.view.animation.ScaleAnimation
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity

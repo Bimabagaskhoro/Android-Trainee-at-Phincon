@@ -41,7 +41,7 @@ class ImageSliderAdapter(
         tvItemImgTitle.text = imgList[position].title_product
 
         itemView.setOnClickListener {
-            listener.onClick(imgList[position].image_product)
+            imgList[position].image_product?.let { it1 -> listener.onClick(it1) }
         }
 
 

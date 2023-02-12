@@ -35,7 +35,7 @@ class LoginFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
@@ -99,8 +99,8 @@ class LoginFragment : Fragment() {
                     binding.progressbar.visibility = View.GONE
                     binding.cardProgressbar.visibility = View.GONE
                     binding.tvWaiting.visibility = View.GONE
-                    saveUserData(it.data!!.success)
-                    val dataLog = it.data!!.success
+                    it.data?.success?.let { it1 -> saveUserData(it1) }
+                    val dataLog = it.data?.success
                     Log.d("datas", "$dataLog")
                     Intent(requireContext(), MainActivity::class.java).also { intent ->
                         startActivity(intent)
@@ -139,15 +139,15 @@ class LoginFragment : Fragment() {
 
         dataStoreViewModel.apply {
             isLogin(isLoggedIn)
-            saveToken(accessToken)
-            saveRefreshToken(refreshToken)
-            saveUserId(userId)
-            saveUserEmail(userEmail)
-            saveUserName(username)
-            saveUserGender(gender)
-            saveUserPhone(phone)
-            saveUserPath(path)
-            saveUserPhoto(image)
+            accessToken?.let { saveToken(it) }
+            refreshToken?.let { saveRefreshToken(it) }
+            userId?.let { saveUserId(it) }
+            userEmail?.let { saveUserEmail(it) }
+            username?.let { saveUserName(it) }
+            gender?.let { saveUserGender(it) }
+            phone?.let { saveUserPhone(it) }
+            path?.let { saveUserPath(it) }
+            image?.let { saveUserPhoto(it) }
         }
     }
 

@@ -63,7 +63,6 @@
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout2"
         android:visibility="gone"
@@ -117,10 +116,11 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_delete" />
 
-                <CheckBox
+                <ImageView
                     android:id="@+id/check_box_notification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_delete"
                     app:layout_constraintTop_toTopOf="parent"

@@ -15,37 +15,37 @@ data class ResponseProduct(
 data class DataItemProduct(
 
     @SerializedName("id")
-    val id: Int,
+    val id: Int? = null,
 
     @SerializedName("date")
-    val date: String,
+    val date: String? = null,
 
     @SerializedName("image")
-    val image: String,
+    val image: String? = null,
 
     @SerializedName("name_product")
-    val name_product: String,
+    val name_product: String? = null,
 
     @SerializedName("harga")
-    val harga: String,
+    val harga: String? = null,
 
     @SerializedName("size")
-    val size: String,
+    val size: String? = null,
 
     @SerializedName("rate")
-    val rate: Int,
+    val rate: Int? = null,
 
     @SerializedName("weight")
-    val weight: String,
+    val weight: String? = null,
 
     @SerializedName("stock")
-    val stock: Int,
+    val stock: Int? = null,
 
     @SerializedName("type")
-    val type: String,
+    val type: String? = null,
 
     @SerializedName("desc")
-    val desc: String
+    val desc: String? = null
 ) : Parcelable
 
 @Parcelize
@@ -55,12 +55,12 @@ data class Success(
     val data: List<DataItemProduct>,
 
     @SerializedName("message")
-    val message: String,
+    val message: String? = null,
 
     @SerializedName("status")
-    val status: Int,
+    val status: Int? = null,
 
     @SerializedName("total_row")
-    val total_row : Int
+    val total_row : Int? = null
 
 ) : Parcelable

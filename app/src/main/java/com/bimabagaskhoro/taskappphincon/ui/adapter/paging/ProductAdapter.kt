@@ -1,7 +1,5 @@
 package com.bimabagaskhoro.taskappphincon.ui.adapter.paging
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,9 +44,9 @@ class ProductAdapter :
                     .placeholder(R.drawable.ic_broken_image)
                     .into(imgProduct)
                 tvTittleProduct.text = data.name_product
-                tvPriceProduct.text = data.harga.formatterIdr()
-                tvDateProduct.text = formatDate(data.date)
-                ratingBar.rating = data.rate.toFloat()
+                tvPriceProduct.text = data.harga?.formatterIdr()
+                tvDateProduct.text = data.date?.let { formatDate(it) }
+                ratingBar.rating = data.rate?.toFloat()!!
                 imgBtnFavorite.visibility = View.INVISIBLE
             }
         }

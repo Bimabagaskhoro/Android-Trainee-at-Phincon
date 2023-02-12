@@ -6,13 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.DataItemFavorite
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.product.DataItemProduct
 import com.bimabagaskhoro.taskappphincon.databinding.ItemProductBinding
 import com.bimabagaskhoro.taskappphincon.utils.formatDate
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bumptech.glide.Glide
 
+@Suppress("DEPRECATION")
 @SuppressLint("NotifyDataSetChanged")
 class ProductHistoryAdapter : RecyclerView.Adapter<ProductHistoryAdapter.ViewHolder>() {
     private var listData = ArrayList<DataItemProduct>()
@@ -47,9 +47,9 @@ class ProductHistoryAdapter : RecyclerView.Adapter<ProductHistoryAdapter.ViewHol
                     .placeholder(R.drawable.ic_broken_image)
                     .into(imgProduct)
                 tvTittleProduct.text = data.name_product
-                tvPriceProduct.text = data.harga.formatterIdr()
-                tvDateProduct.text = formatDate(data.date)
-                ratingBar.rating = data.rate.toFloat()
+                tvPriceProduct.text = data.harga?.formatterIdr()
+                tvDateProduct.text = data.date?.let { formatDate(it) }
+                ratingBar.rating = data.rate?.toFloat()!!
                 imgBtnFavorite.visibility = View.INVISIBLE
             }
         }

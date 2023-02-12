@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.bimabagaskhoro.taskappphincon.R
@@ -57,7 +56,7 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
                 .load(data.image)
                 .into(this!!.imgDialog)
 
-            tvPriceFragmentDialog.text = data.harga.formatterIdr()
+            tvPriceFragmentDialog.text = data.harga?.formatterIdr()
             tvStockFragmentDialog.text = data.stock.toString()
 
             if (data.stock == 1) {
@@ -80,7 +79,7 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
             }
         }
 
-        viewModel.setPrice(data.harga.toInt())
+        data.harga?.toInt()?.let { viewModel.setPrice(it) }
 
         viewModel.price.observe(requireActivity()) { data ->
             binding?.tvTotalPrice?.text = data.toString().formatterIdr()
@@ -126,7 +125,6 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
                     val intent = Intent(context, OnSuccessActivity::class.java)
                     intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, data.id)
                     startActivity(intent)
-                    Log.d("Teststockkkkkkk", "doActionUpdate: ")
                 }
                 is Resource.Error -> {
                     try {

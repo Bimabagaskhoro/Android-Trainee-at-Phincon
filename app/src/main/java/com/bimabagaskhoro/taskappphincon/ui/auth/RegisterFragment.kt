@@ -1,6 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.ui.auth
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
@@ -49,7 +50,6 @@ import java.io.File
 class RegisterFragment : Fragment() {
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
-    private val TAG = RegisterFragment::class.java.simpleName
     private var getFile: File? = null
     private lateinit var result: Bitmap
     private val viewModel: AuthViewModel by viewModels()
@@ -202,7 +202,7 @@ class RegisterFragment : Fragment() {
                             binding.progressbar.visibility = View.GONE
                             binding.cardProgressbar.visibility = View.GONE
                             binding.tvWaiting.visibility = View.GONE
-                            val dataMessages = it.data!!.success.message
+                            val dataMessages = it.data?.success?.message
                             AlertDialog.Builder(requireActivity())
                                 .setTitle("Register Success")
                                 .setMessage(dataMessages)
@@ -227,7 +227,7 @@ class RegisterFragment : Fragment() {
                                 .setPositiveButton("Ok") { _, _ ->
                                 }
                                 .show()
-                            val errCode = it.errorCode!!.toInt()
+                            val errCode = it.errorCode
                             Log.d("errorCode", "$errCode")
 
                             //Toast.makeText(requireActivity(), errorResponse.error.message, Toast.LENGTH_SHORT).show()
@@ -240,6 +240,7 @@ class RegisterFragment : Fragment() {
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun initDialog() {
         val dialogBinding = layoutInflater.inflate(R.layout.custom_dialog_camera, null)
         val mDialog = Dialog(requireActivity())
@@ -276,7 +277,7 @@ class RegisterFragment : Fragment() {
         if (password != matchPassword) {
             Toast.makeText(context, "Password tidak sama", Toast.LENGTH_LONG).show()
         } else {
-            Log.d(TAG, "password: success")
+            Log.d("checkMatchPassword", "password: success")
         }
     }
 

@@ -7,10 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityPasswordBinding
 import com.bimabagaskhoro.taskappphincon.utils.Resource

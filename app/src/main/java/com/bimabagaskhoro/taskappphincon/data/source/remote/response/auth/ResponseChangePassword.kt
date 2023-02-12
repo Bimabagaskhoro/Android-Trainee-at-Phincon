@@ -13,8 +13,8 @@ data class ResponseChangePassword(
 @Parcelize
 data class SuccessPassword(
     @SerializedName("message")
-    val message: String,
+    val message: String? = null,
 
     @SerializedName("status")
-    val status: Int
+    val status: Int? = null
 ) : Parcelable

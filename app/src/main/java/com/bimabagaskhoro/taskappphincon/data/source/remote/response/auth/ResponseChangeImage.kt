@@ -13,11 +13,11 @@ data class ResponseChangeImage(
 @Parcelize
 data class SuccessImage(
     @SerializedName("path")
-    val path: String,
+    val path: String? = null,
 
     @SerializedName("message")
-    val message: String,
+    val message: String? = null,
 
     @SerializedName("status")
-    val status: Int
+    val status: Int? = null
 ) : Parcelable

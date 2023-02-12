@@ -10,7 +10,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityMainBinding
-import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment)
-        val appBarConfiguration = AppBarConfiguration(
+        AppBarConfiguration(
             setOf(
                 R.id.navigation_home, R.id.navigation_fav, R.id.navigation_user
             )

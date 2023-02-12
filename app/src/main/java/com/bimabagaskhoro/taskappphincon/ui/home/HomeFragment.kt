@@ -39,10 +39,10 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initSearchingKey()
         initRecyclerView()
         setViewModel(null)
         initSwipeRefresh()
+        initSearchingKey()
     }
 
     private fun initSearchingKey() {
@@ -53,6 +53,7 @@ class HomeFragment : Fragment() {
             }
 
             override fun onQueryTextChange(q: String): Boolean {
+                hideKeyboard(requireActivity())
                 viewModel.onSearch(q)
                 setViewModel(q)
                 return true

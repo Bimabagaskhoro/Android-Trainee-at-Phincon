@@ -13,14 +13,14 @@ data class ResponseRefreshToken(
 @Parcelize
 data class SuccessRefreshToken(
     @SerializedName("access_token")
-    val access_token: String,
+    val access_token: String? = null,
 
     @SerializedName("refresh_token")
-    val refresh_token: String,
+    val refresh_token: String? = null,
 
     @SerializedName("message")
-    val message: String,
+    val message: String? = null,
 
     @SerializedName("status")
-    val status: Int
+    val status: Int? = null
 ) : Parcelable

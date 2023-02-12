@@ -38,12 +38,11 @@ class FavoriteFragment : Fragment() {
 
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
     private var searchJob: Job? = null
-    private var queryString: String? = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         return binding.root
@@ -57,7 +56,7 @@ class FavoriteFragment : Fragment() {
             initSearchingKey(idUser)
             binding.swipeRefresh.setOnRefreshListener {
                 initSearchingKey(idUser)
-                setData(null, idUser, 0)
+                viewModel.onRefresh()
                 binding.progressBar.visibility = View.VISIBLE
                 binding.edtSearch.setQuery("", false)
                 binding.edtSearch.clearFocus()
@@ -66,7 +65,7 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun initSearchingKey(idUser: Int?) {
-        setData(queryString, idUser!!, 0)
+        idUser?.let { setData(null, it, 0) }
         binding.edtSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 hideKeyboard(requireActivity())
@@ -79,35 +78,37 @@ class FavoriteFragment : Fragment() {
                     q?.let {
                         delay(2000)
                         if (q.isEmpty() || q.toString() == "") {
-                            setData("", idUser, 0)
+                            idUser?.let { it1 -> setData("", it1, 0) }
                         } else {
-                            setData(q, idUser, 0)
+                            idUser?.let { it1 -> setData(q, it1, 0) }
                         }
                     }
                 }
+//                viewModel.onSearchFav(q)
                 return false
             }
         })
         binding.apply {
             fabShorting.setOnClickListener {
-                showFilterDialog(idUser)
+                idUser?.let { it1 -> showFilterDialog(it1) }
             }
         }
     }
 
     private fun setData(q: String?, idUser: Int, i: Int?) {
         if (q.toString().isNotEmpty()) {
-            queryString = q.toString()
             viewModel.getFavProduct(idUser, q).observe(viewLifecycleOwner) { data ->
                 when (data) {
                     is Resource.Loading -> {
                         binding.apply {
                             progressBar.visibility = View.VISIBLE
                             fabShorting.visibility = View.GONE
+                            rvProduct.visibility = View.GONE
+                            binding.viewEmptyData.root.visibility = View.GONE
                         }
                     }
                     is Resource.Success -> {
-                        if (data.data!!.success.data.isNotEmpty()) {
+                        if (data.data?.success?.data?.isNotEmpty() == true) {
                             binding.rvProduct.visibility = View.VISIBLE
                             binding.fabShorting.visibility = View.VISIBLE
                             binding.swipeRefresh.isRefreshing = false
@@ -150,14 +151,18 @@ class FavoriteFragment : Fragment() {
                 }
             }
         } else {
-            viewModel.getFavProduct(idUser).observe(viewLifecycleOwner) { data ->
+            viewModel.getFavProduct(idUser, null).observe(viewLifecycleOwner) { data ->
                 when (data) {
                     is Resource.Loading -> {
-                        binding.progressBar.visibility = View.VISIBLE
-                        binding.fabShorting.visibility = View.GONE
+                        binding.apply {
+                            progressBar.visibility = View.VISIBLE
+                            fabShorting.visibility = View.GONE
+                            rvProduct.visibility = View.GONE
+                            binding.viewEmptyData.root.visibility = View.GONE
+                        }
                     }
                     is Resource.Success -> {
-                        if (data.data!!.success.data.isNotEmpty()) {
+                        if (data.data?.success?.data?.isNotEmpty() == true) {
                             binding.rvProduct.visibility = View.VISIBLE
                             binding.fabShorting.visibility = View.VISIBLE
                             binding.viewEmptyData.root.visibility = View.GONE
@@ -224,19 +229,19 @@ class FavoriteFragment : Fragment() {
         MaterialAlertDialogBuilder(requireActivity()).setTitle(resources.getString(R.string.sort_by))
             .setSingleChoiceItems(options, -1) { _, which ->
                 selectedOption = options[which]
-            }.setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+            }.setPositiveButton(resources.getString(R.string.ok)) { _, _ ->
                 when (selectedOption) {
                     options[0] -> {
-                        setData(queryString, idUser, 1)
+                        setData(null, idUser, 1)
                     }
                     options[1] -> {
-                        setData(queryString, idUser, 2)
+                        setData(null, idUser, 2)
                     }
                     else -> {
-                        setData(queryString, idUser, 0)
+                        setData(null, idUser, 0)
                     }
                 }
-            }.setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+            }.setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }.show()
     }

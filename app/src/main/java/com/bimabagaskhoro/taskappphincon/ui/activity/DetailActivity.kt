@@ -30,7 +30,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_detail.view.*
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
@@ -46,7 +45,6 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
     private var idProduct: Int? = null
     private lateinit var adapter: ProductHistoryAdapter
     private lateinit var seePhoto: PhotoViewFragment
-    private lateinit var imageSliderAdapter: ImageSliderAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,93 +88,106 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         dataStoreViewModel.apply {
             getUserId.observe(this@DetailActivity) {
                 val userId = it
-                viewModel.getDetail(idProduct!!.toInt(), userId)
-                    .observe(this@DetailActivity) { results ->
-                        when (results) {
-                            is Resource.Loading -> {
-                                binding.apply {
-                                    progressBar.visibility = View.VISIBLE
-                                    toolbar.visibility = View.GONE
-                                    layBtn.visibility = View.GONE
-                                    swipeRefresh.visibility = View.GONE
-                                }
-                            }
-                            is Resource.Success -> {
-                                val data = results.data!!.success.data
-                                binding.apply {
-                                    progressBar.visibility = View.GONE
-                                    swipeRefresh.isRefreshing = false
-                                    toolbar.visibility = View.VISIBLE
-                                    layBtn.visibility = View.VISIBLE
-                                    swipeRefresh.visibility = View.VISIBLE
-
-                                    tvNameDetail.isSelected = true
-                                    tvNameDetail.text = data.name_product
-                                    tvTittle.isSelected = true
-                                    tvTittle.text = data.name_product
-                                    ratingBar.rating = data.rate.toFloat()
-                                    tvPrice.text = data.harga.formatterIdr()
-                                    tvStock.text = data.stock.toString()
-                                    tvSize.text = data.size
-                                    tvWeight.text = data.weight
-                                    tvType.text = data.type
-                                    tvDesc.text = data.desc
-
-                                    cardImage.adapter = ImageSliderAdapter(
-                                        this@DetailActivity,
-                                        data.image_product,
-                                        this@DetailActivity
-                                    )
-                                    dotsIndicator.attachTo(cardImage)
-
-                                    imgFavorite.isChecked = data.isFavorite
-
-                                    if (data.stock == 1) {
-                                        tvStock.text = getString(R.string.out_stock)
+                idProduct?.let { it1 ->
+                    viewModel.getDetail(it1, userId)
+                        .observe(this@DetailActivity) { results ->
+                            when (results) {
+                                is Resource.Loading -> {
+                                    binding.apply {
+                                        progressBar.visibility = View.VISIBLE
+                                        toolbar.visibility = View.GONE
+                                        layBtn.visibility = View.GONE
+                                        swipeRefresh.visibility = View.GONE
                                     }
+                                }
+                                is Resource.Success -> {
+                                    val data = results.data?.success?.data
+                                    binding.apply {
+                                        progressBar.visibility = View.GONE
+                                        swipeRefresh.isRefreshing = false
+                                        toolbar.visibility = View.VISIBLE
+                                        layBtn.visibility = View.VISIBLE
+                                        swipeRefresh.visibility = View.VISIBLE
 
-                                    btnShare.setOnClickListener {
-                                        shareDeepLink(
-                                            data.image,
-                                            data.name_product,
-                                            data.stock.toString(),
-                                            data.weight,
-                                            data.size,
-                                            "https://bimabk.com/deeplink?id=${data.id}"
+                                        tvNameDetail.isSelected = true
+                                        tvNameDetail.text = data?.name_product
+                                        tvTittle.isSelected = true
+                                        tvTittle.text = data?.name_product
+                                        ratingBar.rating = data?.rate?.toFloat()!!
+                                        tvPrice.text = data.harga?.formatterIdr()
+                                        tvStock.text = data.stock.toString()
+                                        tvSize.text = data.size
+                                        tvWeight.text = data.weight
+                                        tvType.text = data.type
+                                        tvDesc.text = data.desc
+
+                                        cardImage.adapter = ImageSliderAdapter(
+                                            this@DetailActivity,
+                                            data.image_product,
+                                            this@DetailActivity
                                         )
+                                        dotsIndicator.attachTo(cardImage)
+
+                                        imgFavorite.isChecked = data.isFavorite
+
+                                        if (data.stock == 1) {
+                                            tvStock.text = getString(R.string.out_stock)
+                                        }
+
+                                        btnShare.setOnClickListener {
+                                            data.image?.let { it2 ->
+                                                data.name_product?.let { it3 ->
+                                                    data.weight?.let { it4 ->
+                                                        data.size?.let { it5 ->
+                                                            shareDeepLink(
+                                                                it2,
+                                                                it3,
+                                                                data.stock.toString(),
+                                                                it4,
+                                                                it5,
+                                                                "https://bimabk.com/deeplink?id=${data.id}"
+                                                            )
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    binding.btnCart.setOnClickListener {
+                                        results.data?.success?.data?.let { it2 -> doActionCart(it2) }
+                                    }
+                                    results.data?.success?.data?.let { it2 ->
+                                        initFavorite(userId,
+                                            it2, productId)
+                                    }
+                                    results.data?.success?.data?.let { it2 -> setActionDialog(it2) }
+                                }
+                                is Resource.Error -> {
+                                    binding.progressBar.visibility = View.GONE
+                                    try {
+                                        val err =
+                                            results.errorBody?.string()
+                                                ?.let { it1 -> JSONObject(it1).toString() }
+                                        val gson = Gson()
+                                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                                        val errorResponse =
+                                            gson.fromJson(jsonObject, ResponseError::class.java)
+                                        val messageErr = errorResponse.error.message
+                                        AlertDialog.Builder(this@DetailActivity).setTitle("Failed")
+                                            .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
+                                            }.show()
+                                    } catch (e: Exception) {
+                                        val err = results.errorCode
+                                        Log.d("ErrorCode", "$err")
                                     }
                                 }
-                                binding.btnCart.setOnClickListener {
-                                    doActionCart(results.data.success.data)
+                                is Resource.Empty -> {
+                                    binding.progressBar.visibility = View.GONE
+                                    Log.d("DetailActivity", "Empty Data")
                                 }
-                                initFavorite(userId, results.data.success.data, productId)
-                                setActionDialog(results.data.success.data)
-                            }
-                            is Resource.Error -> {
-                                binding.progressBar.visibility = View.GONE
-                                try {
-                                    val err =
-                                        results.errorBody?.string()
-                                            ?.let { it1 -> JSONObject(it1).toString() }
-                                    val gson = Gson()
-                                    val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                                    val errorResponse =
-                                        gson.fromJson(jsonObject, ResponseError::class.java)
-                                    val messageErr = errorResponse.error.message
-                                    AlertDialog.Builder(this@DetailActivity).setTitle("Failed")
-                                        .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
-                                        }.show()
-                                } catch (e: java.lang.Exception) {
-                                    val err = results.errorCode
-                                    Log.d("ErrorCode", "$err")
-                                }
-                            }
-                            is Resource.Empty -> {
-                                binding.progressBar.visibility = View.GONE
-                                Log.d("DetailActivity", "Empty Data")
                             }
                         }
-                    }
+                }
             }
         }
     }
@@ -268,8 +279,8 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                         val errorResponse =
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
-                        Log.d("Error Body", messageErr)
-                    } catch (e: java.lang.Exception) {
+                        messageErr?.let { Log.d("Error Body", it) }
+                    } catch (e: Exception) {
                         val err = results.errorCode
                         Log.d("ErrorCode", "$err")
                     }
@@ -308,8 +319,8 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                         val errorResponse =
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
-                        Log.d("Error Body", messageErr)
-                    } catch (e: java.lang.Exception) {
+                        messageErr?.let { Log.d("Error Body", it) }
+                    } catch (e: Exception) {
                         val err = results.errorCode
                         Log.d("ErrorCode", "$err")
                     }
@@ -331,7 +342,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         val quantityProduct = 1
         val stockProduct = data.stock
         val isCheck = 0
-        val totalPrice = data.harga.toInt()
+        val totalPrice = data.harga?.toInt()
         val firstPrice = data.harga
         val cart = CartEntity(
             idProduct,
@@ -363,90 +374,94 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
     }
 
     private fun initViewModelHistory(idUser: Int?) {
-        viewModel.getHistoryProduct(idUser!!).observe(this) { data ->
-            when (data) {
-                is Resource.Loading -> {
-                    Log.d("getHistoryProduct", "isLoading")
-                }
-                is Resource.Success -> {
-                    if (data.data!!.success.data.isNotEmpty()) {
-                        adapter.setData(data.data.success.data.sortedBy { it.name_product })
-                        initRecyclerViewHistory()
+        idUser?.let {
+            viewModel.getHistoryProduct(it).observe(this) { data ->
+                when (data) {
+                    is Resource.Loading -> {
+                        Log.d("getHistoryProduct", "isLoading")
                     }
-//                    else if (data.data.success.data.isEmpty()) {
-//                        binding.apply {
-//                            viewHelper1.visibility = View.INVISIBLE
-//                            viewHelper2.visibility = View.INVISIBLE
-//                            rvOtherProduct.visibility = View.INVISIBLE
-//                            rvHistoryProduct.visibility = View.INVISIBLE
-//                            tvTittleSticky.visibility = View.INVISIBLE
-//                            tvTittleSticky2.visibility = View.INVISIBLE
-//                        }
-//                    }
-                }
-                is Resource.Error -> {
-                    try {
-                        val err =
-                            data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
-                        val gson = Gson()
-                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                        val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
-                        val messageErr = errorResponse.error.message
-                        AlertDialog.Builder(this).setTitle("Failed")
-                            .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
-                            }.show()
-                    } catch (e: java.lang.Exception) {
-                        val err = data.errorCode
-                        Log.d("ErrorCode", "$err")
+                    is Resource.Success -> {
+                        if (data.data?.success?.data?.isNotEmpty() == true) {
+                            adapter.setData(data.data.success.data.sortedBy { it1 -> it1.name_product })
+                            initRecyclerViewHistory()
+                        }
+    //                    else if (data.data.success.data.isEmpty()) {
+    //                        binding.apply {
+    //                            viewHelper1.visibility = View.INVISIBLE
+    //                            viewHelper2.visibility = View.INVISIBLE
+    //                            rvOtherProduct.visibility = View.INVISIBLE
+    //                            rvHistoryProduct.visibility = View.INVISIBLE
+    //                            tvTittleSticky.visibility = View.INVISIBLE
+    //                            tvTittleSticky2.visibility = View.INVISIBLE
+    //                        }
+    //                    }
                     }
-                }
-                is Resource.Empty -> {
-                    Log.d("getHistoryProduct", "isEmpty")
+                    is Resource.Error -> {
+                        try {
+                            val err =
+                                data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                            val gson = Gson()
+                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                            val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                            val messageErr = errorResponse.error.message
+                            AlertDialog.Builder(this).setTitle("Failed")
+                                .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
+                                }.show()
+                        } catch (e: Exception) {
+                            val err = data.errorCode
+                            Log.d("ErrorCode", "$err")
+                        }
+                    }
+                    is Resource.Empty -> {
+                        Log.d("getHistoryProduct", "isEmpty")
+                    }
                 }
             }
         }
     }
 
     private fun initViewModelOther(idUser: Int?) {
-        viewModel.getOtherProduct(idUser!!).observe(this) { data ->
-            when (data) {
-                is Resource.Loading -> {
-                    Log.d("getHistoryProduct", "isLoading")
-                }
-                is Resource.Success -> {
-                    if (data.data!!.success.data.isNotEmpty()) {
-                        adapter.setData(data.data.success.data.sortedBy { it.name_product })
-                        initRecyclerViewOther()
+        idUser?.let {
+            viewModel.getOtherProduct(it).observe(this) { data ->
+                when (data) {
+                    is Resource.Loading -> {
+                        Log.d("getHistoryProduct", "isLoading")
                     }
-//                    else if (data.data.success.data.isEmpty()) {
-//                        binding.apply {
-//                            viewHelper1.visibility = View.INVISIBLE
-//                            viewHelper2.visibility = View.INVISIBLE
-//                            rvOtherProduct.visibility = View.INVISIBLE
-//                            rvHistoryProduct.visibility = View.INVISIBLE
-//                            tvTittleSticky.visibility = View.INVISIBLE
-//                            tvTittleSticky2.visibility = View.INVISIBLE
-//                        }
-//                    }
-                }
-                is Resource.Error -> {
-                    try {
-                        val err =
-                            data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
-                        val gson = Gson()
-                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                        val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
-                        val messageErr = errorResponse.error.message
-                        AlertDialog.Builder(this).setTitle("Failed")
-                            .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
-                            }.show()
-                    } catch (e: java.lang.Exception) {
-                        val err = data.errorCode
-                        Log.d("ErrorCode", "$err")
+                    is Resource.Success -> {
+                        if (data.data?.success?.data?.isNotEmpty() == true) {
+                            adapter.setData(data.data.success.data.sortedBy { it1 -> it1.name_product })
+                            initRecyclerViewOther()
+                        }
+    //                    else if (data.data.success.data.isEmpty()) {
+    //                        binding.apply {
+    //                            viewHelper1.visibility = View.INVISIBLE
+    //                            viewHelper2.visibility = View.INVISIBLE
+    //                            rvOtherProduct.visibility = View.INVISIBLE
+    //                            rvHistoryProduct.visibility = View.INVISIBLE
+    //                            tvTittleSticky.visibility = View.INVISIBLE
+    //                            tvTittleSticky2.visibility = View.INVISIBLE
+    //                        }
+    //                    }
                     }
-                }
-                is Resource.Empty -> {
-                    Log.d("getHistoryProduct", "isEmpty")
+                    is Resource.Error -> {
+                        try {
+                            val err =
+                                data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                            val gson = Gson()
+                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                            val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                            val messageErr = errorResponse.error.message
+                            AlertDialog.Builder(this).setTitle("Failed")
+                                .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
+                                }.show()
+                        } catch (e: Exception) {
+                            val err = data.errorCode
+                            Log.d("ErrorCode", "$err")
+                        }
+                    }
+                    is Resource.Empty -> {
+                        Log.d("getHistoryProduct", "isEmpty")
+                    }
                 }
             }
         }

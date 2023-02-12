@@ -40,11 +40,13 @@ class AuthAuthenticator @Inject constructor(
             newToken.body()?.let {
                 val newUserToken = it.success.access_token
                 val newRefreshToken = it.success.refresh_token
-                tokenManager.saveUserToken(newUserToken)
-                tokenManager.saveRefreshToken(newRefreshToken)
-                response.request.newBuilder()
-                    .header("Authorization", it.success.access_token)
-                    .build()
+                newUserToken?.let { it1 -> tokenManager.saveUserToken(it1) }
+                newRefreshToken?.let { it1 -> tokenManager.saveRefreshToken(it1) }
+                it.success.access_token?.let { it1 ->
+                    response.request.newBuilder()
+                        .header("Authorization", it1)
+                        .build()
+                }
             }
         }
     }

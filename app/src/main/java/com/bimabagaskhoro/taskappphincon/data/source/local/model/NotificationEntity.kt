@@ -9,26 +9,26 @@ import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.NOTIFICATION_T
 @Entity(tableName = NOTIFICATION_TABLE)
 data class NotificationEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int? = null,
 
     @ColumnInfo(name = "tittle_notification")
-    val tittle_notification: String = "",
+    val tittle_notification: String? = null,
 
     @ColumnInfo(name = "body_notification")
-    val body_notification: String = "",
+    val body_notification: String? = null,
 
     @ColumnInfo(name = "timestamp_notification")
-    val timestamp_notification: String = "",
+    val timestamp_notification: String? = null,
 
     @ColumnInfo(name = "isRead")
-    val isRead: Int = 0,
+    val isRead: Int? = null,
 
     @ColumnInfo(name = "total_notification")
-    val total_notification: Int = 0,
+    val total_notification: Int? = null,
 
     @ColumnInfo(name = "is_check")
-    var isCheck: Int = 0,
+    var isCheck: Int? = null,
 
     @ColumnInfo(name = "is_state")
-    var isState: Int = 0,
+    var isState: Int? = null,
 )

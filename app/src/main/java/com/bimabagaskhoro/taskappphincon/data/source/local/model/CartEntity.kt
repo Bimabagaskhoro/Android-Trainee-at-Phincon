@@ -11,37 +11,37 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = CART_TABLE)
 data class CartEntity(
     @PrimaryKey()
-    val id: Int,
+    val id: Int? = null,
 
     @ColumnInfo(name = "name_product")
-    val name_product: String = "",
+    val name_product: String? = null,
 
     @ColumnInfo(name = "harga")
-    val harga: String = "",
+    val harga: String? = null,
 
     @ColumnInfo(name = "image")
-    val image: String = "",
+    val image: String? = null,
 
     @ColumnInfo(name = "quantity")
-    val quantity: Int = 0,
+    val quantity: Int? = null,
 
     @ColumnInfo(name = "is_check")
-    var is_check: Int = 0,
+    var is_check: Int? = null,
 
     @ColumnInfo(name = "stock")
-    val stock: Int = 0,
+    val stock: Int? = null,
 
     @ColumnInfo(name = "total_harga")
-    val totalPrice: Int,
+    val totalPrice: Int? = null,
 
     @ColumnInfo(name = "first_price")
-    val firstPrice: String = ""
+    val firstPrice: String? = null
 )
 
 @Parcelize
 data class DataTrolley(
     @ColumnInfo(name = "id")
-    val id: Int,
+    val id: Int? = null,
     @ColumnInfo(name = "quantity")
-    val quantity: Int,
+    val quantity: Int? = null,
 ) : Parcelable

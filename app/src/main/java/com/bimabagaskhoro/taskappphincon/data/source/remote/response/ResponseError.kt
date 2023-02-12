@@ -8,12 +8,15 @@ import kotlinx.android.parcel.Parcelize
 // error
 @Parcelize
 data class ResponseError(
-    @SerializedName("error") val error: ErrorResponse
+    @SerializedName("error")
+    val error: ErrorResponse
 ) : Parcelable
 
 @Parcelize
 data class ErrorResponse(
-    @SerializedName("message") val message: String,
+    @SerializedName("message")
+    val message: String? = null,
 
-    @SerializedName("status") val status: Int
+    @SerializedName("status")
+    val status: Int? = null
 ) : Parcelable

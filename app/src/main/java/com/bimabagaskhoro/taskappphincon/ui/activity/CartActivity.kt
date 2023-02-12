@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -77,32 +76,50 @@ class CartActivity : AppCompatActivity() {
         adapter = CartAdapter(
             { roomViewModel.deleteCart(it) },
             { data ->
-                val totalQty = (data.quantity + 1)
-                val totalPrice = (totalQty * data.firstPrice.toInt())
+                val totalQty = (data.quantity?.plus(1))
+                val totalPrice = (data.firstPrice?.toInt()?.let { totalQty?.times(it) })
                 val id = data.id
-                val newPrice = (totalQty * data.firstPrice.toInt())
+                val newPrice = (data.firstPrice?.toInt()?.let { totalQty?.times(it) })
 
-                roomViewModel.updateQuantity(totalQty, id, newPrice)
-                roomViewModel.updatePriceCard(totalPrice, id)
+                totalQty?.let {
+                    id?.let { it1 ->
+                        newPrice?.let { it2 ->
+                            roomViewModel.updateQuantity(
+                                it, it1,
+                                it2
+                            )
+                        }
+                    }
+                }
+                totalPrice?.let { id?.let { it1 -> roomViewModel.updatePriceCard(it, it1) } }
 
                 val resultPrice = roomViewModel.getTotalPrice()
                 binding.tvAllPrice.text = resultPrice.toString().formatterIdr()
             },
             { data ->
-                val totalQty = (data.quantity - 1)
-                val totalPrice = (totalQty * data.firstPrice.toInt())
+                val totalQty = (data.quantity?.minus(1))
+                val totalPrice = (data.firstPrice?.toInt()?.let { totalQty?.times(it) })
                 val id = data.id
-                val newPrice = (totalQty * data.firstPrice.toInt())
+                val newPrice = (data.firstPrice?.toInt()?.let { totalQty?.times(it) })
 
-                roomViewModel.updateQuantity(totalQty, id, newPrice)
-                roomViewModel.updatePriceCard(totalPrice, id)
+                totalQty?.let {
+                    id?.let { it1 ->
+                        newPrice?.let { it2 ->
+                            roomViewModel.updateQuantity(
+                                it, it1,
+                                it2
+                            )
+                        }
+                    }
+                }
+                totalPrice?.let { id?.let { it1 -> roomViewModel.updatePriceCard(it, it1) } }
 
                 val resultPrice = roomViewModel.getTotalPrice()
                 binding.tvAllPrice.text = resultPrice.toString().formatterIdr()
             },
             { data ->
                 val id = data.id
-                roomViewModel.updateCheck(id, 1)
+                id?.let { roomViewModel.updateCheck(it, 1) }
                 val result = roomViewModel.getTotalPrice()
                 binding.tvAllPrice.text = result.toString().formatterIdr()
                 binding.btnBuy.setOnClickListener {
@@ -111,7 +128,7 @@ class CartActivity : AppCompatActivity() {
             },
             { data ->
                 val id = data.id
-                roomViewModel.updateCheck(id, 0)
+                id?.let { roomViewModel.updateCheck(it, 0) }
                 val result = roomViewModel.getTotalPrice()
                 binding.tvAllPrice.text = result.toString().formatterIdr()
             },
@@ -183,7 +200,7 @@ class CartActivity : AppCompatActivity() {
                         val errorResponse =
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
-                        Log.d("Error Body", messageErr)
+                        messageErr?.let { Log.d("Error Body", it) }
                     } catch (e: java.lang.Exception) {
                         val err = todo.errorCode
                         Log.d("ErrorCode", "$err")

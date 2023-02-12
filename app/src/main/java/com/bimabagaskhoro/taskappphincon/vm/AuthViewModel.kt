@@ -1,29 +1,31 @@
 package com.bimabagaskhoro.taskappphincon.vm
 
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
+import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ResponseDetail
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.DataItemFavorite
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseAddFavorite
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseFavorite
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val dataPreference: AuthPreferences
 ) : ViewModel() {
     fun login(
         email: String,
@@ -78,7 +80,6 @@ class AuthViewModel @Inject constructor(
     ): LiveData<Resource<ResponseAddFavorite>> =
         authRepository.updateStock(
             RequestStock(idUser, data)
-//            RequestStock(listOf(DataStockItem(idProduct,stock)))
         ).asLiveData()
 
     fun updateRating(
@@ -86,11 +87,6 @@ class AuthViewModel @Inject constructor(
         rate: RequestRating
     ): LiveData<Resource<ResponseAddFavorite>> =
         authRepository.updateRate(userId, rate).asLiveData()
-
-    fun getFavProduct(
-        userId: Int,
-        search: String? = null
-    ) = authRepository.getDataFavProduct(userId, search).asLiveData()
 
     fun getOtherProduct(
         userId: Int
@@ -118,12 +114,27 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val productList = currentQuery.flatMapLatest {
         authRepository.getDataProduct(it).cachedIn(viewModelScope)
     }
 
     /**
      * until here home fragment
+     */
+    fun getFavProduct(
+        userId: Int,
+        search: String? = null
+    ) = authRepository.getDataFavProduct(userId, search).asLiveData()
+
+    fun onRefresh() {
+        viewModelScope.launch {
+            dataPreference.getUserId().first()?.let { getFavProduct(it,"") }
+        }
+    }
+
+    /**
+     * for favorite fragment
      */
 
 }

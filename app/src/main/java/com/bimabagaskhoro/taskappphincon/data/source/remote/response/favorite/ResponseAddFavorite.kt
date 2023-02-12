@@ -13,8 +13,8 @@ data class ResponseAddFavorite(
 @Parcelize
 data class SuccessAddFav(
 	@SerializedName("message")
-	val message: String,
+	val message: String? = null,
 
 	@SerializedName("status")
-	val status: Int
+	val status: Int? = null
 ) : Parcelable

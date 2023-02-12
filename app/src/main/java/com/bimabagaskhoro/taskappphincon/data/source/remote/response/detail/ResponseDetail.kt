@@ -16,49 +16,49 @@ data class SuccessDetail(
 	val data: DataDetail,
 
 	@SerializedName("message")
-	val message: String,
+	val message: String? = null,
 
 	@SerializedName("status")
-	val status: Int
+	val status: Int? = null
 ) : Parcelable
 
 @Parcelize
 data class DataDetail(
 	@SerializedName("date")
-	val date: String,
+	val date: String? = null,
 
 	@SerializedName("image")
-	val image: String,
+	val image: String? = null,
 
 	@SerializedName("name_product")
-	val name_product: String,
+	val name_product: String? = null,
 
 	@SerializedName("harga")
-	val harga: String,
+	val harga: String? = null,
 
 	@SerializedName("size")
-	val size: String,
+	val size: String? = null,
 
 	@SerializedName("rate")
-	val rate: Int,
+	val rate: Int? = null,
 
 	@SerializedName("weight")
-	val weight: String,
+	val weight: String? = null,
 
 	@SerializedName("image_product")
 	val image_product: List<ImageProductItem>,
 
 	@SerializedName("id")
-	val id: Int,
+	val id: Int? = null,
 
 	@SerializedName("stock")
-	val stock: Int,
+	val stock: Int? = null,
 
 	@SerializedName("type")
-	val type: String,
+	val type: String? = null,
 
 	@SerializedName("desc")
-	val desc: String,
+	val desc: String? = null,
 
 	@SerializedName("isFavorite")
 	val isFavorite: Boolean
@@ -67,8 +67,8 @@ data class DataDetail(
 @Parcelize
 data class ImageProductItem(
 	@SerializedName("image_product")
-	val image_product: String,
+	val image_product: String? = null,
 
 	@SerializedName("title_product")
-	val title_product: String
+	val title_product: String? = null
 ) : Parcelable

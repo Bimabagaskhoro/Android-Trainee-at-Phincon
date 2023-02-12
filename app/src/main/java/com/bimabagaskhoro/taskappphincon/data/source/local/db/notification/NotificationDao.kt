@@ -37,20 +37,21 @@ interface NotificationDao {
      *
      */
     @Query("DELETE FROM $NOTIFICATION_TABLE WHERE is_check = 1")
-    fun deleteNotification() : Int
+    fun deleteNotification(): Int
 
     @Query("UPDATE $NOTIFICATION_TABLE SET is_check = :state WHERE id = :id")
-    fun updateCheckNotification(id: Int, state : Int): Int
+    fun updateCheckNotification(id: Int, state: Int): Int
 
     @Query("SELECT * FROM $NOTIFICATION_TABLE WHERE is_check = 1")
     fun getAllCheckedNotification(): Flow<List<NotificationEntity>>
 
-    @Query("UPDATE $NOTIFICATION_TABLE SET isRead = :state")
-    fun checkAllNotification(state: Int) : Int
+    @Query("UPDATE $NOTIFICATION_TABLE SET isRead = :state WHERE is_check = 1")
+    fun checkAllNotification(state: Int): Int
 
     @Query("UPDATE $NOTIFICATION_TABLE SET is_state = :state")
-    fun viewCheckBoxAnimation(state : Int): Int
+    fun viewCheckBoxAnimation(state: Int): Int
 
     @Query("DELETE FROM $NOTIFICATION_TABLE WHERE id = :id")
     suspend fun deleteNotification(id: Int)
+
 }
