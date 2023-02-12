@@ -49,8 +49,14 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.login(email, password, tokenFcm)
-                emit(Resource.Success(response))
+                try {
+                    val response = apiService.login(email, password, tokenFcm)
+                    emit(Resource.Success(response))
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
+                }
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -73,8 +79,14 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.register(image, email, password, name, phone, gender)
-                emit(Resource.Success(response))
+                try {
+                    val response = apiService.register(image, email, password, name, phone, gender)
+                    emit(Resource.Success(response))
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
+                }
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -95,8 +107,15 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.changePassword(id, password, newPassword, confirmPassword)
-                emit(Resource.Success(response))
+                try {
+                    val response =
+                        apiService.changePassword(id, password, newPassword, confirmPassword)
+                    emit(Resource.Success(response))
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
+                }
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -116,8 +135,14 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.changeImage(id, image)
-                emit(Resource.Success(response))
+                try {
+                    val response = apiService.changeImage(id, image)
+                    emit(Resource.Success(response))
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
+                }
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -134,8 +159,14 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.addFavorite(idProduct, userId)
-                emit(Resource.Success(response))
+                try {
+                    val response = apiService.addFavorite(idProduct, userId)
+                    emit(Resource.Success(response))
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
+                }
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -151,8 +182,14 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.getDetail(idProduct, idUser)
-                emit(Resource.Success(response))
+                try {
+                    val response = apiService.getDetail(idProduct, idUser)
+                    emit(Resource.Success(response))
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
+                }
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -170,11 +207,17 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.updateStock(
+                try {
+                    val response = apiService.updateStock(
 //                    dataStock,
-                    data
-                )
-                emit(Resource.Success(response))
+                        data
+                    )
+                    emit(Resource.Success(response))
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
+                }
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -190,8 +233,14 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.unFavorite(idProduct, userId)
-                emit(Resource.Success(response))
+                try {
+                    val response = apiService.unFavorite(idProduct, userId)
+                    emit(Resource.Success(response))
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
+                }
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -207,8 +256,14 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.updateRating(userId, rate)
-                emit(Resource.Success(response))
+                try {
+                    val response = apiService.updateRating(userId, rate)
+                    emit(Resource.Success(response))
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
+                }
             } catch (t: HttpException) {
                 when (t.code()) {
                     400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
@@ -227,12 +282,18 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.getListFav(userId, search)
-                val data = response.success.data
-                if (data.isNotEmpty()) {
-                    emit(Resource.Success(response))
-                } else {
-                    emit(Resource.Empty())
+                try {
+                    val response = apiService.getListFav(userId, search)
+                    val data = response.success.data
+                    if (data.isNotEmpty()) {
+                        emit(Resource.Success(response))
+                    } else {
+                        emit(Resource.Empty())
+                    }
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
                 }
             } catch (t: HttpException) {
                 when (t.code()) {
@@ -249,12 +310,19 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.getOtherProduct(userId)
-                val data = response.success.data
-                if (data.isNotEmpty()) {
-                    emit(Resource.Success(response))
-                } else {
-                    emit(Resource.Empty())
+                try {
+                    val response = apiService.getOtherProduct(userId)
+                    val data = response.success.data
+                    if (data.isNotEmpty()) {
+                        emit(Resource.Success(response))
+                    } else {
+                        emit(Resource.Empty())
+                    }
+
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
                 }
             } catch (t: HttpException) {
                 when (t.code()) {
@@ -271,12 +339,18 @@ class AuthRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val response = apiService.getHistoryProduct(userId)
-                val data = response.success.data
-                if (data.isNotEmpty()) {
-                    emit(Resource.Success(response))
-                } else {
-                    emit(Resource.Empty())
+                try {
+                    val response = apiService.getHistoryProduct(userId)
+                    val data = response.success.data
+                    if (data.isNotEmpty()) {
+                        emit(Resource.Success(response))
+                    } else {
+                        emit(Resource.Empty())
+                    }
+                } catch (t: HttpException) {
+                    when (t.code()) {
+                        //429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody()))
+                    }
                 }
             } catch (t: HttpException) {
                 when (t.code()) {
