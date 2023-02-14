@@ -71,6 +71,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         }
 
         seePhoto = PhotoViewFragment(this)
+
     }
 
     private fun initDataDetail() {
@@ -84,6 +85,9 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                 idProduct = id.toInt()
             }
         }
+
+        val dataPayment = intent.getStringExtra(EXTRA_DATA_PAYMENT_TO_BTN)
+        Log.d("Detail_dataPayment", "$dataPayment")
 
         dataStoreViewModel.apply {
             getUserId.observe(this@DetailActivity) {
@@ -160,7 +164,9 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                                         initFavorite(userId,
                                             it2, productId)
                                     }
-                                    results.data?.success?.data?.let { it2 -> setActionDialog(it2) }
+                                    results.data?.success?.data?.let {
+                                            it2 -> setActionDialog(it2, dataPayment)
+                                    }
                                 }
                                 is Resource.Error -> {
                                     binding.progressBar.visibility = View.GONE
@@ -366,10 +372,15 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         }
     }
 
-    private fun setActionDialog(data: DataDetail) {
-        binding.btnBuy.setOnClickListener {
-            val showData = BuyDialogFragment(data)
+    private fun setActionDialog(data: DataDetail, idPayment: String?) {
+        if (idPayment != null) {
+            val showData = BuyDialogFragment(data, idPayment)
             showData.show(supportFragmentManager, DetailActivity::class.java.simpleName)
+        } else {
+            binding.btnBuy.setOnClickListener {
+                val showData = BuyDialogFragment(data, idPayment)
+                showData.show(supportFragmentManager, DetailActivity::class.java.simpleName)
+            }
         }
     }
 
@@ -495,6 +506,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
 
     companion object {
         const val EXTRA_DATA_DETAIL = "extra_data_detail"
+        const val EXTRA_DATA_PAYMENT_TO_BTN = "extra_data_payment_to_btn"
     }
 
     override fun onClick(image: String) {

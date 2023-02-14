@@ -70,4 +70,7 @@
     <string name="tittle">Tittle</string>
     <string name="notification">Notification</string>
     <string name="multiple_select">Multiple Select</string>
+    <string name="payment_methode">Payment Methode</string>
+    <string name="bca_virtual_account">BCA Virtual Account</string>
+    <string name="choose_payment_methode">Choose Payment Methode</string>
 </resources>

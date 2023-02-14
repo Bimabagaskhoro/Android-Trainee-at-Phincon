@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.fcm
+package com.bimabagaskhoro.taskappphincon.firebase
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -14,7 +14,6 @@ import com.bimabagaskhoro.taskappphincon.data.source.local.db.notification.Notif
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
 import com.bimabagaskhoro.taskappphincon.ui.auth.LoginFragment
 import com.bimabagaskhoro.taskappphincon.utils.timeStamp
-import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint

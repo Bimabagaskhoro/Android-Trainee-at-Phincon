@@ -97,8 +97,8 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_add_circle"
         android:background="@drawable/bg_rounded_black"
+        android:src="@drawable/ic_add_circle"
         app:layout_constraintBottom_toTopOf="@+id/view4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view3"
@@ -123,12 +123,12 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_baseline_remove_24"
         android:background="@drawable/bg_rounded_black"
-        app:tint="@color/white"
+        android:src="@drawable/ic_baseline_remove_24"
         app:layout_constraintBottom_toTopOf="@+id/view4"
         app:layout_constraintEnd_toStartOf="@+id/tv_total_number"
-        app:layout_constraintTop_toBottomOf="@+id/view3" />
+        app:layout_constraintTop_toBottomOf="@+id/view3"
+        app:tint="@color/white" />
 
     <View
         android:id="@+id/view4"
@@ -139,18 +139,47 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_total" />
 
+
+    <LinearLayout
+        android:id="@+id/layout_helper"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view4">
+
+        <ImageView
+            android:id="@+id/img_payment_methode"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/bca" />
+
+        <TextView
+            android:id="@+id/tv_payment_methode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/poppinsbold"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:text="@string/bca_virtual_account" />
+
+    </LinearLayout>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/card_buy"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/pinkz"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view4">
+        app:layout_constraintTop_toBottomOf="@+id/layout_helper">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

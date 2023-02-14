@@ -14,6 +14,7 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseErr
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityOnSuccessBinding
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,8 +30,10 @@ class OnSuccessActivity : AppCompatActivity() {
         binding = ActivityOnSuccessBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initDataPayment()
         val productId = intent.getIntExtra(EXTRA_DATA_SUCCESS, 0)
         val listProductId = intent.getStringArrayListExtra(EXTRA_DATA_SUCCESS_ID)
+
 
         binding.button.setOnClickListener {
             val rating = binding.ratingBar.rating
@@ -56,7 +59,8 @@ class OnSuccessActivity : AppCompatActivity() {
                                 binding.progressbar.visibility = View.GONE
                                 try {
                                     val err =
-                                        result.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                                        result.errorBody?.string()
+                                            ?.let { it1 -> JSONObject(it1).toString() }
                                     val gson = Gson()
                                     val jsonObject = gson.fromJson(err, JsonObject::class.java)
                                     val errorResponse =
@@ -130,8 +134,83 @@ class OnSuccessActivity : AppCompatActivity() {
         }
     }
 
+    private fun initDataPayment() {
+        val dataPayment = intent.getStringExtra(EXTRA_DATA_SUCCESS_ID_PAYMENT)
+        val dataName = intent.getStringExtra(EXTRA_DATA_SUCCESS_NAME)
+
+        if (dataPayment == null && dataName == null) {
+            Log.d("initDataPayment", "Ada Error")
+        } else {
+            dataPayment?.let { initImagePayment(it) }
+            binding.tvPaymentMethode.text = dataName
+        }
+    }
+
+    private fun initImagePayment(dataPayment: String) {
+        binding.apply {
+            when (dataPayment) {
+                "va_bca" -> {
+                    Glide.with(this@OnSuccessActivity)
+                        .asBitmap()
+                        .load(R.drawable.bca)
+                        .into(imgPaymentMethode)
+                }
+                "va_mandiri" -> {
+                    Glide.with(this@OnSuccessActivity)
+                        .asBitmap()
+                        .load(R.drawable.mandiri)
+                        .into(imgPaymentMethode)
+                }
+                "va_bri" -> {
+                    Glide.with(this@OnSuccessActivity)
+                        .asBitmap()
+                        .load(R.drawable.bri)
+                        .into(imgPaymentMethode)
+                }
+                "va_bni" -> {
+                    Glide.with(this@OnSuccessActivity)
+                        .asBitmap()
+                        .load(R.drawable.bni)
+                        .into(imgPaymentMethode)
+                }
+                "va_btn" -> {
+                    Glide.with(this@OnSuccessActivity)
+                        .asBitmap()
+                        .load(R.drawable.btn)
+                        .into(imgPaymentMethode)
+                }
+                "va_danamon" -> {
+                    Glide.with(this@OnSuccessActivity)
+                        .asBitmap()
+                        .load(R.drawable.danamon)
+                        .into(imgPaymentMethode)
+                }
+                "ewallet_gopay" -> {
+                    Glide.with(this@OnSuccessActivity)
+                        .asBitmap()
+                        .load(R.drawable.gopay)
+                        .into(imgPaymentMethode)
+                }
+                "ewallet_ovo" -> {
+                    Glide.with(this@OnSuccessActivity)
+                        .asBitmap()
+                        .load(R.drawable.ovo)
+                        .into(imgPaymentMethode)
+                }
+                "ewallet_dana" -> {
+                    Glide.with(this@OnSuccessActivity)
+                        .asBitmap()
+                        .load(R.drawable.dana)
+                        .into(imgPaymentMethode)
+                }
+            }
+        }
+    }
+
     companion object {
         const val EXTRA_DATA_SUCCESS = "extra_data_success"
+        const val EXTRA_DATA_SUCCESS_NAME = "extra_data_success_id_name"
+        const val EXTRA_DATA_SUCCESS_ID_PAYMENT = "extra_data_success_id_payment"
         const val EXTRA_DATA_SUCCESS_ID = "extra_data_success_id"
     }
 }

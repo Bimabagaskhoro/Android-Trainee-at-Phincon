@@ -498,6 +498,8 @@
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     <LinearLayout
         android:id="@+id/lay_btn"
         android:layout_width="match_parent"

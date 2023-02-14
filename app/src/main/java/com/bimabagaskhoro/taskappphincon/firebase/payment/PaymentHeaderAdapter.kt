@@ -1,6 +1,7 @@
-package com.bimabagaskhoro.taskappphincon.firebase
+package com.bimabagaskhoro.taskappphincon.firebase.payment
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ItemPaymentHeaderBinding
+import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 
-class PaymentHeaderAdapter : RecyclerView.Adapter<PaymentHeaderAdapter.ViewHolder>() {
+@Suppress("DEPRECATION")
+class PaymentHeaderAdapter(
+    private val onItemClick: (DataItem) -> Unit,
+) : RecyclerView.Adapter<PaymentHeaderAdapter.ViewHolder>() {
     private val listDataHeader = ArrayList<PaymentModel>()
 
     @SuppressLint("NotifyDataSetChanged")
@@ -37,12 +42,24 @@ class PaymentHeaderAdapter : RecyclerView.Adapter<PaymentHeaderAdapter.ViewHolde
 
             binding.apply {
                 tvPaymentItemHeader.text = data.type.toString()
-                val paymentAdapter = PaymentBodyAdapter(data.data)
+                val paymentAdapter = PaymentBodyAdapter ({ dataItem->
+                    val id = dataItem.id
+                    val name = dataItem.name
+                    val status = dataItem.status
+                    val intent = Intent(itemView.context, DetailActivity::class.java)
+                    onItemClick.invoke(dataItem)
+                },
+                    data.data,
+                )
                 rvItemBodyPayment.layoutManager =
                     LinearLayoutManager(itemView.context, LinearLayoutManager.VERTICAL, false)
                 rvItemBodyPayment.adapter = paymentAdapter
-
             }
         }
     }
+
+    interface OnItemClickCallback {
+        fun onItemClicked(data: PaymentModel)
+    }
+
 }

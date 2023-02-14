@@ -60,18 +60,47 @@
         app:layout_constraintStart_toStartOf="@+id/imageView5"
         app:layout_constraintTop_toBottomOf="@+id/imageView5" />
 
+    <LinearLayout
+        android:id="@+id/layout_helper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_success">
+
+        <ImageView
+            android:id="@+id/img_payment_methode"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            tools:srcCompat="@drawable/bca" />
+
+        <TextView
+            android:id="@+id/tv_payment_methode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/poppinsbold"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            tools:text="BCA Virtual Account" />
+
+    </LinearLayout>
+
+
     <TextView
         android:id="@+id/tv_helpers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/poppinsbold"
+        android:text="@string/berikan_penilaian_anda"
         android:textColor="@color/black"
         android:textSize="14sp"
-        android:text="@string/berikan_penilaian_anda"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_success" />
+        app:layout_constraintTop_toBottomOf="@+id/layout_helper" />
 
     <RatingBar
         android:id="@+id/ratingBar"

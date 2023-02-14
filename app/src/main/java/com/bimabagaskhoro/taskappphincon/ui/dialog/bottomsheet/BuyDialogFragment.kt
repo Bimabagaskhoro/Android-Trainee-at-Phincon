@@ -14,6 +14,9 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockIt
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.DataDetail
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentBuyDialogBinding
+import com.bimabagaskhoro.taskappphincon.firebase.payment.PaymentActivity
+import com.bimabagaskhoro.taskappphincon.firebase.payment.PaymentActivity.Companion.EXTRA_DATA_PAYMENT
+import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
@@ -27,7 +30,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
 
 @AndroidEntryPoint
-class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragment() {
+class BuyDialogFragment(
+    private val data: DataDetail,
+    private val idPayment: String?
+) : BottomSheetDialogFragment() {
     private var _binding: FragmentBuyDialogBinding? = null
     private val binding get() = _binding
     private val viewModel: BuyDialogViewModel by viewModels()
@@ -92,18 +98,52 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
                 cardBuy.isClickable = false
                 cardBuy.setOnClickListener {
                     Toast.makeText(requireActivity(), R.string.out_stock, Toast.LENGTH_SHORT).show()
-//                    Log.d("checkingCar", "onViewCreated: ")
                 }
             } else if (stock != buy) {
                 cardBuy.isClickable = true
-                cardBuy.setOnClickListener {
-                    val idProduct = data.id.toString()
-                    val stockProduct = binding?.tvTotalNumber?.text.toString()
 
-                    dataStoreViewModel.getUserId.observe(viewLifecycleOwner) {
-                        val idUser = it
-                        doActionUpdate(idProduct, stockProduct.toInt(), idUser.toString())
+                if (idPayment != null) {
+                    tvPaymentMethode.visibility = View.VISIBLE
+                    tvPaymentMethode.setOnClickListener {
+                        val intent2 = Intent(context, PaymentActivity::class.java)
+                        startActivity(intent2)
+
                     }
+                    imgPaymentMethode.visibility = View.VISIBLE
+                    imgPaymentMethode.setOnClickListener {
+                        val intent3 = Intent(context, PaymentActivity::class.java)
+                        startActivity(intent3)
+                    }
+                    cardBuy.setOnClickListener {
+                        val stockProduct = binding?.tvTotalNumber?.text.toString()
+
+                        val idProduct = data.id.toString()
+                        dataStoreViewModel.getUserId.observe(viewLifecycleOwner) {
+                            val idUser = it
+                            doActionUpdate(idProduct, stockProduct.toInt(), idUser.toString())
+                        }
+                    }
+                    Log.d("cardBuy", "to on success")
+                } else {
+                    tvPaymentMethode.visibility = View.INVISIBLE
+                    tvPaymentMethode.setOnClickListener {
+                        val intent2 = Intent(context, PaymentActivity::class.java)
+                        startActivity(intent2)
+
+                    }
+                    imgPaymentMethode.visibility = View.INVISIBLE
+                    imgPaymentMethode.setOnClickListener {
+                        val intent3 = Intent(context, PaymentActivity::class.java)
+                        startActivity(intent3)
+                    }
+                    cardBuy.setOnClickListener {
+                        val idProduct = data.id.toString()
+                        val intent = Intent(requireActivity(), PaymentActivity::class.java)
+                        intent.putExtra(EXTRA_DATA_PAYMENT, idProduct.toInt())
+                        startActivity(intent)
+
+                    }
+                    Log.d("cardBuy", "toPayment")
                 }
             }
         }
@@ -113,18 +153,15 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
 
     private fun doActionUpdate(idProduct: String, stockProduct: Int, idUser: String) {
         viewModelStock.updateStock(
-//            "data_stock",
-//            (listOf(DataStockItem(idProduct, stockProduct)))
-//            "data_stock"
             (listOf(DataStockItem(idProduct, stockProduct))), idUser
         ).observe(viewLifecycleOwner) { results ->
             when (results) {
                 is Resource.Loading -> {
                 }
                 is Resource.Success -> {
-                    val intent = Intent(context, OnSuccessActivity::class.java)
-                    intent.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, data.id)
-                    startActivity(intent)
+                    val intent6 = Intent(context, OnSuccessActivity::class.java)
+                    intent6.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, data.id)
+                    startActivity(intent6)
                 }
                 is Resource.Error -> {
                     try {
@@ -157,6 +194,10 @@ class BuyDialogFragment(private val data: DataDetail) : BottomSheetDialogFragmen
         binding?.minFragmentDialog?.setOnClickListener {
             viewModel.minQuantity()
         }
+    }
+
+    companion object {
+        const val EXTRA_DATA_BTN_DIALOG = "extra_data_payment"
     }
 
 }

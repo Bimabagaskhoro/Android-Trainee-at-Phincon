@@ -1,5 +1,7 @@
-package com.bimabagaskhoro.taskappphincon.firebase
+package com.bimabagaskhoro.taskappphincon.firebase.payment
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,8 +12,12 @@ import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ItemPaymentBinding
 import com.bumptech.glide.Glide
 
-class PaymentBodyAdapter(listDataBody: List<DataItem>) : RecyclerView.Adapter<PaymentBodyAdapter.ViewHolder>() {
+class PaymentBodyAdapter(
+    private val onItemClick: (DataItem) -> Unit,
+    listDataBody: List<DataItem>
+) : RecyclerView.Adapter<PaymentBodyAdapter.ViewHolder>() {
     private var listData: List<DataItem> = ArrayList()
+
     init {
         this.listData = listDataBody
     }
@@ -30,6 +36,8 @@ class PaymentBodyAdapter(listDataBody: List<DataItem>) : RecyclerView.Adapter<Pa
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = ItemPaymentBinding.bind(itemView)
+
+        @SuppressLint("Range")
         fun bind(data: DataItem) {
             binding.apply {
                 tvTittle.text = data.name
@@ -38,15 +46,25 @@ class PaymentBodyAdapter(listDataBody: List<DataItem>) : RecyclerView.Adapter<Pa
                         consPayment.setBackgroundColor(
                             Color.parseColor("#FFFFFF")
                         )
+
+                        tvTittle.setTextColor(Color.parseColor("#000000"))
+                        root.isClickable = true
                     }
                     false -> {
                         consPayment.setBackgroundColor(
                             Color.parseColor("#A5A5A5")
                         )
+                        tvTittle.setTextColor(Color.parseColor("#000000"))
+                        imgHelper.setColorFilter(Color.parseColor("#A5A5A5"))
+                        root.isClickable = false
                     }
                     else -> {
                         Log.d("TodoColor", "status payment available")
                     }
+                }
+
+                binding.root.setOnClickListener {
+                    onItemClick.invoke(data)
                 }
 
 
@@ -108,6 +126,5 @@ class PaymentBodyAdapter(listDataBody: List<DataItem>) : RecyclerView.Adapter<Pa
                 }
             }
         }
-
     }
 }

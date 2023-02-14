@@ -4,13 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import com.bimabagaskhoro.taskappphincon.BuildConfig
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
-import com.bimabagaskhoro.taskappphincon.data.source.local.db.notification.NotificationDao
 import com.bimabagaskhoro.taskappphincon.data.source.local.db.notification.NotificationDatabase
 import com.bimabagaskhoro.taskappphincon.data.source.local.db.trolley.CartDatabase
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
 import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepositoryImpl
-import com.bimabagaskhoro.taskappphincon.fcm.FirebaseNotification
 import com.bimabagaskhoro.taskappphincon.utils.AuthAuthenticator
 import com.bimabagaskhoro.taskappphincon.utils.AuthBadResponse
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
