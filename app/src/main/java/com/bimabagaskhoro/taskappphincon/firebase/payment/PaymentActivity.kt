@@ -14,6 +14,7 @@ import com.bimabagaskhoro.taskappphincon.ui.activity.CartActivity.Companion.EXTR
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity.Companion.EXTRA_DATA_DETAIL
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity.Companion.EXTRA_DATA_PAYMENT_TO_BTN
+import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity.Companion.EXTRA_NAME_PAYMENT_TO_BTN
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -59,6 +60,7 @@ class PaymentActivity : AppCompatActivity() {
                 val intent = Intent(this@PaymentActivity, CartActivity::class.java)
                 intent.putExtra(EXTRA_DATA_CART, dataItem.id)
                 intent.putExtra(EXTRA_DATA_CART_NAME, dataItem.name)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
             }
         } else {
@@ -66,6 +68,8 @@ class PaymentActivity : AppCompatActivity() {
                 val intent = Intent(this@PaymentActivity, DetailActivity::class.java)
                 intent.putExtra(EXTRA_DATA_DETAIL, productId)
                 intent.putExtra(EXTRA_DATA_PAYMENT_TO_BTN, dataItem.id)
+                intent.putExtra(EXTRA_NAME_PAYMENT_TO_BTN, dataItem.name)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
             }
         }
@@ -104,7 +108,7 @@ class PaymentActivity : AppCompatActivity() {
         binding.apply {
             rvHeaderPayment.setHasFixedSize(true)
             rvHeaderPayment.adapter = adapter
-            dataList?.let { adapter.setData(it) }
+            dataList?.sortedBy { it.order }?.let { adapter.setData(it) }
         }
     }
 

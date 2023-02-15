@@ -13,6 +13,7 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockIt
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCartBinding
 import com.bimabagaskhoro.taskappphincon.firebase.payment.PaymentActivity
+import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_PRICE_TROLLEY
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_ID
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_ID_PAYMENT
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_NAME
@@ -49,6 +50,7 @@ class CartActivity : AppCompatActivity() {
         binding.apply {
             btnBack.setOnClickListener {
                 val intent = Intent(this@CartActivity, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
             }
             checkBox2.setOnCheckedChangeListener { _, isChecked ->
@@ -59,7 +61,10 @@ class CartActivity : AppCompatActivity() {
                     val dataPayment = intent.getStringExtra(EXTRA_DATA_CART)
                     val dataName = intent.getStringExtra(EXTRA_DATA_CART_NAME)
                     if (dataPayment == null && dataName == null) {
-                        btnBuy.isClickable = false
+                        btnBuy.setOnClickListener {
+                            val intent = Intent(this@CartActivity, PaymentActivity::class.java)
+                            startActivity(intent)
+                        }
                     } else {
                         binding.btnBuy.setOnClickListener {
                             setActionPost(dataPayment, dataName)
@@ -76,31 +81,20 @@ class CartActivity : AppCompatActivity() {
 
         if (dataPayment == null && dataName == null) {
             binding.apply {
-                imgPaymentMethode.visibility = View.INVISIBLE
-                tvPaymentMethode.visibility = View.INVISIBLE
-                tvHoldingPayment.visibility = View.VISIBLE
-                btnBuy.isClickable = false
+                imgPaymentMethode.visibility = View.GONE
+                tvPaymentMethode.visibility = View.GONE
                 btnBuy.setOnClickListener {
-                    Toast.makeText(
-                        this@CartActivity,
-                        "Please Choose payment Method first",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-                tvHoldingPayment.setOnClickListener {
                     val intent = Intent(this@CartActivity, PaymentActivity::class.java)
                     startActivity(intent)
                 }
             }
         } else {
             binding.apply {
-                tvHoldingPayment.visibility = View.INVISIBLE
                 imgPaymentMethode.visibility = View.VISIBLE
                 tvPaymentMethode.visibility = View.VISIBLE
 
                 dataPayment?.let { initImagePayment(it) }
                 tvPaymentMethode.text = dataName
-                tvHoldingPayment.visibility = View.GONE
                 btnBuy.isClickable = true
                 btnBuy.setOnClickListener {
                     setActionPost(dataPayment, dataName)
@@ -195,8 +189,15 @@ class CartActivity : AppCompatActivity() {
 
                 val dataPayment = intent.getStringExtra(EXTRA_DATA_CART)
                 val dataName = intent.getStringExtra(EXTRA_DATA_CART_NAME)
-                binding.btnBuy.setOnClickListener {
-                    setActionPost(dataPayment, dataName)
+                if (dataPayment == null && dataName == null) {
+                    binding.btnBuy.setOnClickListener {
+                        val intent = Intent(this@CartActivity, PaymentActivity::class.java)
+                        startActivity(intent)
+                    }
+                } else {
+                    binding.btnBuy.setOnClickListener {
+                        setActionPost(dataPayment, dataName)
+                    }
                 }
             },
             { data ->
@@ -264,10 +265,15 @@ class CartActivity : AppCompatActivity() {
                     binding.tvWaiting.visibility = View.GONE
                     roomViewModel.deleteTrolleyChecked()
 
+                    /**
+                     * do something
+                     */
+                    val resultPrice = binding.tvAllPrice.text.toString().trim()
                     val intent = Intent(this, OnSuccessActivity::class.java)
                     intent.putExtra(EXTRA_DATA_SUCCESS_ID, listOfProductId)
                     intent.putExtra(EXTRA_DATA_SUCCESS_NAME, dataName)
                     intent.putExtra(EXTRA_DATA_SUCCESS_ID_PAYMENT, dataPayment)
+                    intent.putExtra(EXTRA_DATA_PRICE_TROLLEY, resultPrice)
                     startActivity(intent)
                 }
                 is Resource.Error -> {

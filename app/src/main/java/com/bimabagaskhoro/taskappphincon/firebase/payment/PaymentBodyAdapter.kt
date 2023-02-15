@@ -7,19 +7,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ItemPaymentBinding
 import com.bumptech.glide.Glide
 
 class PaymentBodyAdapter(
-    private val onItemClick: (DataItem) -> Unit,
-    listDataBody: List<DataItem>
+    private val onItemClick: (DataItem) -> Unit
 ) : RecyclerView.Adapter<PaymentBodyAdapter.ViewHolder>() {
-    private var listData: List<DataItem> = ArrayList()
-
-    init {
-        this.listData = listDataBody
+    private val listData = ArrayList<DataItem>()
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(users: List<DataItem>) {
+        listData.clear()
+        listData.addAll(users)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -43,30 +45,31 @@ class PaymentBodyAdapter(
                 tvTittle.text = data.name
                 when (data.status) {
                     true -> {
+                        consPayment.alpha = 1.0f
                         consPayment.setBackgroundColor(
                             Color.parseColor("#FFFFFF")
                         )
-
                         tvTittle.setTextColor(Color.parseColor("#000000"))
-                        root.isClickable = true
+                        binding.root.setOnClickListener {
+                            onItemClick.invoke(data)
+                        }
                     }
                     false -> {
+                        consPayment.alpha = 0.4f
                         consPayment.setBackgroundColor(
                             Color.parseColor("#A5A5A5")
                         )
+                        binding.root.setOnClickListener {
+                            Toast.makeText(itemView.context, "${data.name} Not Available", Toast.LENGTH_SHORT).show()
+                        }
                         tvTittle.setTextColor(Color.parseColor("#000000"))
                         imgHelper.setColorFilter(Color.parseColor("#A5A5A5"))
-                        root.isClickable = false
+
                     }
                     else -> {
                         Log.d("TodoColor", "status payment available")
                     }
                 }
-
-                binding.root.setOnClickListener {
-                    onItemClick.invoke(data)
-                }
-
 
                 when (data.id) {
                     "va_bca" -> {

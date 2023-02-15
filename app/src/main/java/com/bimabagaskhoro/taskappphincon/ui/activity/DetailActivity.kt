@@ -55,7 +55,11 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
 
         initDataDetail()
         binding.apply {
-            btnBack.setOnClickListener { finish() }
+            btnBack.setOnClickListener {
+                val intent = Intent(this@DetailActivity, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                startActivity(intent)
+            }
         }
         binding.swipeRefresh.setOnRefreshListener {
             initDataDetail()
@@ -87,6 +91,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         }
 
         val dataPayment = intent.getStringExtra(EXTRA_DATA_PAYMENT_TO_BTN)
+        val namePayment = intent.getStringExtra(EXTRA_NAME_PAYMENT_TO_BTN)
         Log.d("Detail_dataPayment", "$dataPayment")
 
         dataStoreViewModel.apply {
@@ -161,11 +166,13 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                                         results.data?.success?.data?.let { it2 -> doActionCart(it2) }
                                     }
                                     results.data?.success?.data?.let { it2 ->
-                                        initFavorite(userId,
-                                            it2, productId)
+                                        initFavorite(
+                                            userId,
+                                            it2, productId
+                                        )
                                     }
-                                    results.data?.success?.data?.let {
-                                            it2 -> setActionDialog(it2, dataPayment)
+                                    results.data?.success?.data?.let { it2 ->
+                                        setActionDialog(it2, dataPayment, namePayment)
                                     }
                                 }
                                 is Resource.Error -> {
@@ -180,7 +187,8 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                                             gson.fromJson(jsonObject, ResponseError::class.java)
                                         val messageErr = errorResponse.error.message
                                         AlertDialog.Builder(this@DetailActivity).setTitle("Failed")
-                                            .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
+                                            .setMessage(messageErr)
+                                            .setPositiveButton("Ok") { _, _ ->
                                             }.show()
                                     } catch (e: Exception) {
                                         val err = results.errorCode
@@ -372,13 +380,13 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         }
     }
 
-    private fun setActionDialog(data: DataDetail, idPayment: String?) {
-        if (idPayment != null) {
-            val showData = BuyDialogFragment(data, idPayment)
+    private fun setActionDialog(data: DataDetail, dataPayment: String?, namePayment: String?) {
+        if (dataPayment != null && namePayment !== null) {
+            val showData = BuyDialogFragment(data, dataPayment, namePayment)
             showData.show(supportFragmentManager, DetailActivity::class.java.simpleName)
         } else {
             binding.btnBuy.setOnClickListener {
-                val showData = BuyDialogFragment(data, idPayment)
+                val showData = BuyDialogFragment(data, dataPayment, namePayment)
                 showData.show(supportFragmentManager, DetailActivity::class.java.simpleName)
             }
         }
@@ -396,16 +404,16 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             adapter.setData(data.data.success.data.sortedBy { it1 -> it1.name_product })
                             initRecyclerViewHistory()
                         }
-    //                    else if (data.data.success.data.isEmpty()) {
-    //                        binding.apply {
-    //                            viewHelper1.visibility = View.INVISIBLE
-    //                            viewHelper2.visibility = View.INVISIBLE
-    //                            rvOtherProduct.visibility = View.INVISIBLE
-    //                            rvHistoryProduct.visibility = View.INVISIBLE
-    //                            tvTittleSticky.visibility = View.INVISIBLE
-    //                            tvTittleSticky2.visibility = View.INVISIBLE
-    //                        }
-    //                    }
+                        /**
+                         * do action
+                         */
+                        else if (data.data?.success?.data?.isEmpty() == true) {
+                            binding.apply {
+                                viewHelper2.visibility = View.GONE
+                                tvTittleSticky2.visibility = View.GONE
+                                rvHistoryProduct.visibility = View.GONE
+                            }
+                        }
                     }
                     is Resource.Error -> {
                         try {
@@ -425,6 +433,11 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                     }
                     is Resource.Empty -> {
                         Log.d("getHistoryProduct", "isEmpty")
+                        binding.apply {
+                            viewHelper2.visibility = View.GONE
+                            tvTittleSticky2.visibility = View.GONE
+                            rvHistoryProduct.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -443,16 +456,13 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             adapter.setData(data.data.success.data.sortedBy { it1 -> it1.name_product })
                             initRecyclerViewOther()
                         }
-    //                    else if (data.data.success.data.isEmpty()) {
-    //                        binding.apply {
-    //                            viewHelper1.visibility = View.INVISIBLE
-    //                            viewHelper2.visibility = View.INVISIBLE
-    //                            rvOtherProduct.visibility = View.INVISIBLE
-    //                            rvHistoryProduct.visibility = View.INVISIBLE
-    //                            tvTittleSticky.visibility = View.INVISIBLE
-    //                            tvTittleSticky2.visibility = View.INVISIBLE
-    //                        }
-    //                    }
+                        else if (data.data?.success?.data?.isEmpty() == true) {
+                            binding.apply {
+                                viewHelper1.visibility = View.GONE
+                                rvOtherProduct.visibility = View.GONE
+                                tvTittleSticky.visibility = View.GONE
+                            }
+                        }
                     }
                     is Resource.Error -> {
                         try {
@@ -472,6 +482,11 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                     }
                     is Resource.Empty -> {
                         Log.d("getHistoryProduct", "isEmpty")
+                        binding.apply {
+                            viewHelper1.visibility = View.GONE
+                            rvOtherProduct.visibility = View.GONE
+                            tvTittleSticky.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -507,6 +522,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
     companion object {
         const val EXTRA_DATA_DETAIL = "extra_data_detail"
         const val EXTRA_DATA_PAYMENT_TO_BTN = "extra_data_payment_to_btn"
+        const val EXTRA_NAME_PAYMENT_TO_BTN = "extra_name_payment_to_btn"
     }
 
     override fun onClick(image: String) {

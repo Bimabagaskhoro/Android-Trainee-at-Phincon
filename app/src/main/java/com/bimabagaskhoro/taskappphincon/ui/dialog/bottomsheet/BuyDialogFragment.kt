@@ -32,7 +32,8 @@ import org.json.JSONObject
 @AndroidEntryPoint
 class BuyDialogFragment(
     private val data: DataDetail,
-    private val idPayment: String?
+    private val dataPayment: String?,
+    private val namePayment: String?
 ) : BottomSheetDialogFragment() {
     private var _binding: FragmentBuyDialogBinding? = null
     private val binding get() = _binding
@@ -69,6 +70,7 @@ class BuyDialogFragment(
                 tvStockFragmentDialog.text = getString(R.string.out_stock)
             }
         }
+        initDataPayment()
 
         viewModel.quantity.observe(viewLifecycleOwner) { results ->
             binding?.tvTotalNumber?.text = results.toString()
@@ -102,17 +104,21 @@ class BuyDialogFragment(
             } else if (stock != buy) {
                 cardBuy.isClickable = true
 
-                if (idPayment != null) {
+                if (dataPayment != null && namePayment != null) {
                     tvPaymentMethode.visibility = View.VISIBLE
                     tvPaymentMethode.setOnClickListener {
+                        val idProduct = data.id.toString()
                         val intent2 = Intent(context, PaymentActivity::class.java)
+                        intent2.putExtra(EXTRA_DATA_PAYMENT, idProduct.toInt())
                         startActivity(intent2)
-
                     }
                     imgPaymentMethode.visibility = View.VISIBLE
                     imgPaymentMethode.setOnClickListener {
-                        val intent3 = Intent(context, PaymentActivity::class.java)
-                        startActivity(intent3)
+                        val idProduct = data.id.toString()
+                        val intentOsaas = Intent(context, PaymentActivity::class.java)
+                        intentOsaas.putExtra(EXTRA_DATA_PAYMENT, idProduct.toInt())
+                        startActivity(intentOsaas)
+
                     }
                     cardBuy.setOnClickListener {
                         val stockProduct = binding?.tvTotalNumber?.text.toString()
@@ -120,20 +126,30 @@ class BuyDialogFragment(
                         val idProduct = data.id.toString()
                         dataStoreViewModel.getUserId.observe(viewLifecycleOwner) {
                             val idUser = it
-                            doActionUpdate(idProduct, stockProduct.toInt(), idUser.toString())
+                            doActionUpdate(
+                                idProduct,
+                                stockProduct.toInt(),
+                                idUser.toString(),
+                                dataPayment,
+                                namePayment
+                            )
                         }
                     }
                     Log.d("cardBuy", "to on success")
                 } else {
-                    tvPaymentMethode.visibility = View.INVISIBLE
+                    tvPaymentMethode.visibility = View.GONE
                     tvPaymentMethode.setOnClickListener {
+                        val idProduct = data.id.toString()
                         val intent2 = Intent(context, PaymentActivity::class.java)
+                        intent2.putExtra(EXTRA_DATA_PAYMENT, idProduct.toInt())
                         startActivity(intent2)
 
                     }
-                    imgPaymentMethode.visibility = View.INVISIBLE
+                    imgPaymentMethode.visibility = View.GONE
                     imgPaymentMethode.setOnClickListener {
+                        val idProduct = data.id.toString()
                         val intent3 = Intent(context, PaymentActivity::class.java)
+                        intent3.putExtra(EXTRA_DATA_PAYMENT, idProduct.toInt())
                         startActivity(intent3)
                     }
                     cardBuy.setOnClickListener {
@@ -151,7 +167,13 @@ class BuyDialogFragment(
         setActionData()
     }
 
-    private fun doActionUpdate(idProduct: String, stockProduct: Int, idUser: String) {
+    private fun doActionUpdate(
+        idProduct: String,
+        stockProduct: Int,
+        idUser: String,
+        dataPayment: String?,
+        namePayment: String?
+    ) {
         viewModelStock.updateStock(
             (listOf(DataStockItem(idProduct, stockProduct))), idUser
         ).observe(viewLifecycleOwner) { results ->
@@ -159,9 +181,16 @@ class BuyDialogFragment(
                 is Resource.Loading -> {
                 }
                 is Resource.Success -> {
-                    val intent6 = Intent(context, OnSuccessActivity::class.java)
-                    intent6.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, data.id)
-                    startActivity(intent6)
+                    viewModel.price.observe(requireActivity()) {
+                        val totalPrice = it.toString()
+                        val intent6 = Intent(context, OnSuccessActivity::class.java)
+                        intent6.putExtra(OnSuccessActivity.EXTRA_DATA_PRICE, totalPrice)
+                        intent6.putExtra(OnSuccessActivity.EXTRA_DATA_SUCCESS, data.id)
+                        intent6.putExtra(OnSuccessActivity.EXTRA_ID_SUCCESS, dataPayment)
+                        intent6.putExtra(OnSuccessActivity.EXTRA_NAME_SUCCESS, namePayment)
+                        startActivity(intent6)
+                    }
+
                 }
                 is Resource.Error -> {
                     try {
@@ -196,8 +225,74 @@ class BuyDialogFragment(
         }
     }
 
-    companion object {
-        const val EXTRA_DATA_BTN_DIALOG = "extra_data_payment"
+    private fun initDataPayment() {
+        if (dataPayment == null && namePayment == null) {
+            Log.d("initDataPayment", "Ada Error")
+        } else {
+            dataPayment?.let { initImagePayment(it) }
+            binding?.tvPaymentMethode?.text = namePayment
+        }
     }
 
+
+    private fun initImagePayment(dataPayment: String) {
+        binding?.apply {
+            when (dataPayment) {
+                "va_bca" -> {
+                    Glide.with(requireActivity())
+                        .asBitmap()
+                        .load(R.drawable.bca)
+                        .into(imgPaymentMethode)
+                }
+                "va_mandiri" -> {
+                    Glide.with(requireActivity())
+                        .asBitmap()
+                        .load(R.drawable.mandiri)
+                        .into(imgPaymentMethode)
+                }
+                "va_bri" -> {
+                    Glide.with(requireActivity())
+                        .asBitmap()
+                        .load(R.drawable.bri)
+                        .into(imgPaymentMethode)
+                }
+                "va_bni" -> {
+                    Glide.with(requireActivity())
+                        .asBitmap()
+                        .load(R.drawable.bni)
+                        .into(imgPaymentMethode)
+                }
+                "va_btn" -> {
+                    Glide.with(requireActivity())
+                        .asBitmap()
+                        .load(R.drawable.btn)
+                        .into(imgPaymentMethode)
+                }
+                "va_danamon" -> {
+                    Glide.with(requireActivity())
+                        .asBitmap()
+                        .load(R.drawable.danamon)
+                        .into(imgPaymentMethode)
+                }
+                "ewallet_gopay" -> {
+                    Glide.with(requireActivity())
+                        .asBitmap()
+                        .load(R.drawable.gopay)
+                        .into(imgPaymentMethode)
+                }
+                "ewallet_ovo" -> {
+                    Glide.with(requireActivity())
+                        .asBitmap()
+                        .load(R.drawable.ovo)
+                        .into(imgPaymentMethode)
+                }
+                "ewallet_dana" -> {
+                    Glide.with(requireActivity())
+                        .asBitmap()
+                        .load(R.drawable.dana)
+                        .into(imgPaymentMethode)
+                }
+            }
+        }
+    }
 }

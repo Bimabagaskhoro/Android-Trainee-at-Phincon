@@ -159,23 +159,6 @@
                 app:layout_constraintStart_toEndOf="@+id/img_payment_methode"
                 app:layout_constraintTop_toTopOf="@+id/img_payment_methode" />
 
-
-            <TextView
-                android:id="@+id/tv_holding_payment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:visibility="gone"
-                android:fontFamily="@font/poppinsbold"
-                android:text="@string/choose_payment_methode"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

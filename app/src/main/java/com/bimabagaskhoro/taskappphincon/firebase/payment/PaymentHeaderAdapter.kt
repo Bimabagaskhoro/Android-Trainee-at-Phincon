@@ -13,9 +13,11 @@ import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 
 @Suppress("DEPRECATION")
 class PaymentHeaderAdapter(
-    private val onItemClick: (DataItem) -> Unit,
+    private val onItemClick: (DataItem) -> Unit
 ) : RecyclerView.Adapter<PaymentHeaderAdapter.ViewHolder>() {
     private val listDataHeader = ArrayList<PaymentModel>()
+
+    private var isExpand: Boolean = true
 
     @SuppressLint("NotifyDataSetChanged")
     fun setData(users: List<PaymentModel>) {
@@ -42,24 +44,34 @@ class PaymentHeaderAdapter(
 
             binding.apply {
                 tvPaymentItemHeader.text = data.type.toString()
-                val paymentAdapter = PaymentBodyAdapter ({ dataItem->
-                    val id = dataItem.id
-                    val name = dataItem.name
-                    val status = dataItem.status
-                    val intent = Intent(itemView.context, DetailActivity::class.java)
+                val paymentAdapter = PaymentBodyAdapter { dataItem ->
                     onItemClick.invoke(dataItem)
-                },
-                    data.data,
-                )
+                }
+                if (isExpand) {
+                    rvItemBodyPayment.visibility = View.VISIBLE
+                } else {
+                    rvItemBodyPayment.visibility = View.GONE
+                }
+
+                tvPaymentItemHeader.setOnClickListener {
+                    isExpand = !isExpand
+                    if (isExpand) {
+                        rvItemBodyPayment.visibility = View.VISIBLE
+                        imgToggleUp.visibility = View.VISIBLE
+                        imgToggleDown.visibility = View.GONE
+
+                    } else {
+                        rvItemBodyPayment.visibility = View.GONE
+                        imgToggleUp.visibility = View.GONE
+                        imgToggleDown.visibility = View.VISIBLE
+                    }
+                }
+                rvItemBodyPayment.setHasFixedSize(true)
+                paymentAdapter.setData(data.data.sortedBy { it.order })
                 rvItemBodyPayment.layoutManager =
                     LinearLayoutManager(itemView.context, LinearLayoutManager.VERTICAL, false)
                 rvItemBodyPayment.adapter = paymentAdapter
             }
         }
     }
-
-    interface OnItemClickCallback {
-        fun onItemClicked(data: PaymentModel)
-    }
-
 }

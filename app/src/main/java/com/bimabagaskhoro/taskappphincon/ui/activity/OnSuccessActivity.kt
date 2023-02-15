@@ -12,13 +12,16 @@ import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityOnSuccessBinding
+import com.bimabagaskhoro.taskappphincon.firebase.payment.PaymentActivity
 import com.bimabagaskhoro.taskappphincon.utils.Resource
+import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
+import java.util.ArrayList
 
 @AndroidEntryPoint
 class OnSuccessActivity : AppCompatActivity() {
@@ -31,9 +34,19 @@ class OnSuccessActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initDataPayment()
+        initDataPaymentFromBottomCard()
+
+
         val productId = intent.getIntExtra(EXTRA_DATA_SUCCESS, 0)
         val listProductId = intent.getStringArrayListExtra(EXTRA_DATA_SUCCESS_ID)
 
+        if (productId != 0) {
+            val totalPriceDetail = intent.getStringExtra(EXTRA_DATA_PRICE)
+            binding.tvTotalPriceIdr.text = totalPriceDetail?.formatterIdr()
+        } else {
+            val totalPriceTrolley = intent.getStringExtra(EXTRA_DATA_PRICE_TROLLEY)
+            binding.tvTotalPriceIdr.text = totalPriceTrolley?.formatterIdr()
+        }
 
         binding.button.setOnClickListener {
             val rating = binding.ratingBar.rating
@@ -132,11 +145,25 @@ class OnSuccessActivity : AppCompatActivity() {
                 }
             }
         }
+
+
+    }
+
+    private fun initDataPaymentFromBottomCard() {
+        val dataPayment = intent.getStringExtra(EXTRA_DATA_SUCCESS_ID_PAYMENT)
+        val dataName = intent.getStringExtra(EXTRA_DATA_SUCCESS_NAME)
+
+        if (dataPayment == null && dataName == null) {
+            Log.d("initDataPayment", "Ada Error")
+        } else {
+            dataPayment?.let { initImagePayment(it) }
+            binding.tvPaymentMethode.text = dataName
+        }
     }
 
     private fun initDataPayment() {
-        val dataPayment = intent.getStringExtra(EXTRA_DATA_SUCCESS_ID_PAYMENT)
-        val dataName = intent.getStringExtra(EXTRA_DATA_SUCCESS_NAME)
+        val dataPayment = intent.getStringExtra(EXTRA_ID_SUCCESS)
+        val dataName = intent.getStringExtra(EXTRA_NAME_SUCCESS)
 
         if (dataPayment == null && dataName == null) {
             Log.d("initDataPayment", "Ada Error")
@@ -209,8 +236,13 @@ class OnSuccessActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_DATA_SUCCESS = "extra_data_success"
+        const val EXTRA_ID_SUCCESS = "extra_id_success"
+        const val EXTRA_NAME_SUCCESS = "extra_name_success"
+        const val EXTRA_DATA_PRICE = "extra_data_price"
+
         const val EXTRA_DATA_SUCCESS_NAME = "extra_data_success_id_name"
         const val EXTRA_DATA_SUCCESS_ID_PAYMENT = "extra_data_success_id_payment"
         const val EXTRA_DATA_SUCCESS_ID = "extra_data_success_id"
+        const val EXTRA_DATA_PRICE_TROLLEY = "extra_data_price_trolley"
     }
 }
