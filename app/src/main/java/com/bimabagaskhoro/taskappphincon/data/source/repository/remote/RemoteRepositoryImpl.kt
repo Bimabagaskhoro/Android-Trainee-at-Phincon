@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.data.source.repository
+package com.bimabagaskhoro.taskappphincon.data.source.repository.remote
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -24,9 +24,9 @@ import okhttp3.RequestBody
 import retrofit2.HttpException
 import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(
+class RemoteRepositoryImpl @Inject constructor(
     private val apiService: ApiService
-) : AuthRepository {
+) : RemoteRepository {
     override fun getDataProduct(
         search: String?
     ): Flow<PagingData<DataItemProduct>> {

@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.data.source.repository
+package com.bimabagaskhoro.taskappphincon.data.source.repository.remote
 
 import androidx.paging.PagingData
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-interface AuthRepository {
+interface RemoteRepository {
     fun getDataProduct(
         search: String?
     ): Flow<PagingData<DataItemProduct>>

@@ -1,7 +1,6 @@
-package com.bimabagaskhoro.taskappphincon.firebase.payment
+package com.bimabagaskhoro.taskappphincon.ui.adapter.firebase
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ItemPaymentHeaderBinding
-import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataItem
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.PaymentModel
 
 @Suppress("DEPRECATION")
 class PaymentHeaderAdapter(

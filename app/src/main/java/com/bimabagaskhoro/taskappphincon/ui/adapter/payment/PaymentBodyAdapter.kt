@@ -1,7 +1,6 @@
-package com.bimabagaskhoro.taskappphincon.firebase.payment
+package com.bimabagaskhoro.taskappphincon.ui.adapter.firebase
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +10,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ItemPaymentBinding
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataItem
 import com.bumptech.glide.Glide
 
 class PaymentBodyAdapter(
