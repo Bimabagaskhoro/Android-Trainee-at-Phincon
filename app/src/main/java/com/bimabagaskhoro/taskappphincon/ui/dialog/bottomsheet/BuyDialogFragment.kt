@@ -14,9 +14,8 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockIt
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.DataDetail
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentBuyDialogBinding
-import com.bimabagaskhoro.taskappphincon.firebase.payment.PaymentActivity
-import com.bimabagaskhoro.taskappphincon.firebase.payment.PaymentActivity.Companion.EXTRA_DATA_PAYMENT
-import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
+import com.bimabagaskhoro.taskappphincon.ui.activity.PaymentActivity
+import com.bimabagaskhoro.taskappphincon.ui.activity.PaymentActivity.Companion.EXTRA_DATA_PAYMENT
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr

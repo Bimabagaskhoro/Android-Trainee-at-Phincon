@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.firebase
+package com.bimabagaskhoro.taskappphincon.fcm
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

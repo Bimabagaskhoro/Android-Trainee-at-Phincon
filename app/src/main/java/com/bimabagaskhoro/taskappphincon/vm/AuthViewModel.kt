@@ -1,6 +1,5 @@
 package com.bimabagaskhoro.taskappphincon.vm
 
-import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
@@ -10,11 +9,9 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStoc
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseChangeImage
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRegister
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ResponseDetail
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.DataItemFavorite
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseAddFavorite
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseFavorite
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
+import com.bimabagaskhoro.taskappphincon.data.source.repository.remote.RemoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -24,14 +21,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
+    private val remoteRepository: RemoteRepository,
     private val dataPreference: AuthPreferences
 ) : ViewModel() {
     fun login(
         email: String,
         password: String,
         tokenFcm: String
-    ) = authRepository.login(email, password, tokenFcm).asLiveData()
+    ) = remoteRepository.login(email, password, tokenFcm).asLiveData()
 
     fun register(
         image: MultipartBody.Part,
@@ -41,44 +38,44 @@ class AuthViewModel @Inject constructor(
         phone: RequestBody,
         gender: Int,
     ): LiveData<Resource<ResponseRegister>> =
-        authRepository.register(image, email, password, name, phone, gender).asLiveData()
+        remoteRepository.register(image, email, password, name, phone, gender).asLiveData()
 
     fun changePassword(
         id: Int,
         oldPassword: String,
         newPassword: String,
         confirmPassword: String
-    ) = authRepository.changePassword(id, oldPassword, newPassword, confirmPassword).asLiveData()
+    ) = remoteRepository.changePassword(id, oldPassword, newPassword, confirmPassword).asLiveData()
 
     fun changeImage(
         id: Int,
         image: MultipartBody.Part,
     ): LiveData<Resource<ResponseChangeImage>> =
-        authRepository.changeImage(id, image).asLiveData()
+        remoteRepository.changeImage(id, image).asLiveData()
 
     fun getDetail(
         idProduct: Int,
         idUser: Int
     ): LiveData<Resource<ResponseDetail>> =
-        authRepository.getDetailProduct(idProduct, idUser).asLiveData()
+        remoteRepository.getDetailProduct(idProduct, idUser).asLiveData()
 
     fun addFavorite(
         userId: Int,
         idProduct: Int
     ): LiveData<Resource<ResponseAddFavorite>> =
-        authRepository.addFavorite(userId, idProduct).asLiveData()
+        remoteRepository.addFavorite(userId, idProduct).asLiveData()
 
     fun unFavorite(
         userId: Int,
         idProduct: Int
     ): LiveData<Resource<ResponseAddFavorite>> =
-        authRepository.unFavorite(userId, idProduct).asLiveData()
+        remoteRepository.unFavorite(userId, idProduct).asLiveData()
 
     fun updateStock(
         data: List<DataStockItem>,
         idUser: String
     ): LiveData<Resource<ResponseAddFavorite>> =
-        authRepository.updateStock(
+        remoteRepository.updateStock(
             RequestStock(idUser, data)
         ).asLiveData()
 
@@ -86,15 +83,15 @@ class AuthViewModel @Inject constructor(
         userId: Int,
         rate: RequestRating
     ): LiveData<Resource<ResponseAddFavorite>> =
-        authRepository.updateRate(userId, rate).asLiveData()
+        remoteRepository.updateRate(userId, rate).asLiveData()
 
     fun getOtherProduct(
         userId: Int
-    ) = authRepository.getOtherProduct(userId).asLiveData()
+    ) = remoteRepository.getOtherProduct(userId).asLiveData()
 
     fun getHistoryProduct(
         userId: Int
-    ) = authRepository.getHistoryProduct(userId).asLiveData()
+    ) = remoteRepository.getHistoryProduct(userId).asLiveData()
 
     /**
      * for home fragment
@@ -116,7 +113,7 @@ class AuthViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val productList = currentQuery.flatMapLatest {
-        authRepository.getDataProduct(it).cachedIn(viewModelScope)
+        remoteRepository.getDataProduct(it).cachedIn(viewModelScope)
     }
 
     /**
@@ -125,7 +122,7 @@ class AuthViewModel @Inject constructor(
     fun getFavProduct(
         userId: Int,
         search: String? = null
-    ) = authRepository.getDataFavProduct(userId, search).asLiveData()
+    ) = remoteRepository.getDataFavProduct(userId, search).asLiveData()
 
     fun onRefresh() {
         viewModelScope.launch {

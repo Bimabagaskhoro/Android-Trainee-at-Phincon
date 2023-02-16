@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.ui.adapter.firebase
+package com.bimabagaskhoro.taskappphincon.ui.adapter.payment
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

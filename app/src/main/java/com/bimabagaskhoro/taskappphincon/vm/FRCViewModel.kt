@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bimabagaskhoro.taskappphincon.data.source.repository.FirebaseRepository
+import com.bimabagaskhoro.taskappphincon.data.source.repository.firebase.FirebaseRepository
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class FirebaseViewModel @Inject constructor(
+class FRCViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepository
 ) : ViewModel() {
 
@@ -43,5 +43,4 @@ class FirebaseViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
-
 }

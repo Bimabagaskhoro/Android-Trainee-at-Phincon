@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.firebase.payment
+package com.bimabagaskhoro.taskappphincon.data.source.remote.response
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon.firebase.payment
+package com.bimabagaskhoro.taskappphincon.ui.activity
 
 import android.content.Intent
 import android.net.Uri
@@ -10,10 +10,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.PaymentModel
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityPaymentBinding
-import com.bimabagaskhoro.taskappphincon.ui.activity.CartActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.CartActivity.Companion.EXTRA_DATA_CART
 import com.bimabagaskhoro.taskappphincon.ui.activity.CartActivity.Companion.EXTRA_DATA_CART_NAME
-import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity.Companion.EXTRA_DATA_DETAIL
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity.Companion.EXTRA_DATA_PAYMENT_TO_BTN
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity.Companion.EXTRA_NAME_PAYMENT_TO_BTN

@@ -7,14 +7,17 @@ import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
 import com.bimabagaskhoro.taskappphincon.data.source.local.db.notification.NotificationDatabase
 import com.bimabagaskhoro.taskappphincon.data.source.local.db.trolley.CartDatabase
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
-import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepository
-import com.bimabagaskhoro.taskappphincon.data.source.repository.AuthRepositoryImpl
+import com.bimabagaskhoro.taskappphincon.data.source.repository.remote.RemoteRepository
+import com.bimabagaskhoro.taskappphincon.data.source.repository.remote.RemoteRepositoryImpl
+import com.bimabagaskhoro.taskappphincon.data.source.repository.firebase.FirebaseRepository
+import com.bimabagaskhoro.taskappphincon.data.source.repository.firebase.FirebaseRepositoryImpl
 import com.bimabagaskhoro.taskappphincon.utils.AuthAuthenticator
 import com.bimabagaskhoro.taskappphincon.utils.AuthBadResponse
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CART_DATABASE
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.NOTIFICATION_DATABASE
 import com.bimabagaskhoro.taskappphincon.utils.HeaderInterceptor
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -110,8 +113,8 @@ object AppModule {
     @Singleton
     fun provideUserRepository(
         apiService: ApiService
-    ): AuthRepository {
-        return AuthRepositoryImpl(apiService)
+    ): RemoteRepository {
+        return RemoteRepositoryImpl(apiService)
     }
 
     @Provides
@@ -150,4 +153,19 @@ object AppModule {
     @Provides
     @Singleton
     fun provideNotificationDao(db: NotificationDatabase) = db.notificationDao()
+
+    /**
+     * firebase config
+     */
+
+    @Provides
+    @Singleton
+    fun providesFirebaseRemoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+
+    @Provides
+    @Singleton
+    fun providesFirebaseRepository(
+        fcm: FirebaseRemoteConfig
+    ): FirebaseRepository = FirebaseRepositoryImpl(fcm)
+
 }

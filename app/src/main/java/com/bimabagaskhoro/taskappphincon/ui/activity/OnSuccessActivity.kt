@@ -12,7 +12,6 @@ import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityOnSuccessBinding
-import com.bimabagaskhoro.taskappphincon.firebase.payment.PaymentActivity
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
@@ -21,7 +20,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
-import java.util.ArrayList
 
 @AndroidEntryPoint
 class OnSuccessActivity : AppCompatActivity() {
