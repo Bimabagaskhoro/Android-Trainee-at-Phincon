@@ -1,90 +1,97 @@
 package com.bimabagaskhoro.taskappphincon.vm
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.bimabagaskhoro.taskappphincon.data.source.repository.local.LocalDataSource
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
-import com.bimabagaskhoro.taskappphincon.data.source.local.LocalDataSource
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LocalViewModel @Inject constructor(
-    private val repository: LocalDataSource
+    private val localDataSource: LocalDataSource
 ) : ViewModel() {
 
-    fun deleteCart(id: Int) = viewModelScope.launch(Dispatchers.IO) { repository.deleteCart(id) }
+    /**
+     * trolley
+     */
 
-    fun insertCart(cartEntity: CartEntity) =
-        viewModelScope.launch(Dispatchers.IO) { repository.saveCart(cartEntity) }
-
-    val getAllCart: LiveData<List<CartEntity>> = repository.getAllCarts().asLiveData()
-    val countAllCart: Int = repository.countItems()
-
-    fun updateQuantity(quantity: Int, id: Int, newTotalPrice: Int): Int =
-        repository.updateQuantity(quantity, id, newTotalPrice)
-
-    fun updatePriceCard(harga: Int, id: Int): Int = repository.updatePriceCard(harga, id)
-
-//    fun getTrolleyChecked(): List<DataTrolley>? {
-//        return repository.getCheckedTrolley()
-//    }
-
-    fun checkAll(state: Int): Int = repository.checkALl(state)
-
-    fun updateCheck(id: Int, state: Int): Int = repository.updateCheck(id, state)
-
-    fun getTotalPrice(): Int {
-        return repository.getTotalHarga()
+    fun getAllProduct(): Flow<List<CartEntity>> {
+        return localDataSource.getAllProduct()
     }
 
-    fun deleteTrolleyChecked(): Int? {
-        return repository.deleteCheckedTrolley()
+    fun getAllCheckedProduct(): Flow<List<CartEntity>> {
+        return localDataSource.getAllCheckedProduct()
     }
 
-    val getTrolleyChecked: LiveData<List<CartEntity>> =
-        repository.getAllCheckedProductFromTrolly().asLiveData()
+    fun insertCart(cartDataDomain: CartEntity) {
+        viewModelScope.launch(Dispatchers.IO) {
+            localDataSource.addProductToTrolley(cartDataDomain)
+        }
+    }
+
+    fun updateProductData(quantity: Int?, itemTotalPrice: Int?, id: Int?) {
+        viewModelScope.launch {
+            localDataSource.updateProductData(quantity, itemTotalPrice, id)
+        }
+    }
+
+    fun updateProductIsCheckedAll(isChecked: Boolean) {
+        viewModelScope.launch {
+            localDataSource.updateProductIsCheckedAll(isChecked)
+        }
+    }
+
+    fun updateProductIsCheckedById(isChecked: Boolean, id: Int?) {
+        viewModelScope.launch {
+            localDataSource.updateProductIsCheckedById(isChecked, id)
+        }
+    }
+
+    fun deleteProductByIdFromTrolley(id: Int?) {
+        viewModelScope.launch {
+            localDataSource.deleteProductByIdFromTrolley(id)
+        }
+    }
 
     /**
      * notification
      */
-
-    val getAllNotification: LiveData<List<NotificationEntity>> =
-        repository.getAllNotification().asLiveData()
-
-    val countAllNotification: Int = repository.countItemNotification()
-
-    fun getTotalNotification(): Int {
-        return repository.getTotalNotification()
+    fun getAllNotification(): Flow<List<NotificationEntity>> {
+        return localDataSource.getAllNotification()
     }
 
-    fun getTotalIsReadNotification(): Int {
-        return repository.getTotalIsReadNotification()
+    fun updateReadNotification(isRead: Boolean, id: Int?) {
+        viewModelScope.launch {
+            localDataSource.updateReadNotification(isRead, id)
+        }
     }
 
-    fun updateTotalNotification(totalNotification: Int, id: Int): Int =
-        repository.updateTotalNotification(totalNotification, id)
-
-    fun isRead(state: Int, id: Int): Int = repository.isRead(state, id)
-
-    fun deleteNotification(): Int? {
-        return repository.deleteNotification()
+    fun setAllReadNotification(isRead: Boolean) {
+        viewModelScope.launch {
+            localDataSource.setAllReadNotification(isRead)
+        }
     }
 
-    val getAllCheckedNotification: LiveData<List<NotificationEntity>> =
-        repository.getAllCheckedNotification().asLiveData()
+    fun updateCheckedNotification(isChecked: Boolean, id: Int?) {
+        viewModelScope.launch {
+            localDataSource.updateCheckedNotification(isChecked, id)
+        }
+    }
 
-    fun updateCheckNotification(id: Int, state: Int): Int = repository.updateCheckNotification(id, state)
+    fun setAllUncheckedNotification(isChecked: Boolean = false) {
+        viewModelScope.launch {
+            localDataSource.setAllUncheckedNotification(isChecked)
+        }
+    }
 
-    fun checkAllNotification(state: Int): Int = repository.checkAllNotification(state)
-
-    fun viewCheckBoxAnimation(state: Int): Int = repository.viewCheckBoxAnimation(state)
-
-    fun deleteNotifications(id: Int) = viewModelScope.launch(Dispatchers.IO) { repository.deleteNotification(id) }
-
-
+    fun deleteNotification(isChecked: Boolean) {
+        viewModelScope.launch {
+            localDataSource.deleteNotification(isChecked)
+        }
+    }
 }

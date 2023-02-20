@@ -20,6 +20,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -30,7 +31,6 @@ import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.SuccessImage
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentUserBinding
-import com.bimabagaskhoro.taskappphincon.ui.SplashScreen
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.PasswordActivity
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CustomSpinnerAdapter
@@ -38,7 +38,7 @@ import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
 import com.bimabagaskhoro.taskappphincon.utils.reduceFileImage
 import com.bimabagaskhoro.taskappphincon.utils.rotateBitmap
 import com.bimabagaskhoro.taskappphincon.utils.uriToFile
-import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
@@ -50,6 +50,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
 import java.io.File
+import java.io.IOException
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -60,7 +61,7 @@ class UserFragment : Fragment() {
 
     private var getFile: File? = null
     private lateinit var result: Bitmap
-    private val viewModel: AuthViewModel by viewModels()
+    private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     val dataLanguage = arrayOf("en", "id")
     val dataImgLanguage = intArrayOf(R.drawable.unitedstates, R.drawable.indonesia)
@@ -99,6 +100,7 @@ class UserFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     dataStoreViewModel.clear()
                     startActivity(Intent(requireActivity(), AuthActivity::class.java))
+                    requireActivity().finish()
                 }
             }
         }
@@ -304,14 +306,21 @@ class UserFragment : Fragment() {
                                     .setPositiveButton("Ok") { _, _ ->
                                     }
                                     .show()
-                            } catch (e: java.lang.Exception) {
-                                val err = result.errorCode
-                                Log.d("ErrorCode", "$err")
+                            } catch (t: IOException) {
+                                val msgErr = t.localizedMessage
+                                Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
                             }
 
                         }
                         is Resource.Empty -> {
+                            binding.progressbar.visibility = View.GONE
+                            binding.cardProgressbar.visibility = View.GONE
+                            binding.tvWaiting.visibility = View.GONE
                             Log.d("Empty Data", "Empty")
+                        }
+
+                        else -> {
+                            Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

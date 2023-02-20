@@ -16,11 +16,10 @@ import com.bumptech.glide.Glide
 @SuppressLint("NotifyDataSetChanged")
 @Suppress("DEPRECATION")
 class CartAdapter(
-    private val onDeleteItem: (Int) -> Unit,
+    private val onDeleteItem: (CartEntity) -> Unit,
     private val onAddQuantity: (CartEntity) -> Unit,
     private val onMinQuantity: (CartEntity) -> Unit,
     private val onCheckedItem: (CartEntity) -> Unit,
-    private val onUnCheckedItem: (CartEntity) -> Unit,
 ) :
     RecyclerView.Adapter<CartAdapter.ViewHolder>() {
     private var listData = ArrayList<CartEntity>()
@@ -57,54 +56,44 @@ class CartAdapter(
                     .placeholder(R.drawable.ic_broken_image)
                     .into(imgProduct)
                 tvTittleProduct.isSelected = true
-                tvTittleProduct.text = data.name_product
-                tvPriceProduct.text = data.harga?.formatterIdr()
+                tvTittleProduct.text = data.nameProduct
+                tvPriceProduct.text = data.price?.formatterIdr()
                 tvTotalNumber.text = data.quantity.toString()
 
+                checkBox.isChecked = data.isChecked
+                checkBox.setOnClickListener { onCheckedItem.invoke(data) }
                 btnDelete.setOnClickListener {
-                    data.id?.let { it1 -> onDeleteItem(it1) }
+                    onDeleteItem.invoke(data)
                 }
 
-                addFragmentDialog.setOnClickListener {
-                    val stock = data.stock
-                    val quantity = (data.quantity)
-                    if (quantity == stock) {
-                        addFragmentDialog.isClickable = false
-                        Toast.makeText(itemView.context, R.string.out_stock, Toast.LENGTH_SHORT)
-                            .show()
-                    } else {
-                        onAddQuantity.invoke(listData[adapterPosition])
-                        binding.addFragmentDialog.background =
-                            ContextCompat.getDrawable(
-                                itemView.context,
-                                R.drawable.bg_rounded_lightgrey
-                            )
+                addQty.setOnClickListener {
+                    data.stock?.let {
+                        if (tvTotalNumber.text.toString().toInt() < it) {
+                            onAddQuantity.invoke(data)
+                        }
                     }
-                }
-                minFragmentDialog.setOnClickListener {
-                    val quantity = (data.quantity)
-                    if (quantity != 1) {
-                        onMinQuantity.invoke(listData[adapterPosition])
-                    } else {
-                        minFragmentDialog.isClickable = false
-                        binding.minFragmentDialog.background =
-                            ContextCompat.getDrawable(
-                                itemView.context,
-                                R.drawable.bg_rounded_lightgrey
-                            )
-                    }
-                }
-                if (data.is_check == 1) {
-                    binding.checkBox.isChecked = true
-                } else if (data.is_check == 0) {
-                    binding.checkBox.isChecked = false
                 }
 
-                checkBox.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        onCheckedItem.invoke(listData[adapterPosition])
-                    } else if (!isChecked) {
-                        onUnCheckedItem.invoke(listData[adapterPosition])
+                minQty.setOnClickListener {
+                    if (tvTotalNumber.text.toString().toInt() > 1) {
+                        onMinQuantity.invoke(data)
+                    }
+                }
+
+                data.stock?.let {
+                    when (tvTotalNumber.text.toString().toInt()) {
+                        it -> {
+                            binding.addQty.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_rounded_lightgrey)
+                            binding.minQty.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_rounded_black)
+                        }
+                        1 -> {
+                            binding.addQty.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_rounded_black)
+                            binding.minQty.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_rounded_lightgrey)
+                        }
+                        else -> {
+                            binding.addQty.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_rounded_black)
+                            binding.minQty.background = ContextCompat.getDrawable(itemView.context, R.drawable.bg_rounded_black)
+                        }
                     }
                 }
             }

@@ -14,17 +14,18 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseErr
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityOnSuccessBinding
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
-import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
+import java.io.IOException
 
 @AndroidEntryPoint
 class OnSuccessActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOnSuccessBinding
-    private val viewModel: AuthViewModel by viewModels()
+    private val viewModel: RemoteViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,8 +68,8 @@ class OnSuccessActivity : AppCompatActivity() {
                                 finishAffinity()
                             }
                             is Resource.Error -> {
-                                binding.progressbar.visibility = View.GONE
                                 try {
+                                    binding.progressbar.visibility = View.GONE
                                     val err =
                                         result.errorBody?.string()
                                             ?.let { it1 -> JSONObject(it1).toString() }
@@ -80,14 +81,17 @@ class OnSuccessActivity : AppCompatActivity() {
                                     AlertDialog.Builder(this@OnSuccessActivity).setTitle("Failed")
                                         .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                         }.show()
-                                } catch (e: java.lang.Exception) {
-                                    val err = result.errorCode
-                                    Log.d("ErrorCode", "$err")
+                                } catch (t: IOException) {
+                                    val msgErr = t.localizedMessage
+                                    Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
                                 }
                             }
                             is Resource.Empty -> {
                                 binding.progressbar.visibility = View.GONE
                                 Log.d("DetailActivity", "Empty Data")
+                            }
+                            else -> {
+                                Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -129,14 +133,17 @@ class OnSuccessActivity : AppCompatActivity() {
                                             .setMessage(messageErr)
                                             .setPositiveButton("Ok") { _, _ ->
                                             }.show()
-                                    } catch (e: java.lang.Exception) {
-                                        val err = result.errorCode
-                                        Log.d("ErrorCode", "$err")
+                                    } catch (t: IOException) {
+                                        val msgErr = t.localizedMessage
+                                        Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
                                     }
                                 }
                                 is Resource.Empty -> {
                                     binding.progressbar.visibility = View.GONE
                                     Log.d("DetailActivity", "Empty Data")
+                                }
+                                else -> {
+                                    Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -230,6 +237,11 @@ class OnSuccessActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 
     companion object {

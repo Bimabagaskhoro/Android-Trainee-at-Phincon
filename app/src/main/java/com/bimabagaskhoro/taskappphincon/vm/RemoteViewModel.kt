@@ -20,7 +20,7 @@ import okhttp3.RequestBody
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(
+class RemoteViewModel @Inject constructor(
     private val remoteRepository: RemoteRepository,
     private val dataPreference: AuthPreferences
 ) : ViewModel() {

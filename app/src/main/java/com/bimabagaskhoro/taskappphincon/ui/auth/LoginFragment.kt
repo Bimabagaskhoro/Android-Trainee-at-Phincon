@@ -17,34 +17,37 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseErr
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.SuccessLogin
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentLoginBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.MainActivity
-import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.utils.NoConnectivityException
+import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
+import java.io.IOException
+import java.net.SocketTimeoutException
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
-    private val binding get() = _binding!!
-    private val viewModel: AuthViewModel by viewModels()
+    private val binding get() = _binding
+    private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
+        binding?.apply {
             btnLogin.setOnClickListener {
                 onButtonPressed()
             }
@@ -57,33 +60,36 @@ class LoginFragment : Fragment() {
     }
 
     private fun onButtonPressed() {
-        val email = binding.edtEmail.text.toString().trim()
-        val password = binding.edtPassword.text.toString().trim()
+        val email = binding?.edtEmail?.text.toString().trim()
+        val password = binding?.edtPassword?.text.toString().trim()
         if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.tvCheckingEmail.visibility = View.INVISIBLE
-        } else {
-            binding.tvCheckingEmail.visibility = View.VISIBLE
-            binding.edtEmail.requestFocus()
-        }
-        when {
-            email.isEmpty() -> {
-                binding.edtEmail.error = "Masukan email terlebih dahulu"
-                binding.edtEmail.requestFocus()
-            }
-            password.isEmpty() -> {
-                binding.edtPassword.error = "Masukan password terlebih dahulu"
-                binding.edtPassword.requestFocus()
-            }
-            else -> {
-
-                binding.edtEmail.error = null
-                binding.edtPassword.error = null
-                FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                    val tokenFcm = task.result
-                    Log.d("tokenFcm", tokenFcm)
-                    initData(email, password, tokenFcm)
+            binding?.tvCheckingEmail?.visibility = View.INVISIBLE
+            when {
+                email.isEmpty() -> {
+                    binding?.edtEmail?.error = "Masukan email terlebih dahulu"
+                    binding?.edtEmail?.requestFocus()
+                }
+                password.isEmpty() -> {
+                    binding?.edtPassword?.error = "Masukan password terlebih dahulu"
+                    binding?.edtPassword?.requestFocus()
+                }
+                else -> {
+                    binding?.edtEmail?.error = null
+                    binding?.edtPassword?.error = null
+                    try {
+                        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                            val tokenFcm = task.result
+                            Log.d("tokenFcm", tokenFcm)
+                            initData(email, password, tokenFcm)
+                        }
+                    } catch (io: IOException) {
+                        Log.d("IOException", "No Internet")
+                    }
                 }
             }
+        } else {
+            binding?.tvCheckingEmail?.visibility = View.VISIBLE
+            binding?.edtEmail?.requestFocus()
         }
     }
 
@@ -91,14 +97,14 @@ class LoginFragment : Fragment() {
         viewModel.login(email, password, tokenFcm).observe(viewLifecycleOwner) {
             when (it) {
                 is Resource.Loading -> {
-                    binding.progressbar.visibility = View.VISIBLE
-                    binding.cardProgressbar.visibility = View.VISIBLE
-                    binding.tvWaiting.visibility = View.VISIBLE
+                    binding?.progressbar?.visibility = View.VISIBLE
+                    binding?.cardProgressbar?.visibility = View.VISIBLE
+                    binding?.tvWaiting?.visibility = View.VISIBLE
                 }
                 is Resource.Success -> {
-                    binding.progressbar.visibility = View.GONE
-                    binding.cardProgressbar.visibility = View.GONE
-                    binding.tvWaiting.visibility = View.GONE
+                    binding?.progressbar?.visibility = View.GONE
+                    binding?.cardProgressbar?.visibility = View.GONE
+                    binding?.tvWaiting?.visibility = View.GONE
                     it.data?.success?.let { it1 -> saveUserData(it1) }
                     val dataLog = it.data?.success
                     Log.d("datas", "$dataLog")
@@ -108,18 +114,30 @@ class LoginFragment : Fragment() {
                     }
                 }
                 is Resource.Error -> {
-                    binding.progressbar.visibility = View.GONE
-                    binding.cardProgressbar.visibility = View.GONE
-                    binding.tvWaiting.visibility = View.GONE
-                    val err = it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
-                    val gson = Gson()
-                    val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                    val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
-                    val messageErr = errorResponse.error.message
-                    Toast.makeText(requireActivity(), messageErr, Toast.LENGTH_SHORT).show()
+                    try {
+                        binding?.progressbar?.visibility = View.GONE
+                        binding?.cardProgressbar?.visibility = View.GONE
+                        binding?.tvWaiting?.visibility = View.GONE
+                        val err = it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                        val gson = Gson()
+                        val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                        val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                        val messageErr = errorResponse?.error?.message
+                        Toast.makeText(requireActivity(), messageErr, Toast.LENGTH_SHORT).show()
+
+                        //
+//                        val errorMsg = it.errorMessage
+//                        Toast.makeText(requireActivity(), errorMsg, Toast.LENGTH_SHORT).show()
+                    } catch (t: IOException) {
+                        val msgErr = t.message
+                        Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
+                    }
                 }
                 is Resource.Empty -> {
                     Log.d("Empty Data", "Empty")
+                }
+                else -> {
+                    Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
                 }
             }
         }

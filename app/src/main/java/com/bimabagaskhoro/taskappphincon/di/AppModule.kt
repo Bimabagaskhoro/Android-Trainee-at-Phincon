@@ -4,8 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import com.bimabagaskhoro.taskappphincon.BuildConfig
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
-import com.bimabagaskhoro.taskappphincon.data.source.local.db.notification.NotificationDatabase
-import com.bimabagaskhoro.taskappphincon.data.source.local.db.trolley.CartDatabase
+import com.bimabagaskhoro.taskappphincon.data.source.repository.local.LocalDataSource
+import com.bimabagaskhoro.taskappphincon.data.source.repository.local.LocalDataSourceImpl
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.AppRoomDatabase
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.dao.CartDao
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.dao.NotificationDao
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiService
 import com.bimabagaskhoro.taskappphincon.data.source.repository.remote.RemoteRepository
 import com.bimabagaskhoro.taskappphincon.data.source.repository.remote.RemoteRepositoryImpl
@@ -15,7 +18,7 @@ import com.bimabagaskhoro.taskappphincon.utils.AuthAuthenticator
 import com.bimabagaskhoro.taskappphincon.utils.AuthBadResponse
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CART_DATABASE
-import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.NOTIFICATION_DATABASE
+import com.bimabagaskhoro.taskappphincon.utils.NoInternetInterceptor
 import com.bimabagaskhoro.taskappphincon.utils.HeaderInterceptor
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.Module
@@ -50,7 +53,8 @@ object AppModule {
         httpLoggingInterceptor: HttpLoggingInterceptor,
         authBadResponse: AuthBadResponse,
         authAuthenticator: AuthAuthenticator,
-        headerInterceptor: HeaderInterceptor
+        headerInterceptor: HeaderInterceptor,
+        noInternetInterceptor: NoInternetInterceptor
     ): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
@@ -60,6 +64,7 @@ object AppModule {
             .addInterceptor(headerInterceptor) //header
             .addInterceptor(authBadResponse) // 401 bad response
             .authenticator(authAuthenticator) // get refresh token
+            .addInterceptor(noInternetInterceptor) // time Out
             .readTimeout(10, TimeUnit.SECONDS)
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)
@@ -83,6 +88,12 @@ object AppModule {
     @Provides
     fun provideHeaderInterceptor(authPreferences: AuthPreferences): HeaderInterceptor =
         HeaderInterceptor(authPreferences)
+
+    @Singleton
+    @Provides
+    fun provideNoInternetInterceptor(
+        @ApplicationContext context: Context
+    ): NoInternetInterceptor = NoInternetInterceptor(context)
 
     @Singleton
     @Provides
@@ -121,13 +132,14 @@ object AppModule {
     @Singleton
     fun provideDataStore(@ApplicationContext context: Context): AuthPreferences =
         AuthPreferences(context)
+
     /**
      * trolley database
      */
     @Provides
     @Singleton
     fun provideCartDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
-        context, CartDatabase::class.java, CART_DATABASE
+        context, AppRoomDatabase::class.java, CART_DATABASE
     )
         .allowMainThreadQueries()
         .fallbackToDestructiveMigration()
@@ -135,24 +147,21 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCartDao(db: CartDatabase) = db.cartDao()
+    fun provideCartDao(db: AppRoomDatabase) = db.cartDao()
 
-
-    /**
-     * notification database
-     */
-    @Provides
-    @Singleton
-    fun provideNotificationDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
-        context, NotificationDatabase::class.java, NOTIFICATION_DATABASE
-    )
-        .allowMainThreadQueries()
-        .fallbackToDestructiveMigration()
-        .build()
 
     @Provides
     @Singleton
-    fun provideNotificationDao(db: NotificationDatabase) = db.notificationDao()
+    fun provideNotificationDao(db: AppRoomDatabase) = db.notificationDao()
+
+    @Singleton
+    @Provides
+    fun providesLocalDataSource(
+        cartDao: CartDao,
+        notificationDao: NotificationDao
+    ): LocalDataSource {
+        return LocalDataSourceImpl(cartDao, notificationDao)
+    }
 
     /**
      * firebase config

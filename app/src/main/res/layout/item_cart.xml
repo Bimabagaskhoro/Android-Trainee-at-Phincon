@@ -81,15 +81,15 @@
                 app:srcCompat="@drawable/ic_delete" />
 
             <ImageButton
-                android:id="@+id/add_fragment_dialog"
+                android:id="@+id/add_qty"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/bg_rounded_black"
                 android:src="@drawable/ic_add_circle"
-                app:layout_constraintBottom_toBottomOf="@+id/min_fragment_dialog"
+                app:layout_constraintBottom_toBottomOf="@+id/min_qty"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/min_fragment_dialog"
+                app:layout_constraintTop_toTopOf="@+id/min_qty"
                 app:tint="@color/white" />
 
             <TextView
@@ -101,12 +101,12 @@
                 android:text="@string/_1"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/add_fragment_dialog"
-                app:layout_constraintEnd_toStartOf="@+id/add_fragment_dialog"
-                app:layout_constraintTop_toTopOf="@+id/add_fragment_dialog" />
+                app:layout_constraintBottom_toBottomOf="@+id/add_qty"
+                app:layout_constraintEnd_toStartOf="@+id/add_qty"
+                app:layout_constraintTop_toTopOf="@+id/add_qty" />
 
             <ImageButton
-                android:id="@+id/min_fragment_dialog"
+                android:id="@+id/min_qty"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_marginEnd="8dp"

@@ -76,6 +76,9 @@ class PaymentActivity : AppCompatActivity() {
                 is Resource.Empty -> {
                     Log.d("observeData", "observeData: Empty Data")
                 }
+                else -> {
+                    Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -99,6 +102,7 @@ class PaymentActivity : AppCompatActivity() {
                 intent.putExtra(EXTRA_DATA_CART_NAME, dataItem.name)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
+                finish()
             }
         } else {
             PaymentHeaderAdapter { dataItem ->
@@ -108,6 +112,7 @@ class PaymentActivity : AppCompatActivity() {
                 intent.putExtra(EXTRA_NAME_PAYMENT_TO_BTN, dataItem.name)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
+                finish()
             }
         }
     }
@@ -126,12 +131,13 @@ class PaymentActivity : AppCompatActivity() {
                 val intent = Intent(this@PaymentActivity, DetailActivity::class.java)
                 intent.putExtra(EXTRA_DATA_DETAIL, productId)
                 startActivity(intent)
-
+                finish()
             }
         } else if (!fromDetail) {
             binding.btnBack.setOnClickListener {
                 val intent = Intent(this@PaymentActivity, CartActivity::class.java)
                 startActivity(intent)
+                finish()
             }
         }
     }
@@ -140,4 +146,8 @@ class PaymentActivity : AppCompatActivity() {
         const val EXTRA_DATA_PAYMENT = "extra_data_payment"
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
+    }
 }

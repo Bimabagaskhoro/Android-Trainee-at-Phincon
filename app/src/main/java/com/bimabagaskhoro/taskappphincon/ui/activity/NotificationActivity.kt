@@ -1,137 +1,169 @@
 package com.bimabagaskhoro.taskappphincon.ui.activity
 
-import android.app.AlertDialog
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bimabagaskhoro.taskappphincon.R
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityNotificationBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.NotificationAdapter
 import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class NotificationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificationBinding
     private lateinit var adapter: NotificationAdapter
     private val roomViewModel: LocalViewModel by viewModels()
+    private var isMultipleSelect = false
+    private lateinit var menuNotification: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNotificationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        doActionAdapter()
-        initData()
 
-        val countBadgesNotification = roomViewModel.getTotalNotification()
-        if (countBadgesNotification == 0) {
-            binding.icCheckedFirst.visibility = View.GONE
-        }
-
-        binding.apply {
-            btnBack.setOnClickListener {
-                val intent = Intent(this@NotificationActivity, MainActivity::class.java)
-                startActivity(intent)
-            }
-            icCheckedFirst.setOnClickListener {
-                appBarLayout.visibility = View.GONE
-                appBarLayout2.visibility = View.VISIBLE
-                roomViewModel.viewCheckBoxAnimation(1)
-            }
-
-            btnBack2.setOnClickListener {
-                appBarLayout.visibility = View.VISIBLE
-                appBarLayout2.visibility = View.GONE
-                roomViewModel.viewCheckBoxAnimation(0)
-            }
-
-            binding.checkBoxNotification.setOnClickListener {
-                roomViewModel.checkAllNotification(1)
-//                roomViewModel.isRead(1, data.id)
-                val countBadgesNotifications = roomViewModel.getTotalNotification()
-                if (countBadgesNotifications != 0) {
-                    binding.appBarLayout.visibility = View.VISIBLE
-                    binding.appBarLayout2.visibility = View.GONE
-                    roomViewModel.viewCheckBoxAnimation(0)
-                }
-            }
-
-        }
+        setupToolbar()
+        initObserver()
+        initAdapter()
     }
 
-    private fun doActionAdapter() {
+    private fun initAdapter() {
         adapter = NotificationAdapter(
-            { data ->
-                if (data.isRead == 0) {
-                    data.id?.let { roomViewModel.isRead(1, it) }
-                }
-                val tittleMsg = data.tittle_notification
-                val bodyMsg = data.body_notification
-                val count1 = roomViewModel.getTotalIsReadNotification()
-                val math2 = count1 - count1
-                data.id?.let { tittleMsg?.let { it1 -> bodyMsg?.let { it2 ->
-                    initDialog(math2, it, it1,
-                        it2
-                    )
-                } } }
-
-            },
-            { data ->
-                val id = data.id
-                id?.let { roomViewModel.updateCheckNotification(it, 1) }
-                binding.btnDelete.setOnClickListener {
-                    AlertDialog.Builder(this)
-                        .setTitle("Delete")
-                        .setMessage("Are U Sure Wanna Delete This Notification")
-                        .setPositiveButton(R.string.ok) { _, _ ->
-//                            roomViewModel.deleteNotifications(id)
-                            roomViewModel.deleteNotification()
-                            val countBadgesNotification = roomViewModel.getTotalNotification()
-                            if (countBadgesNotification == 0) {
-                                val intent =
-                                    Intent(this@NotificationActivity, MainActivity::class.java)
-                                startActivity(intent)
-                            } else if (countBadgesNotification != 0) {
-                                binding.appBarLayout.visibility = View.VISIBLE
-                                binding.appBarLayout2.visibility = View.GONE
-                                roomViewModel.viewCheckBoxAnimation(0)
-                            }
-                        }
-                        .show()
-                }
-            },
-            { data ->
-                val id = data.id
-                id?.let { roomViewModel.updateCheckNotification(it, 0) }
-            })
+            context = this@NotificationActivity,
+            isMultipleSelect = isMultipleSelect,
+            onItemClicked = { onNotificationItemClicked(it) },
+            onCheckboxChecked = { onCheckboxChecked(it) }
+        )
     }
 
-    private fun initDialog(math2: Int, id: Int, tittleMsg: String, bodyMsg: String) {
-        AlertDialog.Builder(this)
-            .setTitle(tittleMsg)
-            .setMessage(bodyMsg)
-            .setPositiveButton(R.string.ok) { _, _ ->
-                roomViewModel.updateTotalNotification(math2, id)
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbarNotification)
+        supportActionBar?.title = getString(R.string.notification)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.notification_menu, menu)
+                menuNotification = menu
             }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when (menuItem.itemId) {
+                    android.R.id.home -> {
+                        onBackPressed()
+                    }
+                    R.id.menu_check_notification -> {
+                        showMultipleSelect()
+                    }
+                    R.id.menu_read_notification -> {
+                        readNotification()
+                    }
+                    R.id.menu_delete_notification -> {
+                        deleteNotification()
+                    }
+                }
+                return true
+            }
+        })
+    }
+
+    private fun showMultipleSelect() {
+        isMultipleSelect = !isMultipleSelect
+        initObserver()
+
+        if (isMultipleSelect) {
+            menuNotification.findItem(R.id.menu_read_notification)?.isVisible = true
+            menuNotification.findItem(R.id.menu_delete_notification)?.isVisible = true
+            menuNotification.findItem(R.id.menu_check_notification)?.isVisible = false
+
+            supportActionBar?.title = getString(R.string.multiple_select)
+        } else {
+            menuNotification.findItem(R.id.menu_read_notification)?.isVisible = false
+            menuNotification.findItem(R.id.menu_delete_notification)?.isVisible = false
+            menuNotification.findItem(R.id.menu_check_notification)?.isVisible = true
+
+            supportActionBar?.title = getString(R.string.notification)
+        }
+    }
+
+    private fun readNotification() {
+        roomViewModel.setAllReadNotification(true)
+        onBackPressed()
+    }
+
+    private fun deleteNotification() {
+        roomViewModel.deleteNotification(true)
+        onBackPressed()
+    }
+
+
+    private fun initObserver() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                roomViewModel.getAllNotification().collectLatest { result ->
+                    if (result.isNotEmpty()) {
+                        initAdapter()
+                        binding.rvNotification.adapter = adapter
+                        binding.rvNotification.setHasFixedSize(true)
+                        adapter.setData(result)
+
+                        binding.rvNotification.visibility = View.VISIBLE
+                        binding.emptyData.visibility = View.GONE
+                    } else {
+                        binding.rvNotification.visibility = View.GONE
+                        binding.emptyData.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    private fun onNotificationItemClicked(data: NotificationEntity) {
+        roomViewModel.updateReadNotification(true, data.id)
+        androidx.appcompat.app.AlertDialog.Builder(this@NotificationActivity)
+            .setTitle(data.notificationTitle)
+            .setMessage(data.notificationBody)
+            .setPositiveButton("Ok") { _, _ -> }
             .show()
     }
 
-    private fun initData() {
-        roomViewModel.getAllNotification.observe(this@NotificationActivity) { data ->
-            if (data.isNotEmpty()) {
-                adapter.setData(data.sortedBy { it.isRead })
-                binding.apply {
-                    rvNotification.adapter = adapter
-                    rvNotification.layoutManager = LinearLayoutManager(this@NotificationActivity)
-                    rvNotification.setHasFixedSize(true)
-                    viewEmptyData.root.visibility = View.GONE
-                }
-            } else if (data.isEmpty()) {
-                binding.viewEmptyData.root.visibility = View.VISIBLE
-            }
+    private fun onCheckboxChecked(data: NotificationEntity) {
+        val productId = data.id
+        val isChecked = !data.isChecked
+        roomViewModel.updateCheckedNotification(isChecked, productId)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        if (isMultipleSelect) {
+            showMultipleSelect()
+        } else {
+            onBackPressedDispatcher.onBackPressed()
         }
+        roomViewModel.setAllUncheckedNotification()
+        return true
+    }
+
+    override fun onBackPressed() {
+        if (isMultipleSelect) {
+            showMultipleSelect()
+        } else {
+            onBackPressedDispatcher.onBackPressed()
+        }
+        roomViewModel.setAllUncheckedNotification()
     }
 }

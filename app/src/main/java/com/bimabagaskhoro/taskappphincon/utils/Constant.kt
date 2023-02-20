@@ -5,7 +5,6 @@ class Constant {
         const val BASE_URL = "https://portlan.id/training_android/public/api/ecommerce/"
         const val CART_TABLE = "cart_table"
         const val CART_DATABASE = "cart_database"
-        const val NOTIFICATION_DATABASE = "notification_database"
         const val NOTIFICATION_TABLE = "notification_table"
         const val INITIAL_INDEX = 0
     }

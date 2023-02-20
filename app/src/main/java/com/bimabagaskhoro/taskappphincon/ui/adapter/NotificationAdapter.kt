@@ -1,10 +1,12 @@
 package com.bimabagaskhoro.taskappphincon.ui.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
@@ -13,9 +15,10 @@ import com.bimabagaskhoro.taskappphincon.databinding.ItemNotificationBinding
 @Suppress("DEPRECATION")
 @SuppressLint("NotifyDataSetChanged")
 class NotificationAdapter(
-    private val onClicked: (NotificationEntity) -> Unit,
-    private val onCheckedItem: (NotificationEntity) -> Unit,
-    private val onUnCheckedItem: (NotificationEntity) -> Unit
+    private val context: Context,
+    private val isMultipleSelect: Boolean,
+    private val onItemClicked: (NotificationEntity) -> Unit,
+    private val onCheckboxChecked: (NotificationEntity) -> Unit
 ) : RecyclerView.Adapter<NotificationAdapter.ViewHolder>() {
     private var listData = ArrayList<NotificationEntity>()
 
@@ -42,60 +45,31 @@ class NotificationAdapter(
         private val binding = ItemNotificationBinding.bind(itemView)
         fun bind(data: NotificationEntity) {
             binding.apply {
-                tvTittleNotif.isSelected = true
-                tvTittleNotif.text = data.tittle_notification
-                tvBodyNotif.text = data.body_notification
-                tvCalendarNotif.text = data.timestamp_notification
 
-                // item 2
-                tvTittleNotif2.isSelected = true
-                tvTittleNotif2.text = data.tittle_notification
-                tvBodyNotif2.text = data.body_notification
-                tvCalendarNotif2.text = data.timestamp_notification
+                tvNotificationTitle.text = data.notificationTitle
+                tvNotificationBody.text = data.notificationBody
+                tvNotificationDate.text = data.notificationDate
 
-                if (data.isRead == 1) {
-                    cardNotif.setBackgroundColor(
-                        Color.parseColor("#FFFFFF")
-                    )
-                    cardNotif2.setBackgroundColor(
-                        Color.parseColor("#FFFFFF")
-                    )
-                } else if (data.isRead == 0) {
-                    cardNotif.setBackgroundColor(
-                        Color.parseColor("#A7CFFF")
-                    )
-                    cardNotif2.setBackgroundColor(
-                        Color.parseColor("#A7CFFF")
-                    )
+                if (isMultipleSelect) {
+                    cbNotification.visibility = View.VISIBLE
+                    cbNotification.isChecked = data.isChecked
+                } else {
+                    cbNotification.visibility = View.GONE
                 }
 
-                if (data.isCheck == 1) {
-                    binding.checkBox.isChecked = true
-                } else if (data.isCheck == 0) {
-                    binding.checkBox.isChecked = false
-                }
+                cvNotification.setCardBackgroundColor(
+                    if (data.isRead) Color.WHITE
+                    else ContextCompat.getColor(context, R.color.blue_card)
+                )
 
-                if (data.isState == 1) {
-                    cardHelper1.visibility = View.VISIBLE
-                    cardHelper2.visibility = View.GONE
-                } else if (data.isState == 0) {
-                    cardHelper1.visibility = View.GONE
-                    cardHelper2.visibility = View.VISIBLE
-                }
-
-                cardNotif.setOnClickListener {
-                    onClicked.invoke(data)
-                }
-                cardNotif2.setOnClickListener {
-                    onClicked.invoke(data)
-                }
-
-                checkBox.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        onCheckedItem.invoke(listData[adapterPosition])
-                    } else if (!isChecked) {
-                        onUnCheckedItem.invoke(listData[adapterPosition])
+                cvNotification.setOnClickListener {
+                    if (!isMultipleSelect) {
+                        onItemClicked.invoke(data)
                     }
+                }
+
+                cbNotification.setOnClickListener {
+                    onCheckboxChecked.invoke(data)
                 }
             }
         }

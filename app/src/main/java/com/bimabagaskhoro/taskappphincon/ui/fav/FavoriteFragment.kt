@@ -8,32 +8,42 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseFavorite
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentFavoriteBinding
+import com.bimabagaskhoro.taskappphincon.ui.activity.CartActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
+import com.bimabagaskhoro.taskappphincon.ui.activity.NotificationActivity
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductFavAdapter
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.hideKeyboard
-import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
+import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import java.io.IOException
 
 @AndroidEntryPoint
 class FavoriteFragment : Fragment() {
     private var _binding: FragmentFavoriteBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding
 
-    private val viewModel: AuthViewModel by viewModels()
+    private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    private val roomViewModel: LocalViewModel by viewModels()
     private lateinit var adapter: ProductFavAdapter
 
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
@@ -42,10 +52,10 @@ class FavoriteFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,19 +64,69 @@ class FavoriteFragment : Fragment() {
         dataStoreViewModel.getUserId.observe(viewLifecycleOwner) {
             val idUser = it
             initSearchingKey(idUser)
-            binding.swipeRefresh.setOnRefreshListener {
-                initSearchingKey(idUser)
-                viewModel.onRefresh()
-                binding.progressBar.visibility = View.VISIBLE
-                binding.edtSearch.setQuery("", false)
-                binding.edtSearch.clearFocus()
+            binding?.apply {
+                swipeRefresh.setOnRefreshListener {
+                    initSearchingKey(idUser)
+                    viewModel.onRefresh()
+                    progressBar.visibility = View.VISIBLE
+                    edtSearch.setQuery("", false)
+                    edtSearch.clearFocus()
+                }
+            }
+        }
+
+        setUpToolbar()
+    }
+
+    private fun setUpToolbar() {
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    roomViewModel.getAllProduct().collect { result ->
+                        binding?.apply {
+                            if (result.isNotEmpty()) {
+                                imgBadges.isVisible = true
+                                tvBadgesMenu.text = result.size.toString()
+                            } else {
+                                imgBadges.isVisible = false
+                                tvBadgesMenu.isVisible = false
+                                tvBadgesMenu.text = result.size.toString()
+                            }
+                            icCart.setOnClickListener {
+                                startActivity(Intent(requireActivity(), CartActivity::class.java))
+                            }
+                        }
+                    }
+                }
+                launch {
+                    roomViewModel.getAllNotification().collect { result ->
+                        binding?.apply {
+                            if (result.isNotEmpty()) {
+                                imgBadgesNotification.isVisible = true
+                                tvBadgesNotification.text = result.size.toString()
+                            } else {
+                                imgBadgesNotification.isVisible = false
+                                tvBadgesNotification.isVisible = false
+                                tvBadgesNotification.text = result.size.toString()
+                            }
+                            icNotification.setOnClickListener {
+                                startActivity(
+                                    Intent(
+                                        requireActivity(),
+                                        NotificationActivity::class.java
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
     private fun initSearchingKey(idUser: Int?) {
         idUser?.let { setData(null, it, 0) }
-        binding.edtSearch.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding?.edtSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 hideKeyboard(requireActivity())
                 return false
@@ -88,7 +148,7 @@ class FavoriteFragment : Fragment() {
                 return false
             }
         })
-        binding.apply {
+        binding?.apply {
             fabShorting.setOnClickListener {
                 idUser?.let { it1 -> showFilterDialog(it1) }
             }
@@ -100,30 +160,37 @@ class FavoriteFragment : Fragment() {
             viewModel.getFavProduct(idUser, q).observe(viewLifecycleOwner) { data ->
                 when (data) {
                     is Resource.Loading -> {
-                        binding.apply {
+                        binding?.apply {
                             progressBar.visibility = View.VISIBLE
                             fabShorting.visibility = View.GONE
                             rvProduct.visibility = View.GONE
-                            binding.viewEmptyData.root.visibility = View.GONE
+                            viewEmptyData.root.visibility = View.GONE
                         }
                     }
                     is Resource.Success -> {
                         if (data.data?.success?.data?.isNotEmpty() == true) {
-                            binding.rvProduct.visibility = View.VISIBLE
-                            binding.fabShorting.visibility = View.VISIBLE
-                            binding.swipeRefresh.isRefreshing = false
-                            binding.progressBar.visibility = View.GONE
-                            binding.viewEmptyData.root.visibility = View.GONE
-                            binding.fabShorting.visibility = View.VISIBLE
-                            setProductRv(data.data, i)
+                            binding?.apply {
+                                rvProduct.visibility = View.VISIBLE
+                                fabShorting.visibility = View.VISIBLE
+                                swipeRefresh.isRefreshing = false
+                                progressBar.visibility = View.GONE
+                                viewEmptyData.root.visibility = View.GONE
+                                fabShorting.visibility = View.VISIBLE
+                                setProductRv(data.data, i)
+                            }
                         } else {
-                            binding.rvProduct.visibility = View.GONE
-                            binding.fabShorting.visibility = View.GONE
+                            binding?.apply {
+                                rvProduct.visibility = View.GONE
+                                fabShorting.visibility = View.GONE
+                            }
                         }
                     }
                     is Resource.Error -> {
-                        binding.progressBar.visibility = View.GONE
-                        binding.fabShorting.visibility = View.GONE
+                        binding?.apply {
+                            swipeRefresh.isRefreshing = false
+                            progressBar.visibility = View.GONE
+                            fabShorting.visibility = View.GONE
+                        }
                         try {
                             val err =
                                 data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
@@ -134,19 +201,24 @@ class FavoriteFragment : Fragment() {
                             AlertDialog.Builder(requireActivity()).setTitle("Failed")
                                 .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                 }.show()
-                        } catch (e: java.lang.Exception) {
-                            val err = data.errorCode
-                            Log.d("ErrorCode", "$err")
+                        } catch (t: IOException) {
+                            val msgErr = t.localizedMessage
+                            Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
                         }
                     }
                     is Resource.Empty -> {
-                        binding.apply {
+                        binding?.apply {
+                            swipeRefresh.isRefreshing = false
                             progressBar.visibility = View.GONE
                             viewEmptyData.root.visibility = View.VISIBLE
                             rvProduct.visibility = View.GONE
                             fabShorting.visibility = View.GONE
+                            edtSearch.visibility = View.GONE
 
                         }
+                    }
+                    else -> {
+                        Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -154,29 +226,33 @@ class FavoriteFragment : Fragment() {
             viewModel.getFavProduct(idUser, null).observe(viewLifecycleOwner) { data ->
                 when (data) {
                     is Resource.Loading -> {
-                        binding.apply {
+                        binding?.apply {
                             progressBar.visibility = View.VISIBLE
                             fabShorting.visibility = View.GONE
                             rvProduct.visibility = View.GONE
-                            binding.viewEmptyData.root.visibility = View.GONE
+                            viewEmptyData.root.visibility = View.GONE
                         }
                     }
                     is Resource.Success -> {
                         if (data.data?.success?.data?.isNotEmpty() == true) {
-                            binding.rvProduct.visibility = View.VISIBLE
-                            binding.fabShorting.visibility = View.VISIBLE
-                            binding.viewEmptyData.root.visibility = View.GONE
-                            binding.progressBar.visibility = View.GONE
-                            binding.fabShorting.visibility = View.VISIBLE
-                            setProductRv(data.data, i)
+                            binding?.apply {
+                                rvProduct.visibility = View.VISIBLE
+                                fabShorting.visibility = View.VISIBLE
+                                viewEmptyData.root.visibility = View.GONE
+                                progressBar.visibility = View.GONE
+                                fabShorting.visibility = View.VISIBLE
+                                setProductRv(data.data, i)
+                            }
                         } else {
-                            binding.rvProduct.visibility = View.GONE
+                            binding?.rvProduct?.visibility = View.GONE
                         }
 
                     }
                     is Resource.Error -> {
-                        binding.progressBar.visibility = View.GONE
-                        binding.fabShorting.visibility = View.GONE
+                        binding?.apply {
+                            progressBar.visibility = View.GONE
+                            fabShorting.visibility = View.GONE
+                        }
                         try {
                             val err =
                                 data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
@@ -187,18 +263,21 @@ class FavoriteFragment : Fragment() {
                             AlertDialog.Builder(requireActivity()).setTitle("Failed")
                                 .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                 }.show()
-                        } catch (e: java.lang.Exception) {
-                            val err = data.errorCode
-                            Log.d("ErrorCode", "$err")
+                        } catch (t: IOException) {
+                            val msgErr = t.localizedMessage
+                            Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
                         }
                     }
                     is Resource.Empty -> {
-                        binding.apply {
+                        binding?.apply {
                             progressBar.visibility = View.GONE
                             viewEmptyData.root.visibility = View.VISIBLE
                             rvProduct.visibility = View.GONE
                             fabShorting.visibility = View.GONE
                         }
+                    }
+                    else -> {
+                        Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -247,10 +326,10 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        binding.apply {
+        binding?.apply {
             progressBar.visibility = View.GONE
             rvProduct.adapter = adapter
-            binding.viewEmptyData.root.visibility = View.GONE
+            viewEmptyData.root.visibility = View.GONE
             rvProduct.setHasFixedSize(true)
 
             adapter.onItemClick = {

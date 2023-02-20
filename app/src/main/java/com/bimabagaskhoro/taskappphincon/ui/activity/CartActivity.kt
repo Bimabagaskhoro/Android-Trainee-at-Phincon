@@ -4,11 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bimabagaskhoro.taskappphincon.R
+import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataItem
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
+import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCartBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_PRICE_TROLLEY
@@ -16,24 +23,31 @@ import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_ID_PAYMENT
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_NAME
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CartAdapter
+import com.bimabagaskhoro.taskappphincon.utils.NoConnectivityException
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
-import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_cart.*
+import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.io.IOException
+import java.util.ArrayList
 
 @Suppress("UnusedEquals", "UNUSED_EXPRESSION")
 @AndroidEntryPoint
 class CartActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCartBinding
-    private lateinit var adapter: CartAdapter
+    private var trolleyAdapter: CartAdapter? = null
+    private var totalPrice = 0
+
     private val roomViewModel: LocalViewModel by viewModels()
-    private val viewModel: AuthViewModel by viewModels()
+    private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,181 +55,135 @@ class CartActivity : AppCompatActivity() {
         binding = ActivityCartBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        doActionAdapter()
-        initData()
-        doActionTextClick()
-
-        binding.apply {
-            btnBack.setOnClickListener {
-                val intent = Intent(this@CartActivity, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                startActivity(intent)
-            }
-            checkBox2.setOnCheckedChangeListener { _, isChecked ->
-                if (!isChecked) {
-                    btnBuy.isClickable = false
-                } else if (isChecked) {
-                    initCheckBox(isChecked)
-                    val dataPayment = intent.getStringExtra(EXTRA_DATA_CART)
-                    val dataName = intent.getStringExtra(EXTRA_DATA_CART_NAME)
-                    if (dataPayment == null && dataName == null) {
-                        btnBuy.setOnClickListener {
-                            val intent = Intent(this@CartActivity, PaymentActivity::class.java)
-                            startActivity(intent)
-                        }
-                    } else {
-                        binding.btnBuy.setOnClickListener {
-                            setActionPost(dataPayment, dataName)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun doActionTextClick() {
         val dataPayment = intent.getStringExtra(EXTRA_DATA_CART)
         val dataName = intent.getStringExtra(EXTRA_DATA_CART_NAME)
+        setupToolbar()
+        initObserver()
+        initRecyclerView()
+        setupListener()
+        postProductTrolley(dataPayment, dataName)
+    }
 
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbarTrolley)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun initObserver() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                roomViewModel.getAllProduct().collect { result ->
+                    if (result.isNotEmpty()) {
+                        var priceTotal = 0
+                        val filterResult = result.filter { it.isChecked }
+
+                        filterResult.forEach {
+                            priceTotal = priceTotal.plus(it.itemTotalPrice!!)
+                        }
+                        binding.apply {
+                            tvAllPrice.text = priceTotal.toString().formatterIdr()
+                            checkBox2.isChecked = result.size == filterResult.size
+                            rvCart.adapter = trolleyAdapter
+                            rvCart.setHasFixedSize(true)
+                            trolleyAdapter?.setData(result)
+                            totalPrice = priceTotal
+                            checkBox2.visibility = View.VISIBLE
+                            rvCart.visibility = View.VISIBLE
+                            cardView.visibility = View.VISIBLE
+
+                            emptyData.visibility = View.GONE
+                            tvEmpty.visibility = View.GONE
+
+                        }
+                    } else {
+                        binding.apply {
+                            cardView.visibility = View.GONE
+                            viewLayout.visibility = View.GONE
+                            emptyData.visibility = View.VISIBLE
+                            tvEmpty.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initRecyclerView() {
+        binding.apply {
+            trolleyAdapter = CartAdapter(
+                onDeleteItem = { setDialogDeleteItem(it) },
+                onAddQuantity = {
+                    val productId = it.id
+                    val quantity = it.quantity
+                    val price = it.price
+                    roomViewModel.updateProductData(
+                        quantity = quantity?.plus(1),
+                        itemTotalPrice = price?.toInt()?.times(quantity.toString().toInt().plus(1)),
+                        id = productId
+                    )
+                },
+                onMinQuantity = {
+                    val productId = it.id
+                    val quantity = it.quantity
+                    val price = it.price
+                    roomViewModel.updateProductData(
+                        quantity = quantity?.minus(1),
+                        itemTotalPrice = price?.toInt()
+                            ?.times(quantity.toString().toInt().minus(1)),
+                        id = productId
+                    )
+                },
+                onCheckedItem = {
+                    val productId = it.id
+                    val isChecked = !it.isChecked
+                    binding.btnBuy.isClickable = true
+                    roomViewModel.updateProductIsCheckedById(isChecked, productId)
+                },
+            )
+        }
+    }
+
+    private fun setupListener() {
+        binding.checkBox2.setOnClickListener {
+            if (binding.checkBox2.isChecked) {
+                roomViewModel.updateProductIsCheckedAll(true)
+            } else {
+                roomViewModel.updateProductIsCheckedAll(false)
+            }
+        }
+    }
+
+    private fun postProductTrolley(dataPayment: String?, dataName: String?) {
         if (dataPayment == null && dataName == null) {
-            binding.apply {
-                imgPaymentMethode.visibility = View.GONE
-                tvPaymentMethode.visibility = View.GONE
-                btnBuy.setOnClickListener {
-                    val intent = Intent(this@CartActivity, PaymentActivity::class.java)
-                    startActivity(intent)
-                }
+            binding.layBtnPayment.visibility = View.GONE
+            binding.btnBuy.setOnClickListener {
+                val intent = Intent(this@CartActivity, PaymentActivity::class.java)
+                startActivity(intent)
             }
         } else {
-            binding.apply {
-                imgPaymentMethode.visibility = View.VISIBLE
-                tvPaymentMethode.visibility = View.VISIBLE
-
-                dataPayment?.let { initImagePayment(it) }
-                tvPaymentMethode.text = dataName
-                btnBuy.isClickable = true
-                btnBuy.setOnClickListener {
-                    setActionPost(dataPayment, dataName)
-                }
-                tvPaymentMethode.setOnClickListener {
-                    val intent = Intent(this@CartActivity, PaymentActivity::class.java)
-                    startActivity(intent)
-                }
-                imgPaymentMethode.setOnClickListener {
-                    val intent = Intent(this@CartActivity, PaymentActivity::class.java)
-                    startActivity(intent)
-                }
-
-                val countBadges = roomViewModel.countAllCart
-                if (countBadges == 0) {
-                    binding.apply {
-                        checkBox2.visibility = View.INVISIBLE
-                        tvCheckAll.visibility = View.INVISIBLE
-                        tvAllPrice.visibility = View.INVISIBLE
-                        btnBuy.visibility = View.INVISIBLE
-                    }
-                }
-
+            binding.layBtnPayment.setOnClickListener {
+                val intent = Intent(this@CartActivity, PaymentActivity::class.java)
+                startActivity(intent)
             }
-        }
-    }
-
-    private fun initCheckBox(checked: Boolean) {
-        if (checked) {
-            dataStoreViewModel.getUserChecked.observe(this@CartActivity) { true }
-            roomViewModel.checkAll(1)
-            val resultPrice = roomViewModel.getTotalPrice()
-            binding.tvAllPrice.text = resultPrice.toString().formatterIdr()
-        } else {
-            dataStoreViewModel.getUserChecked.observe(this@CartActivity) { false }
-            roomViewModel.checkAll(0)
-            val resultPrice = roomViewModel.getTotalPrice()
-            binding.tvAllPrice.text = resultPrice.toString().formatterIdr()
-        }
-    }
-
-    private fun doActionAdapter() {
-        adapter = CartAdapter(
-            { roomViewModel.deleteCart(it) },
-            { data ->
-                val totalQty = (data.quantity?.plus(1))
-                val totalPrice = (data.firstPrice?.toInt()?.let { totalQty?.times(it) })
-                val id = data.id
-                val newPrice = (data.firstPrice?.toInt()?.let { totalQty?.times(it) })
-
-                totalQty?.let {
-                    id?.let { it1 ->
-                        newPrice?.let { it2 ->
-                            roomViewModel.updateQuantity(
-                                it, it1,
-                                it2
+            binding.tvPaymentMethode.text = dataName
+            dataPayment?.let { initImagePayment(it) }
+            binding.btnBuy.setOnClickListener {
+                setActionPost(dataPayment, dataName)
+            }
+            lifecycleScope.launch {
+                lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    roomViewModel.getAllCheckedProduct().collect { result ->
+                        val dataStockItems = arrayListOf<DataStockItem>()
+                        val listOfProductId = arrayListOf<String>()
+                        for (i in result.indices) {
+                            dataStockItems.add(
+                                DataStockItem(
+                                    result[i].id.toString(),
+                                    result[i].quantity!!
+                                )
                             )
+                            listOfProductId.add(result[i].id.toString())
                         }
-                    }
-                }
-                totalPrice?.let { id?.let { it1 -> roomViewModel.updatePriceCard(it, it1) } }
-
-                val resultPrice = roomViewModel.getTotalPrice()
-                binding.tvAllPrice.text = resultPrice.toString().formatterIdr()
-            },
-            { data ->
-                val totalQty = (data.quantity?.minus(1))
-                val totalPrice = (data.firstPrice?.toInt()?.let { totalQty?.times(it) })
-                val id = data.id
-                val newPrice = (data.firstPrice?.toInt()?.let { totalQty?.times(it) })
-
-                totalQty?.let {
-                    id?.let { it1 ->
-                        newPrice?.let { it2 ->
-                            roomViewModel.updateQuantity(
-                                it, it1,
-                                it2
-                            )
-                        }
-                    }
-                }
-                totalPrice?.let { id?.let { it1 -> roomViewModel.updatePriceCard(it, it1) } }
-
-                val resultPrice = roomViewModel.getTotalPrice()
-                binding.tvAllPrice.text = resultPrice.toString().formatterIdr()
-            },
-            { data ->
-                val id = data.id
-                id?.let { roomViewModel.updateCheck(it, 1) }
-                val result = roomViewModel.getTotalPrice()
-                binding.tvAllPrice.text = result.toString().formatterIdr()
-
-                val dataPayment = intent.getStringExtra(EXTRA_DATA_CART)
-                val dataName = intent.getStringExtra(EXTRA_DATA_CART_NAME)
-                if (dataPayment == null && dataName == null) {
-                    binding.btnBuy.setOnClickListener {
-                        val intent = Intent(this@CartActivity, PaymentActivity::class.java)
-                        startActivity(intent)
-                    }
-                } else {
-                    binding.btnBuy.setOnClickListener {
-                        setActionPost(dataPayment, dataName)
-                    }
-                }
-            },
-            { data ->
-                val id = data.id
-                id?.let { roomViewModel.updateCheck(it, 0) }
-                val result = roomViewModel.getTotalPrice()
-                binding.tvAllPrice.text = result.toString().formatterIdr()
-            },
-        )
-    }
-
-    private fun initData() {
-        roomViewModel.getAllCart.observe(this@CartActivity) {
-            if (it.isNotEmpty()) {
-                adapter.setData(it)
-                binding.apply {
-                    rvCart.adapter = adapter
-                    rvCart.layoutManager = LinearLayoutManager(this@CartActivity)
-                    rvCart.setHasFixedSize(true)
-                    adapter.onItemClick = {
                     }
                 }
             }
@@ -223,29 +191,38 @@ class CartActivity : AppCompatActivity() {
     }
 
     private fun setActionPost(dataPayment: String?, dataName: String?) {
-        roomViewModel.getTrolleyChecked.observe(this@CartActivity) { result ->
-            val dataStockItems = arrayListOf<DataStockItem>()
-            val listOfProductId = arrayListOf<String>()
-            dataStoreViewModel.getUserId.observe(this@CartActivity) {
-                val idUser = it
-                for (i in result.indices) {
-                    dataStockItems.add(DataStockItem(result[i].id.toString(), result[i].quantity))
-                    listOfProductId.add(result[i].id.toString())
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                roomViewModel.getAllCheckedProduct().collect { result ->
+                    val dataStockItems = arrayListOf<DataStockItem>()
+                    val listOfProductId = arrayListOf<String>()
+                    dataStoreViewModel.getUserId.observe(this@CartActivity) {
+                        val idUser = it
+                        for (i in result.indices) {
+                            dataStockItems.add(
+                                DataStockItem(
+                                    result[i].id.toString(),
+                                    result[i].quantity
+                                )
+                            )
+                            listOfProductId.add(result[i].id.toString())
+                        }
+                        buyProduct(
+                            idUser.toString(),
+                            dataStockItems,
+                            listOfProductId,
+                            dataPayment,
+                            dataName,
+                        )
+                    }
                 }
-                buyProduct(
-                    idUser.toString(),
-                    dataStockItems,
-                    listOfProductId,
-                    dataPayment,
-                    dataName
-                )
             }
         }
     }
 
     private fun buyProduct(
         idUser: String,
-        requestBody: List<DataStockItem>,
+        requestBody: ArrayList<DataStockItem>,
         listOfProductId: ArrayList<String>,
         dataPayment: String?,
         dataName: String?
@@ -257,11 +234,12 @@ class CartActivity : AppCompatActivity() {
                     binding.cardProgressbar.visibility = View.VISIBLE
                     binding.tvWaiting.visibility = View.VISIBLE
                 }
+
                 is Resource.Success -> {
                     binding.progressbar.visibility = View.GONE
                     binding.cardProgressbar.visibility = View.GONE
                     binding.tvWaiting.visibility = View.GONE
-                    roomViewModel.deleteTrolleyChecked()
+                    requestBody.forEach { roomViewModel.deleteProductByIdFromTrolley(it.id_product?.toInt()) }
 
                     /**
                      * do something
@@ -275,10 +253,10 @@ class CartActivity : AppCompatActivity() {
                     startActivity(intent)
                 }
                 is Resource.Error -> {
-                    binding.progressbar.visibility = View.GONE
-                    binding.cardProgressbar.visibility = View.GONE
-                    binding.tvWaiting.visibility = View.GONE
                     try {
+                        binding.progressbar.visibility = View.GONE
+                        binding.cardProgressbar.visibility = View.GONE
+                        binding.tvWaiting.visibility = View.GONE
                         val err =
                             todo.errorBody?.string()
                                 ?.let { it1 -> JSONObject(it1).toString() }
@@ -288,9 +266,9 @@ class CartActivity : AppCompatActivity() {
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
                         messageErr?.let { Log.d("Error Body", it) }
-                    } catch (e: java.lang.Exception) {
-                        val err = todo.errorCode
-                        Log.d("ErrorCode", "$err")
+                    } catch (t: IOException) {
+                        val msgErr = t.localizedMessage
+                        Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
@@ -298,6 +276,17 @@ class CartActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+//        roomViewModel.updateProductIsCheckedAll(false)
+        onBackPressedDispatcher.onBackPressed()
+        return true
+    }
+
+    override fun onBackPressed() {
+//        roomViewModel.updateProductIsCheckedAll(false)
+        onBackPressedDispatcher.onBackPressed()
     }
 
     private fun initImagePayment(dataPayment: String) {
@@ -359,6 +348,17 @@ class CartActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun setDialogDeleteItem(data: CartEntity) {
+        AlertDialog.Builder(this@CartActivity)
+            .setTitle("Remove item from trolley")
+            .setMessage("Are you sure you want to remove this item?")
+            .setPositiveButton("Ok") { _, _ ->
+                roomViewModel.deleteProductByIdFromTrolley(data.id)
+            }
+            .setNegativeButton("Cancel") { _, _ -> }
+            .show()
     }
 
     companion object {

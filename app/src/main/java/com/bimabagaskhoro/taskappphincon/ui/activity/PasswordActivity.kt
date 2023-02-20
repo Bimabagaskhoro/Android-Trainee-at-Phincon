@@ -11,17 +11,18 @@ import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityPasswordBinding
 import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
+import java.io.IOException
 
 @AndroidEntryPoint
 class PasswordActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPasswordBinding
-    private val viewModel: AuthViewModel by viewModels()
+    private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,51 +98,51 @@ class PasswordActivity : AppCompatActivity() {
         ).observe(this) { result ->
             when (result) {
                 is Resource.Loading -> {
-                    binding.progressbar.visibility = View.VISIBLE
                     binding.cardProgressbar.visibility = View.VISIBLE
-                    binding.tvWaiting.visibility = View.VISIBLE
                 }
                 is Resource.Success -> {
-                    binding.progressbar.visibility = View.GONE
                     binding.cardProgressbar.visibility = View.GONE
-                    binding.tvWaiting.visibility = View.GONE
                     val dataMessages = result.data!!.success.message
                     AlertDialog.Builder(this)
                         .setTitle("Change Password Success")
                         .setMessage(dataMessages)
                         .setPositiveButton("Ok") { _, _ ->
-
+                            onBackPressed()
                         }
                         .show()
-                    //findNavController().navigate(R.id.action_passwordFragment_to_navigation_user)
                 }
                 is Resource.Error -> {
-                    binding.progressbar.visibility = View.GONE
-                    binding.cardProgressbar.visibility = View.GONE
-                    binding.tvWaiting.visibility = View.GONE
                     try {
+                        binding.cardProgressbar.visibility = View.GONE
                         val err =
-                            result.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                            result.errorBody?.string()
+                                ?.let { it1 -> JSONObject(it1).toString() }
                         val gson = Gson()
                         val jsonObject = gson.fromJson(err, JsonObject::class.java)
                         val errorResponse =
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
-                        AlertDialog.Builder(this)
-                            .setTitle("Change Password Failed")
-                            .setMessage(messageErr)
-                            .setPositiveButton("Ok") { _, _ ->
-                            }
-                            .show()
-                    } catch (e: java.lang.Exception) {
-                        val err = result.errorCode
-                        Log.d("ErrorCode", "$err")
+                        AlertDialog.Builder(this).setTitle("Failed")
+                            .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
+                            }.show()
+                    } catch (t: IOException) {
+                        val msgErr = t.localizedMessage
+                        Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
+                    binding.cardProgressbar.visibility = View.GONE
                     Log.d("Empty Data", "Empty")
+                }
+                else -> {
+                    Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
                 }
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 }

@@ -34,14 +34,16 @@
                 android:layout_width="300dp"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
                 android:ellipsize="marquee"
                 android:fadingEdge="horizontal"
-                android:singleLine="true"
-                android:scrollHorizontally="true"
                 android:fontFamily="@font/poppinsbold"
                 android:gravity="start|center"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
                 android:textColor="@color/black"
                 android:textSize="20sp"
+                app:layout_constraintEnd_toStartOf="@+id/btn_share"
                 app:layout_constraintStart_toEndOf="@+id/btn_back"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Jam tangan" />
@@ -65,7 +67,8 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp">
 
         <me.didik.component.StickyNestedScrollView
             android:id="@+id/sticky_nested"
@@ -84,7 +87,7 @@
                     android:id="@+id/card_image"
                     android:layout_width="355dp"
                     android:layout_height="196dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -426,6 +429,7 @@
                     android:layout_marginEnd="8dp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/tv_tittle_sticky_2"
                     app:layout_constraintStart_toStartOf="@+id/tv_tittle_sticky_2"
                     app:layout_constraintTop_toBottomOf="@+id/tv_tittle_sticky_2" />
@@ -529,6 +533,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="24dp"
                         android:text="@string/buy"
+                        android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -543,7 +548,7 @@
                         android:gravity="center_horizontal|center_vertical"
                         android:text="@string/cart"
                         android:textColor="@color/pinkz"
-                        android:textSize="18sp"
+                        android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/btn_buy"
                         app:layout_constraintEnd_toStartOf="@+id/btn_buy"
                         app:layout_constraintTop_toTopOf="@+id/btn_buy" />

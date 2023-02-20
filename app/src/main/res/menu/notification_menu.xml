@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_check_notification"
+        android:icon="@drawable/ic_add_check"
+        android:title="check notification"
+        app:showAsAction="always" />
+
+    <group
+        android:id="@+id/menu_group_multiple_notification"
+        android:visible="false">
+
+        <item
+            android:id="@+id/menu_read_notification"
+            android:icon="@drawable/ic_check_box_filled"
+            android:title="Read"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/menu_delete_notification"
+            android:icon="@drawable/ic_delete"
+            android:title="delete"
+            app:showAsAction="ifRoom" />
+
+    </group>
+</menu>

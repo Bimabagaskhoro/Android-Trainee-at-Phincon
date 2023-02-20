@@ -27,14 +27,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentRegisterBinding
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
-import com.bimabagaskhoro.taskappphincon.utils.reduceFileImage
-import com.bimabagaskhoro.taskappphincon.utils.rotateBitmap
-import com.bimabagaskhoro.taskappphincon.utils.uriToFile
-import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.utils.*
+import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,14 +42,15 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.File
+import java.io.IOException
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
     private var _binding: FragmentRegisterBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding
     private var getFile: File? = null
     private lateinit var result: Bitmap
-    private val viewModel: AuthViewModel by viewModels()
+    private val viewModel: RemoteViewModel by viewModels()
 
     private val launcherIntentCameraX = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -67,7 +65,7 @@ class RegisterFragment : Fragment() {
                 isBackCamera
             )
 
-            binding.apply {
+            binding?.apply {
                 floatingActionButton.isEnabled = true
                 imgProfile.visibility = View.VISIBLE
                 imgProfile.setImageBitmap(result)
@@ -82,7 +80,7 @@ class RegisterFragment : Fragment() {
             val file = uriToFile(uri, requireContext())
             getFile = file
 
-            binding.apply {
+            binding?.apply {
                 floatingActionButton.isEnabled = true
                 imgProfile.visibility = View.VISIBLE
                 imgProfile.setImageURI(uri)
@@ -98,9 +96,9 @@ class RegisterFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
-        return binding.root
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -113,7 +111,7 @@ class RegisterFragment : Fragment() {
             )
         }
 
-        binding.apply {
+        binding?.apply {
             btnRegister.setOnClickListener { onButtonPressed() }
             btnLogin.setOnClickListener {
                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
@@ -125,46 +123,62 @@ class RegisterFragment : Fragment() {
     }
 
     private fun onButtonPressed() {
-        val name = binding.edtName.text.toString().trim()
-        val email = binding.edtEmail.text.toString().trim()
-        val password = binding.edtPassword.text.toString().trim()
-        val matchPassword = binding.edtConfirmPassword.text.toString().trim()
-        val phone = binding.edtPhone.text.toString().trim()
+        val name = binding?.edtName?.text.toString().trim()
+        val email = binding?.edtEmail?.text.toString().trim()
+        val password = binding?.edtPassword?.text.toString().trim()
+        val matchPassword = binding?.edtConfirmPassword?.text.toString().trim()
+        val phone = binding?.edtPhone?.text.toString().trim()
         val gender =
-            if (binding.rdFemale.isChecked) isGender(binding.rdFemale.isChecked) else isGender(
-                binding.rdMale.isChecked
+            if (binding?.rdFemale?.isChecked == true) isGender(binding?.rdFemale?.isChecked!!) else isGender(
+                binding?.rdMale?.isChecked == true
             )
-        checkEmail()
-        checkMatchPassword()
-        when {
-            email.isEmpty() -> {
-                binding.edtEmail.error = "Masukan email terlebih dahulu"
-                binding.edtEmail.requestFocus()
+
+        val emailPattern = binding?.edtEmail?.text.toString().trim()
+        if (Patterns.EMAIL_ADDRESS.matcher(emailPattern).matches()) { // using EMAIL_ADREES matcher
+            binding?.tvCheckingEmail?.visibility = View.INVISIBLE
+            val passwordCheck = binding?.edtPassword?.text.toString().trim()
+            val matchPasswordCheck = binding?.edtConfirmPassword?.text.toString().trim()
+            if (passwordCheck != matchPasswordCheck) {
+                Toast.makeText(context, "Password tidak sama", Toast.LENGTH_LONG).show()
+            } else {
+                Log.d("checkMatchPassword", "password: success")
+                if (getFile == null) {
+                    Toast.makeText(context, "Upload Profile Required", Toast.LENGTH_LONG).show()
+                } else {
+                    when {
+                        email.isEmpty() -> {
+                            binding?.edtEmail?.error = "Masukan email terlebih dahulu"
+                            binding?.edtEmail?.requestFocus()
+                        }
+                        password.isEmpty() -> {
+                            binding?.edtPassword?.error = "Masukan password terlebih dahulu"
+                            binding?.edtPassword?.requestFocus()
+                        }
+                        matchPassword.isEmpty() -> {
+                            binding?.edtConfirmPassword?.error = "Masukan konfirmasi password terlebih dahulu"
+                            binding?.edtConfirmPassword?.requestFocus()
+                        }
+                        name.isEmpty() -> {
+                            binding?.edtName?.error = "Masukan nama terlebih dahulu"
+                            binding?.edtName?.requestFocus()
+                        }
+                        phone.isEmpty() -> {
+                            binding?.edtPhone?.error = "Masukan nomer terlebih dahulu"
+                            binding?.edtPhone?.requestFocus()
+                        }
+                        else -> {
+                            binding?.edtEmail?.error = null
+                            binding?.edtPassword?.error = null
+                            binding?.edtName?.error = null
+                            binding?.edtConfirmPassword?.error = null
+                            binding?.edtPhone?.error = null
+                            initData(name, email, password, phone, gender)
+                        }
+                    }
+                }
             }
-            password.isEmpty() -> {
-                binding.edtPassword.error = "Masukan password terlebih dahulu"
-                binding.edtPassword.requestFocus()
-            }
-            matchPassword.isEmpty() -> {
-                binding.edtConfirmPassword.error = "Masukan konfirmasi password terlebih dahulu"
-                binding.edtConfirmPassword.requestFocus()
-            }
-            name.isEmpty() -> {
-                binding.edtName.error = "Masukan nama terlebih dahulu"
-                binding.edtName.requestFocus()
-            }
-            phone.isEmpty() -> {
-                binding.edtPhone.error = "Masukan nomer terlebih dahulu"
-                binding.edtPhone.requestFocus()
-            }
-            else -> {
-                binding.edtEmail.error = null
-                binding.edtPassword.error = null
-                binding.edtName.error = null
-                binding.edtConfirmPassword.error = null
-                binding.edtPhone.error = null
-                initData(name, email, password, phone, gender)
-            }
+        } else {
+            binding?.tvCheckingEmail?.visibility = View.VISIBLE
         }
     }
 
@@ -194,14 +208,14 @@ class RegisterFragment : Fragment() {
                 .observe(viewLifecycleOwner) {
                     when (it) {
                         is Resource.Loading -> {
-                            binding.progressbar.visibility = View.VISIBLE
-                            binding.cardProgressbar.visibility = View.VISIBLE
-                            binding.tvWaiting.visibility = View.VISIBLE
+                            binding?.progressbar?.visibility = View.VISIBLE
+                            binding?.cardProgressbar?.visibility = View.VISIBLE
+                            binding?.tvWaiting?.visibility = View.VISIBLE
                         }
                         is Resource.Success -> {
-                            binding.progressbar.visibility = View.GONE
-                            binding.cardProgressbar.visibility = View.GONE
-                            binding.tvWaiting.visibility = View.GONE
+                            binding?.progressbar?.visibility = View.GONE
+                            binding?.cardProgressbar?.visibility = View.GONE
+                            binding?.tvWaiting?.visibility = View.GONE
                             val dataMessages = it.data?.success?.message
                             AlertDialog.Builder(requireActivity())
                                 .setTitle("Register Success")
@@ -212,28 +226,34 @@ class RegisterFragment : Fragment() {
                             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
                         }
                         is Resource.Error -> {
-                            binding.progressbar.visibility = View.GONE
-                            binding.cardProgressbar.visibility = View.GONE
-                            binding.tvWaiting.visibility = View.GONE
-                            val err =
-                                it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
-                            val gson = Gson()
-                            val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                            val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
-                            val messageErr = errorResponse.error.message
-                            AlertDialog.Builder(requireActivity())
-                                .setTitle("Gagal")
-                                .setMessage(messageErr)
-                                .setPositiveButton("Ok") { _, _ ->
-                                }
-                                .show()
-                            val errCode = it.errorCode
-                            Log.d("errorCode", "$errCode")
-
-                            //Toast.makeText(requireActivity(), errorResponse.error.message, Toast.LENGTH_SHORT).show()
+                            try {
+                                binding?.progressbar?.visibility = View.GONE
+                                binding?.cardProgressbar?.visibility = View.GONE
+                                binding?.tvWaiting?.visibility = View.GONE
+                                val err =
+                                    it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                                val gson = Gson()
+                                val jsonObject = gson.fromJson(err, JsonObject::class.java)
+                                val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                                val messageErr = errorResponse.error.message
+                                AlertDialog.Builder(requireActivity())
+                                    .setTitle("Gagal")
+                                    .setMessage(messageErr)
+                                    .setPositiveButton("Ok") { _, _ ->
+                                    }
+                                    .show()
+                                val errCode = it.errorCode
+                                Log.d("errorCode", "$errCode")
+                            } catch (t: IOException) {
+                                val msgErr = t.localizedMessage
+                                Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
+                            }
                         }
                         is Resource.Empty -> {
                             Log.d("Empty Data", "Empty")
+                        }
+                        else -> {
+                            Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -263,30 +283,11 @@ class RegisterFragment : Fragment() {
     }
 
     private fun isGender(isChecked: Boolean): Int {
-        val female = binding.rdFemale.isChecked
+        val female = binding?.rdFemale?.isChecked
         return if (isChecked == female) {
             1
         } else {
             0
-        }
-    }
-
-    private fun checkMatchPassword() {
-        val password = binding.edtPassword.text.toString().trim()
-        val matchPassword = binding.edtConfirmPassword.text.toString().trim()
-        if (password != matchPassword) {
-            Toast.makeText(context, "Password tidak sama", Toast.LENGTH_LONG).show()
-        } else {
-            Log.d("checkMatchPassword", "password: success")
-        }
-    }
-
-    private fun checkEmail() {
-        val email = binding.edtEmail.text.toString().trim()
-        if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) { // using EMAIL_ADREES matcher
-            binding.tvCheckingEmail.visibility = View.INVISIBLE
-        } else {
-            binding.tvCheckingEmail.visibility = View.VISIBLE
         }
     }
 

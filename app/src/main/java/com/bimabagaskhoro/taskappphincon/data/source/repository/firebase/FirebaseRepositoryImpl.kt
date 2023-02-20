@@ -39,20 +39,21 @@ class FirebaseRepositoryImpl @Inject constructor(
                         Resource.Error(
                             true,
                             null,
+                            null,
                             null
                         )
                     )
                     is FirebaseRemoteConfigClientException -> {
-                        Resource.Error(true, null, null)
+                        Resource.Error(true, null, null,null)
                     }
                     is FirebaseTooManyRequestsException -> {
-                        Resource.Error(true, null, null)
+                        Resource.Error(true, null, null,null)
                     }
                     is FirebaseRemoteConfigException -> {
-                        Resource.Error(true, null, null)
+                        Resource.Error(true, null, null,null)
                     }
                     is FirebaseException -> {
-                        Resource.Error(true, null, null)
+                        Resource.Error(true, null, null, null)
                     }
                 }
             }

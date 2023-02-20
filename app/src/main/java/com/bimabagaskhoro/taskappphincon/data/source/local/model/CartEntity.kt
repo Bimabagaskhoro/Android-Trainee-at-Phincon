@@ -10,32 +10,29 @@ import kotlinx.android.parcel.Parcelize
 
 @Entity(tableName = CART_TABLE)
 data class CartEntity(
-    @PrimaryKey()
+    @PrimaryKey(autoGenerate = false)
     val id: Int? = null,
 
-    @ColumnInfo(name = "name_product")
-    val name_product: String? = null,
-
-    @ColumnInfo(name = "harga")
-    val harga: String? = null,
-
     @ColumnInfo(name = "image")
-    val image: String? = null,
+    val image: String?,
+
+    @ColumnInfo(name = "name_product")
+    val nameProduct: String?,
 
     @ColumnInfo(name = "quantity")
-    val quantity: Int? = null,
+    val quantity: Int? = 1,
 
-    @ColumnInfo(name = "is_check")
-    var is_check: Int? = null,
+    @ColumnInfo(name = "price")
+    val price: String?,
+
+    @ColumnInfo(name = "item_total_price")
+    val itemTotalPrice: Int?,
 
     @ColumnInfo(name = "stock")
     val stock: Int? = null,
 
-    @ColumnInfo(name = "total_harga")
-    val totalPrice: Int? = null,
-
-    @ColumnInfo(name = "first_price")
-    val firstPrice: String? = null
+    @ColumnInfo(name = "is_checked")
+    val isChecked: Boolean = false,
 )
 
 @Parcelize

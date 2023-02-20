@@ -2,6 +2,7 @@ package com.bimabagaskhoro.taskappphincon.utils
 
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
 import kotlinx.coroutines.runBlocking
@@ -15,14 +16,18 @@ class AuthBadResponse @Inject constructor(
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
-        if (response.code == 401) {
-            runBlocking {
-                tokenManager.clear()
+        try {
+            if (response.code == 401) {
+                runBlocking {
+                    tokenManager.clear()
+                }
+                val intent = Intent(context, AuthActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+                return response
             }
-            val intent = Intent(context, AuthActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
-            return response
+        } catch (e: Exception) {
+            Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
         }
         return response
     }

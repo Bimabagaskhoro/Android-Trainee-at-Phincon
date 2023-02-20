@@ -21,9 +21,10 @@ import com.bimabagaskhoro.taskappphincon.ui.adapter.ImageSliderAdapter
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductHistoryAdapter
 import com.bimabagaskhoro.taskappphincon.ui.dialog.bottomsheet.BuyDialogFragment
 import com.bimabagaskhoro.taskappphincon.ui.dialog.photoview.PhotoViewFragment
+import com.bimabagaskhoro.taskappphincon.utils.NoConnectivityException
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
-import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.google.gson.Gson
@@ -34,12 +35,11 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.Exception
 
 @AndroidEntryPoint
 class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListener {
     private lateinit var binding: ActivityDetailBinding
-    private val viewModel: AuthViewModel by viewModels()
+    private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val roomViewModel: LocalViewModel by viewModels()
     private var idProduct: Int? = null
@@ -59,6 +59,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                 val intent = Intent(this@DetailActivity, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
+                finish()
             }
         }
         binding.swipeRefresh.setOnRefreshListener {
@@ -73,9 +74,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
             initViewModelHistory(idUser)
             initViewModelOther(idUser)
         }
-
         seePhoto = PhotoViewFragment(this)
-
     }
 
     private fun initDataDetail() {
@@ -176,8 +175,8 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                                     }
                                 }
                                 is Resource.Error -> {
-                                    binding.progressBar.visibility = View.GONE
                                     try {
+                                        binding.progressBar.visibility = View.GONE
                                         val err =
                                             results.errorBody?.string()
                                                 ?.let { it1 -> JSONObject(it1).toString() }
@@ -190,14 +189,17 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                                             .setMessage(messageErr)
                                             .setPositiveButton("Ok") { _, _ ->
                                             }.show()
-                                    } catch (e: Exception) {
-                                        val err = results.errorCode
-                                        Log.d("ErrorCode", "$err")
+                                    } catch (t: IOException) {
+                                        val msgErr = t.localizedMessage
+                                        Toast.makeText(this@DetailActivity, msgErr, Toast.LENGTH_SHORT).show()
                                     }
                                 }
                                 is Resource.Empty -> {
                                     binding.progressBar.visibility = View.GONE
                                     Log.d("DetailActivity", "Empty Data")
+                                }
+                                else -> {
+                                    Toast.makeText(this@DetailActivity, "No Internet Detect", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -242,12 +244,18 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         })
     }
 
+    /**
+     *
+     * herrrrre
+     */
     private fun initFavorite(userId: Int, data: DataDetail, productId: Int) {
         binding.imgFavorite.setOnClickListener {
-            if (data.isFavorite) {
-                unFavorite(userId, productId)
-            } else {
+            if (!data.isFavorite) {
                 addFavorite(userId, productId)
+                binding.swipeRefresh.isRefreshing = true
+            } else if (data.isFavorite) {
+                unFavorite(userId, productId)
+                binding.swipeRefresh.isRefreshing = true
             }
         }
     }
@@ -271,20 +279,38 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         viewModel.addFavorite(userId, productId).observe(this@DetailActivity) { results ->
             when (results) {
                 is Resource.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                    Log.d("addFavoriteLoading", "Loading")
+                    binding.apply {
+                        progressBar.visibility = View.VISIBLE
+                        toolbar.visibility = View.GONE
+                        stickyNested.visibility = View.GONE
+                        layBtn.visibility = View.GONE
+                        Log.d("addFavoriteLoading", "Loading")
+                    }
                 }
                 is Resource.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    Toast.makeText(
-                        this@DetailActivity,
-                        R.string.succes_favorite,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    binding.apply {
+                        progressBar.visibility = View.GONE
+                        toolbar.visibility = View.VISIBLE
+                        stickyNested.visibility = View.VISIBLE
+                        swipeRefresh.isRefreshing = false
+                        layBtn.visibility = View.VISIBLE
+                        Toast.makeText(
+                            this@DetailActivity,
+                            R.string.succes_favorite,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        initDataDetail()
+                    }
                 }
                 is Resource.Error -> {
-                    binding.progressBar.visibility = View.GONE
                     try {
+                        binding.apply {
+                            progressBar.visibility = View.GONE
+                            toolbar.visibility = View.VISIBLE
+                            stickyNested.visibility = View.GONE
+                            swipeRefresh.isRefreshing = false
+                            layBtn.visibility = View.VISIBLE
+                        }
                         val err =
                             results.errorBody?.string()
                                 ?.let { it1 -> JSONObject(it1).toString() }
@@ -294,14 +320,17 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
                         messageErr?.let { Log.d("Error Body", it) }
-                    } catch (e: Exception) {
-                        val err = results.errorCode
-                        Log.d("ErrorCode", "$err")
+                    } catch (t: IOException) {
+                        val msgErr = t.localizedMessage
+                        Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
                     binding.progressBar.visibility = View.GONE
                     Log.d("addFavorite", "Empty Data")
+                }
+                else -> {
+                    Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -311,20 +340,38 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         viewModel.unFavorite(userId, productId).observe(this@DetailActivity) { results ->
             when (results) {
                 is Resource.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                    Log.d("unFavoriteLoading", "Loading")
+                    binding.apply {
+                        progressBar.visibility = View.VISIBLE
+                        toolbar.visibility = View.GONE
+                        stickyNested.visibility = View.GONE
+                        layBtn.visibility = View.GONE
+                        Log.d("addFavoriteLoading", "Loading")
+                    }
                 }
                 is Resource.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    Toast.makeText(
-                        this@DetailActivity,
-                        R.string.delete_favorite,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    binding.apply {
+                        progressBar.visibility = View.GONE
+                        toolbar.visibility = View.VISIBLE
+                        stickyNested.visibility = View.VISIBLE
+                        swipeRefresh.isRefreshing = false
+                        layBtn.visibility = View.VISIBLE
+                        Toast.makeText(
+                            this@DetailActivity,
+                            R.string.delete_favorite,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        initDataDetail()
+                    }
                 }
                 is Resource.Error -> {
-                    binding.progressBar.visibility = View.GONE
                     try {
+                        binding.apply {
+                            progressBar.visibility = View.GONE
+                            toolbar.visibility = View.VISIBLE
+                            stickyNested.visibility = View.VISIBLE
+                            swipeRefresh.isRefreshing = false
+                            layBtn.visibility = View.VISIBLE
+                        }
                         val err =
                             results.errorBody?.string()
                                 ?.let { it1 -> JSONObject(it1).toString() }
@@ -334,43 +381,35 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
                         messageErr?.let { Log.d("Error Body", it) }
-                    } catch (e: Exception) {
-                        val err = results.errorCode
-                        Log.d("ErrorCode", "$err")
+                    } catch (t: IOException) {
+                        val msgErr = t.localizedMessage
+                        Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
                     binding.progressBar.visibility = View.GONE
                     Log.d("unFavorite", "Empty Data")
                 }
-
+                else -> {
+                    Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
     private fun doActionCart(data: DataDetail) {
-        val idProduct = data.id
-        val nameProduct = data.name_product
-        val priceProduct = data.harga
-        val imageProduct = data.image
-        val quantityProduct = 1
-        val stockProduct = data.stock
-        val isCheck = 0
-        val totalPrice = data.harga?.toInt()
-        val firstPrice = data.harga
         val cart = CartEntity(
-            idProduct,
-            nameProduct,
-            priceProduct,
-            imageProduct,
-            quantityProduct,
-            isCheck,
-            stockProduct,
-            totalPrice,
-            firstPrice
+            id = data.id,
+            image = data.image,
+            nameProduct = data.name_product,
+            quantity = 1,
+            price = data.harga,
+            itemTotalPrice = data.harga?.toInt(),
+            stock = data.stock,
+            isChecked = false
         )
 
-        if (stockProduct != 1) {
+        if (data.stock != 1) {
             roomViewModel.insertCart(cart)
             Toast.makeText(this, R.string.succes_trolley, Toast.LENGTH_SHORT).show()
             startActivity(Intent(this@DetailActivity, MainActivity::class.java))
@@ -386,8 +425,12 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
             showData.show(supportFragmentManager, DetailActivity::class.java.simpleName)
         } else {
             binding.btnBuy.setOnClickListener {
-                val showData = BuyDialogFragment(data, dataPayment, namePayment)
-                showData.show(supportFragmentManager, DetailActivity::class.java.simpleName)
+                if (data.stock == 1) {
+                    Toast.makeText(this, R.string.failed_trolley, Toast.LENGTH_SHORT).show()
+                } else {
+                    val showData = BuyDialogFragment(data, dataPayment, namePayment)
+                    showData.show(supportFragmentManager, DetailActivity::class.java.simpleName)
+                }
             }
         }
     }
@@ -439,6 +482,9 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             rvHistoryProduct.visibility = View.GONE
                         }
                     }
+                    else -> {
+                        Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -455,8 +501,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                         if (data.data?.success?.data?.isNotEmpty() == true) {
                             adapter.setData(data.data.success.data.sortedBy { it1 -> it1.name_product })
                             initRecyclerViewOther()
-                        }
-                        else if (data.data?.success?.data?.isEmpty() == true) {
+                        } else if (data.data?.success?.data?.isEmpty() == true) {
                             binding.apply {
                                 viewHelper1.visibility = View.GONE
                                 rvOtherProduct.visibility = View.GONE
@@ -475,9 +520,9 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             AlertDialog.Builder(this).setTitle("Failed")
                                 .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                 }.show()
-                        } catch (e: Exception) {
-                            val err = data.errorCode
-                            Log.d("ErrorCode", "$err")
+                        } catch (t: IOException) {
+                            val msgErr = t.localizedMessage
+                            Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
                         }
                     }
                     is Resource.Empty -> {
@@ -487,6 +532,9 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             rvOtherProduct.visibility = View.GONE
                             tvTittleSticky.visibility = View.GONE
                         }
+                    }
+                    else -> {
+                        Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -502,6 +550,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                 val intent = Intent(this@DetailActivity, DetailActivity::class.java)
                 intent.putExtra(EXTRA_DATA_DETAIL, it.id)
                 startActivity(intent)
+                finish()
             }
         }
     }
@@ -515,8 +564,14 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                 val intent = Intent(this@DetailActivity, DetailActivity::class.java)
                 intent.putExtra(EXTRA_DATA_DETAIL, it.id)
                 startActivity(intent)
+                finish()
             }
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 
     companion object {

@@ -10,13 +10,18 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.local.db.notification.NotificationDao
+import com.bimabagaskhoro.taskappphincon.data.source.local.db.dao.NotificationDao
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
+import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
 import com.bimabagaskhoro.taskappphincon.ui.auth.LoginFragment
 import com.bimabagaskhoro.taskappphincon.utils.timeStamp
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,41 +31,18 @@ class FirebaseNotification : FirebaseMessagingService() {
     lateinit var database: NotificationDao
 
     override fun onNewToken(token: String) {
+        super.onNewToken(token)
         Log.d(TAG, "Refreshed token: $token")
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: ${remoteMessage.from}")
-        Log.d(TAG, "Message data payload: " + remoteMessage.data)
-        Log.d(TAG, "Message Notification Body: ${remoteMessage.notification?.body}")
-        val timestamp = System.currentTimeMillis()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            sendNotification(
-                remoteMessage.notification?.title,
-                remoteMessage.notification?.body,
-                timeStamp
-            )
-        }
-
-        database.insertNotification(
-            NotificationEntity(
-                0,
-                remoteMessage.notification!!.title.toString(),
-                remoteMessage.notification!!.body.toString(),
-                timeStamp,
-                0,
-                1,
-                0,
-                0
-            )
-        )
+        sendNotification(remoteMessage.notification?.title, remoteMessage.notification?.body)
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    private fun sendNotification(title: String?, messageBody: String?, timeStamp: String) {
-        val contentIntent = Intent(applicationContext, LoginFragment::class.java)
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun sendNotification(title: String?, messageBody: String?) {
+        val contentIntent = Intent(applicationContext, AuthActivity::class.java)
         val contentPendingIntent = PendingIntent.getActivity(
             applicationContext,
             NOTIFICATION_ID,
@@ -68,15 +50,13 @@ class FirebaseNotification : FirebaseMessagingService() {
             PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notificationBuilder = NotificationCompat.Builder(
-            applicationContext,
-            NOTIFICATION_CHANNEL_ID
-        )
-            .setSmallIcon(R.drawable.ic_notif)
-            .setContentTitle(title)
-            .setContentText(messageBody)
-            .setContentIntent(contentPendingIntent)
-            .setAutoCancel(true)
+        val notificationBuilder =
+            NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notif)
+                .setContentTitle(title)
+                .setContentText(messageBody)
+                .setContentIntent(contentPendingIntent)
+                .setAutoCancel(true)
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -88,6 +68,17 @@ class FirebaseNotification : FirebaseMessagingService() {
             )
             notificationBuilder.setChannelId(NOTIFICATION_CHANNEL_ID)
             notificationManager.createNotificationChannel(channel)
+        }
+
+        val date = LocalDate.now().toString()
+        CoroutineScope(Dispatchers.IO).launch {
+            database.insertNotification(
+                NotificationEntity(
+                    notificationTitle = title.toString(),
+                    notificationBody = messageBody.toString(),
+                    notificationDate = date
+                )
+            )
         }
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
     }

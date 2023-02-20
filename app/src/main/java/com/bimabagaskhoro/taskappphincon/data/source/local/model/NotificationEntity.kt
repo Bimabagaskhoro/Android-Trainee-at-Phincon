@@ -11,24 +11,18 @@ data class NotificationEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
 
-    @ColumnInfo(name = "tittle_notification")
-    val tittle_notification: String? = null,
+    @ColumnInfo(name = "notification_title")
+    val notificationTitle: String? = null,
 
-    @ColumnInfo(name = "body_notification")
-    val body_notification: String? = null,
+    @ColumnInfo(name = "notification_body")
+    val notificationBody: String? = null,
 
-    @ColumnInfo(name = "timestamp_notification")
-    val timestamp_notification: String? = null,
+    @ColumnInfo(name = "notification_date")
+    val notificationDate: String? = null,
 
-    @ColumnInfo(name = "isRead")
-    val isRead: Int? = null,
+    @ColumnInfo(name = "is_read")
+    val isRead: Boolean = false,
 
-    @ColumnInfo(name = "total_notification")
-    val total_notification: Int? = null,
-
-    @ColumnInfo(name = "is_check")
-    var isCheck: Int? = null,
-
-    @ColumnInfo(name = "is_state")
-    var isState: Int? = null,
+    @ColumnInfo(name = "is_checked")
+    val isChecked: Boolean = false,
 )

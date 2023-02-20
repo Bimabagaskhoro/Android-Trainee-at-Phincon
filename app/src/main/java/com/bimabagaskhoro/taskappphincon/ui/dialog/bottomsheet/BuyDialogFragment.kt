@@ -19,7 +19,7 @@ import com.bimabagaskhoro.taskappphincon.ui.activity.PaymentActivity.Companion.E
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
-import com.bimabagaskhoro.taskappphincon.vm.AuthViewModel
+import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -27,6 +27,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
+import java.io.IOException
 
 @AndroidEntryPoint
 class BuyDialogFragment(
@@ -37,7 +38,7 @@ class BuyDialogFragment(
     private var _binding: FragmentBuyDialogBinding? = null
     private val binding get() = _binding
     private val viewModel: BuyDialogViewModel by viewModels()
-    private val viewModelStock: AuthViewModel by viewModels()
+    private val viewModelStock: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun getTheme(): Int {
@@ -57,41 +58,13 @@ class BuyDialogFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
-            Glide.with(requireContext())
-                .load(data.image)
-                .into(this!!.imgDialog)
-
-            tvPriceFragmentDialog.text = data.harga?.formatterIdr()
-            tvStockFragmentDialog.text = data.stock.toString()
-
-            if (data.stock == 1) {
-                tvStockFragmentDialog.text = getString(R.string.out_stock)
-            }
-        }
+        getDataDetail()
         initDataPayment()
+        observeToggle()
+        postDataProduct()
+    }
 
-        viewModel.quantity.observe(viewLifecycleOwner) { results ->
-            binding?.tvTotalNumber?.text = results.toString()
-            if (results == data.stock) {
-                binding?.addFragmentDialog?.background =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_lightgrey)
-                binding?.minFragmentDialog?.background =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_black)
-            } else if (results == 1) {
-                binding?.addFragmentDialog?.background =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_black)
-                binding?.minFragmentDialog?.background =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_lightgrey)
-            }
-        }
-
-        data.harga?.toInt()?.let { viewModel.setPrice(it) }
-
-        viewModel.price.observe(requireActivity()) { data ->
-            binding?.tvTotalPrice?.text = data.toString().formatterIdr()
-        }
-
+    private fun postDataProduct() {
         binding?.apply {
             val stock = tvStockFragmentDialog.text
             val buy = tvTotalNumber.text
@@ -162,8 +135,55 @@ class BuyDialogFragment(
                 }
             }
         }
+    }
 
-        setActionData()
+    private fun observeToggle() {
+        viewModel.quantity.observe(viewLifecycleOwner) { results ->
+            binding?.tvTotalNumber?.text = results.toString()
+            if (results == data.stock) {
+                binding?.addFragmentDialog?.background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_lightgrey)
+                binding?.minFragmentDialog?.background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_black)
+            } else if (results == 1) {
+                binding?.addFragmentDialog?.background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_black)
+                binding?.minFragmentDialog?.background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_lightgrey)
+            } else if (results != 1) {
+                binding?.addFragmentDialog?.background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_black)
+                binding?.minFragmentDialog?.background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_black)
+            }
+        }
+
+        data.harga?.toInt()?.let { viewModel.setPrice(it) }
+
+        viewModel.price.observe(requireActivity()) { data ->
+            binding?.tvTotalPrice?.text = data.toString().formatterIdr()
+        }
+        binding?.addFragmentDialog?.setOnClickListener {
+            viewModel.addQuantity(data.stock)
+        }
+        binding?.minFragmentDialog?.setOnClickListener {
+            viewModel.minQuantity()
+        }
+    }
+
+    private fun getDataDetail() {
+        binding.apply {
+            Glide.with(requireContext())
+                .load(data.image)
+                .into(this!!.imgDialog)
+
+            tvPriceFragmentDialog.text = data.harga?.formatterIdr()
+            tvStockFragmentDialog.text = data.stock.toString()
+
+            if (data.stock == 1) {
+                tvStockFragmentDialog.text = getString(R.string.out_stock)
+            }
+        }
     }
 
     private fun doActionUpdate(
@@ -202,25 +222,18 @@ class BuyDialogFragment(
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
                         Toast.makeText(requireActivity(), messageErr, Toast.LENGTH_SHORT).show()
-                    } catch (e: java.lang.Exception) {
-                        val err = results.errorCode
-                        Log.d("ErrorCode", "$err")
+                    } catch (t: IOException) {
+                        val msgErr = t.localizedMessage
+                        Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
                     Log.d("unFavorite", "Empty Data")
                 }
-
+                else -> {
+                    Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
-    }
-
-    private fun setActionData() {
-        binding?.addFragmentDialog?.setOnClickListener {
-            viewModel.addQuantity(data.stock)
-        }
-        binding?.minFragmentDialog?.setOnClickListener {
-            viewModel.minQuantity()
         }
     }
 
