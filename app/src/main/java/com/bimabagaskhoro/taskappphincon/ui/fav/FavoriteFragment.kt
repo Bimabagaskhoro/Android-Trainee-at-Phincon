@@ -74,7 +74,6 @@ class FavoriteFragment : Fragment() {
                 }
             }
         }
-
         setUpToolbar()
     }
 
@@ -144,7 +143,6 @@ class FavoriteFragment : Fragment() {
                         }
                     }
                 }
-//                viewModel.onSearchFav(q)
                 return false
             }
         })
@@ -186,12 +184,12 @@ class FavoriteFragment : Fragment() {
                         }
                     }
                     is Resource.Error -> {
-                        binding?.apply {
-                            swipeRefresh.isRefreshing = false
-                            progressBar.visibility = View.GONE
-                            fabShorting.visibility = View.GONE
-                        }
                         try {
+                            binding?.apply {
+                                swipeRefresh.isRefreshing = false
+                                progressBar.visibility = View.GONE
+                                fabShorting.visibility = View.GONE
+                            }
                             val err =
                                 data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
                             val gson = Gson()
@@ -201,9 +199,8 @@ class FavoriteFragment : Fragment() {
                             AlertDialog.Builder(requireActivity()).setTitle("Failed")
                                 .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                 }.show()
-                        } catch (t: IOException) {
-                            val msgErr = t.localizedMessage
-                            Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
+                        } catch (t: Throwable) {
+                            Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
                         }
                     }
                     is Resource.Empty -> {
@@ -216,9 +213,6 @@ class FavoriteFragment : Fragment() {
                             edtSearch.visibility = View.GONE
 
                         }
-                    }
-                    else -> {
-                        Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -249,11 +243,11 @@ class FavoriteFragment : Fragment() {
 
                     }
                     is Resource.Error -> {
-                        binding?.apply {
-                            progressBar.visibility = View.GONE
-                            fabShorting.visibility = View.GONE
-                        }
                         try {
+                            binding?.apply {
+                                progressBar.visibility = View.GONE
+                                fabShorting.visibility = View.GONE
+                            }
                             val err =
                                 data.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
                             val gson = Gson()
@@ -263,9 +257,8 @@ class FavoriteFragment : Fragment() {
                             AlertDialog.Builder(requireActivity()).setTitle("Failed")
                                 .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                 }.show()
-                        } catch (t: IOException) {
-                            val msgErr = t.localizedMessage
-                            Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
+                        } catch (t: Throwable) {
+                            Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
                         }
                     }
                     is Resource.Empty -> {
@@ -275,9 +268,6 @@ class FavoriteFragment : Fragment() {
                             rvProduct.visibility = View.GONE
                             fabShorting.visibility = View.GONE
                         }
-                    }
-                    else -> {
-                        Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -337,6 +327,14 @@ class FavoriteFragment : Fragment() {
                 intent.putExtra(DetailActivity.EXTRA_DATA_DETAIL, it.id)
                 startActivity(intent)
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        dataStoreViewModel.getUserId.observe(viewLifecycleOwner) {
+            val idUser = it
+            setData(null, idUser, 0)
         }
     }
 

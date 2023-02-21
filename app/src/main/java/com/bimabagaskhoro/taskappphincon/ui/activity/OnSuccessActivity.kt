@@ -81,17 +81,13 @@ class OnSuccessActivity : AppCompatActivity() {
                                     AlertDialog.Builder(this@OnSuccessActivity).setTitle("Failed")
                                         .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                         }.show()
-                                } catch (t: IOException) {
-                                    val msgErr = t.localizedMessage
-                                    Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
+                                } catch (t: Throwable) {
+                                    Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                                 }
                             }
                             is Resource.Empty -> {
                                 binding.progressbar.visibility = View.GONE
                                 Log.d("DetailActivity", "Empty Data")
-                            }
-                            else -> {
-                                Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -133,17 +129,13 @@ class OnSuccessActivity : AppCompatActivity() {
                                             .setMessage(messageErr)
                                             .setPositiveButton("Ok") { _, _ ->
                                             }.show()
-                                    } catch (t: IOException) {
-                                        val msgErr = t.localizedMessage
-                                        Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
+                                    } catch (t: Throwable) {
+                                        Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                                     }
                                 }
                                 is Resource.Empty -> {
                                     binding.progressbar.visibility = View.GONE
                                     Log.d("DetailActivity", "Empty Data")
-                                }
-                                else -> {
-                                    Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }

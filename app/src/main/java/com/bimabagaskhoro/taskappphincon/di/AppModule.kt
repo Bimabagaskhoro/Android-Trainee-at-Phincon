@@ -14,12 +14,12 @@ import com.bimabagaskhoro.taskappphincon.data.source.repository.remote.RemoteRep
 import com.bimabagaskhoro.taskappphincon.data.source.repository.remote.RemoteRepositoryImpl
 import com.bimabagaskhoro.taskappphincon.data.source.repository.firebase.FirebaseRepository
 import com.bimabagaskhoro.taskappphincon.data.source.repository.firebase.FirebaseRepositoryImpl
-import com.bimabagaskhoro.taskappphincon.utils.AuthAuthenticator
-import com.bimabagaskhoro.taskappphincon.utils.AuthBadResponse
+import com.bimabagaskhoro.taskappphincon.utils.interceptor.AuthAuthenticator
+import com.bimabagaskhoro.taskappphincon.utils.interceptor.AuthBadResponse
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CART_DATABASE
-import com.bimabagaskhoro.taskappphincon.utils.NoInternetInterceptor
-import com.bimabagaskhoro.taskappphincon.utils.HeaderInterceptor
+import com.bimabagaskhoro.taskappphincon.utils.interceptor.NoInternetInterceptor
+import com.bimabagaskhoro.taskappphincon.utils.interceptor.HeaderInterceptor
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.Module
 import dagger.Provides

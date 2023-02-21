@@ -13,9 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataItem
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCartBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_PRICE_TROLLEY
@@ -23,7 +21,6 @@ import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_ID_PAYMENT
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_NAME
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CartAdapter
-import com.bimabagaskhoro.taskappphincon.utils.NoConnectivityException
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
@@ -33,7 +30,6 @@ import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_cart.*
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.IOException
@@ -83,8 +79,6 @@ class CartActivity : AppCompatActivity() {
                         binding.apply {
                             tvAllPrice.text = priceTotal.toString().formatterIdr()
                             checkBox2.isChecked = result.size == filterResult.size
-                            rvCart.adapter = trolleyAdapter
-                            rvCart.setHasFixedSize(true)
                             trolleyAdapter?.setData(result)
                             totalPrice = priceTotal
                             checkBox2.visibility = View.VISIBLE
@@ -140,6 +134,8 @@ class CartActivity : AppCompatActivity() {
                     roomViewModel.updateProductIsCheckedById(isChecked, productId)
                 },
             )
+            rvCart.adapter = trolleyAdapter
+            rvCart.setHasFixedSize(true)
         }
     }
 
@@ -266,9 +262,8 @@ class CartActivity : AppCompatActivity() {
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
                         messageErr?.let { Log.d("Error Body", it) }
-                    } catch (t: IOException) {
-                        val msgErr = t.localizedMessage
-                        Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
+                    } catch (t: Throwable) {
+                        Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
@@ -279,13 +274,11 @@ class CartActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-//        roomViewModel.updateProductIsCheckedAll(false)
         onBackPressedDispatcher.onBackPressed()
         return true
     }
 
     override fun onBackPressed() {
-//        roomViewModel.updateProductIsCheckedAll(false)
         onBackPressedDispatcher.onBackPressed()
     }
 

@@ -125,18 +125,15 @@ class PasswordActivity : AppCompatActivity() {
                         AlertDialog.Builder(this).setTitle("Failed")
                             .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                             }.show()
-                    } catch (t: IOException) {
-                        val msgErr = t.localizedMessage
-                        Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
+                    } catch (t: Throwable) {
+                        Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
                     binding.cardProgressbar.visibility = View.GONE
                     Log.d("Empty Data", "Empty")
                 }
-                else -> {
-                    Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
-                }
+
             }
         }
     }

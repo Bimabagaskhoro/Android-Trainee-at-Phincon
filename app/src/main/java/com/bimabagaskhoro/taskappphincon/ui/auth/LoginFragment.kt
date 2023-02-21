@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.utils.Resource
@@ -17,16 +20,19 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseErr
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.SuccessLogin
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentLoginBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.MainActivity
-import com.bimabagaskhoro.taskappphincon.utils.NoConnectivityException
 import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import org.json.JSONObject
 import java.io.IOException
-import java.net.SocketTimeoutException
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -76,14 +82,35 @@ class LoginFragment : Fragment() {
                 else -> {
                     binding?.edtEmail?.error = null
                     binding?.edtPassword?.error = null
-                    try {
-                        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                            val tokenFcm = task.result
-                            Log.d("tokenFcm", tokenFcm)
-                            initData(email, password, tokenFcm)
+
+                    lifecycleScope.launch {
+                        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                            try {
+                                val firebaseToken = FirebaseMessaging.getInstance().token
+                                    .addOnCompleteListener { task ->
+                                        task.toString()
+                                    }
+                                    .addOnFailureListener {
+                                        when(it) {
+                                            is FirebaseNetworkException -> {
+                                                Toast.makeText(requireActivity(), "Check your internet connection.", Toast.LENGTH_SHORT).show()
+                                            }
+                                            is FirebaseTooManyRequestsException -> {
+                                                Toast.makeText(requireActivity(), "Too many request.", Toast.LENGTH_SHORT).show()
+                                            }
+                                            is FirebaseException -> {
+                                                Toast.makeText(requireActivity(), "An unknown error occurred.", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    }.await()
+                                initData(email, password, firebaseToken)
+                            } catch (io: IOException) {
+                                Log.d("IOException", "No Internet")
+                                Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
+                            } catch (e : Exception) {
+                                Log.d("Exception", "Test")
+                            }
                         }
-                    } catch (io: IOException) {
-                        Log.d("IOException", "No Internet")
                     }
                 }
             }
@@ -124,20 +151,12 @@ class LoginFragment : Fragment() {
                         val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse?.error?.message
                         Toast.makeText(requireActivity(), messageErr, Toast.LENGTH_SHORT).show()
-
-                        //
-//                        val errorMsg = it.errorMessage
-//                        Toast.makeText(requireActivity(), errorMsg, Toast.LENGTH_SHORT).show()
-                    } catch (t: IOException) {
-                        val msgErr = t.message
-                        Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
+                    } catch (t: Throwable) {
+                        Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
                     Log.d("Empty Data", "Empty")
-                }
-                else -> {
-                    Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
                 }
             }
         }

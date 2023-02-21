@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 class RemoteRepositoryImpl @Inject constructor(
@@ -52,15 +51,20 @@ class RemoteRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.login(email, password, tokenFcm)
                 emit(Resource.Success(response))
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, e.hashCode(), null, e.message))
             }
         }
     }
@@ -78,15 +82,20 @@ class RemoteRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.register(image, email, password, name, phone, gender)
                 emit(Resource.Success(response))
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }
@@ -103,15 +112,20 @@ class RemoteRepositoryImpl @Inject constructor(
                 val response =
                     apiService.changePassword(id, password, newPassword, confirmPassword)
                 emit(Resource.Success(response))
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }
@@ -125,15 +139,20 @@ class RemoteRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.changeImage(id, image)
                 emit(Resource.Success(response))
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }
@@ -144,15 +163,20 @@ class RemoteRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.addFavorite(idProduct, userId)
                 emit(Resource.Success(response))
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }
@@ -163,15 +187,20 @@ class RemoteRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.getDetail(idProduct, idUser)
                 emit(Resource.Success(response))
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }
@@ -184,15 +213,20 @@ class RemoteRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.updateStock(data)
                 emit(Resource.Success(response))
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }
@@ -203,15 +237,20 @@ class RemoteRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.unFavorite(idProduct, userId)
                 emit(Resource.Success(response))
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }
@@ -222,15 +261,20 @@ class RemoteRepositoryImpl @Inject constructor(
             try {
                 val response = apiService.updateRating(userId, rate)
                 emit(Resource.Success(response))
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }
@@ -249,15 +293,20 @@ class RemoteRepositoryImpl @Inject constructor(
                 } else {
                     emit(Resource.Empty())
                 }
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }
@@ -273,15 +322,20 @@ class RemoteRepositoryImpl @Inject constructor(
                 } else {
                     emit(Resource.Empty())
                 }
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    408 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }
@@ -290,27 +344,27 @@ class RemoteRepositoryImpl @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                try {
-                    val response = apiService.getHistoryProduct(userId)
-                    val data = response.success.data
-                    if (data.isNotEmpty()) {
-                        emit(Resource.Success(response))
-                    } else {
-                        emit(Resource.Empty())
+                val response = apiService.getHistoryProduct(userId)
+                val data = response.success.data
+                if (data.isNotEmpty()) {
+                    emit(Resource.Success(response))
+                } else {
+                    emit(Resource.Empty())
+                }
+            } catch (t: Throwable) {
+                when (t) {
+                    is HttpException -> {
+                        when (t.code()) {
+                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                            else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
+                        }
                     }
-                } catch (t: HttpException) {
-                    when (t.code()) {
-                        429 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                        400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
                     }
                 }
-            } catch (t: HttpException) {
-                when (t.code()) {
-                    400 -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                    else -> emit(Resource.Error(true, t.code(), t.response()?.errorBody(), null))
-                }
-            } catch (e: IOException) {
-                emit(Resource.Error(true, null, null, e.localizedMessage))
             }
         }
     }

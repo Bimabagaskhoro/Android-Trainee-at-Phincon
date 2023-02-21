@@ -1,14 +1,8 @@
-package com.bimabagaskhoro.taskappphincon.utils
+package com.bimabagaskhoro.taskappphincon.utils.interceptor
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.util.Log
-import android.widget.Toast
 import com.bimabagaskhoro.taskappphincon.data.pref.AuthPreferences
 import com.bimabagaskhoro.taskappphincon.data.source.remote.network.ApiToken
 import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.ResponseRefreshToken
-import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking

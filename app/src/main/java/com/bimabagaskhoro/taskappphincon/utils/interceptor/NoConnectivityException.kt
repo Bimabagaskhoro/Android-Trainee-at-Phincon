@@ -1,7 +1,5 @@
-package com.bimabagaskhoro.taskappphincon.utils
+package com.bimabagaskhoro.taskappphincon.utils.interceptor
 
-import android.content.Context
-import android.widget.Toast
 import java.io.IOException
 
 class NoConnectivityException : IOException() {

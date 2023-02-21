@@ -31,6 +31,8 @@ import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseErr
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentRegisterBinding
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
 import com.bimabagaskhoro.taskappphincon.utils.*
+import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CAMERA_X_RESULT
+import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.REQUEST_CODE_PERMISSIONS
 import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -244,16 +246,12 @@ class RegisterFragment : Fragment() {
                                     .show()
                                 val errCode = it.errorCode
                                 Log.d("errorCode", "$errCode")
-                            } catch (t: IOException) {
-                                val msgErr = t.localizedMessage
-                                Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
+                            } catch (t: Throwable) {
+                                Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
                             }
                         }
                         is Resource.Empty -> {
                             Log.d("Empty Data", "Empty")
-                        }
-                        else -> {
-                            Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -305,10 +303,7 @@ class RegisterFragment : Fragment() {
     }
 
     companion object {
-        const val CAMERA_X_RESULT = 200
-
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-        private const val REQUEST_CODE_PERMISSIONS = 10
     }
 
     override fun onDestroyView() {

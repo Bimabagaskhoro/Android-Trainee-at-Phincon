@@ -35,7 +35,7 @@ class FRCViewModel @Inject constructor(
                     }
                 }
                 is Resource.Error -> {
-                    _state.value = Resource.Error(response.isNetworkError, response.errorCode, response.errorBody, response.errorMessage)
+                    _state.value = Resource.Error(response.message, response.errorCode, response.errorBody)
                 }
                 is Resource.Empty ->{
                     _state.value =Resource.Empty()

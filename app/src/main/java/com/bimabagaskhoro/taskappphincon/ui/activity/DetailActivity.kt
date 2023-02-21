@@ -21,7 +21,6 @@ import com.bimabagaskhoro.taskappphincon.ui.adapter.ImageSliderAdapter
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductHistoryAdapter
 import com.bimabagaskhoro.taskappphincon.ui.dialog.bottomsheet.BuyDialogFragment
 import com.bimabagaskhoro.taskappphincon.ui.dialog.photoview.PhotoViewFragment
-import com.bimabagaskhoro.taskappphincon.utils.NoConnectivityException
 import com.bimabagaskhoro.taskappphincon.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
 import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
@@ -189,17 +188,13 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                                             .setMessage(messageErr)
                                             .setPositiveButton("Ok") { _, _ ->
                                             }.show()
-                                    } catch (t: IOException) {
-                                        val msgErr = t.localizedMessage
-                                        Toast.makeText(this@DetailActivity, msgErr, Toast.LENGTH_SHORT).show()
+                                    } catch (t: Throwable) {
+                                        Toast.makeText(this@DetailActivity, "No Internet Connection", Toast.LENGTH_SHORT).show()
                                     }
                                 }
                                 is Resource.Empty -> {
                                     binding.progressBar.visibility = View.GONE
                                     Log.d("DetailActivity", "Empty Data")
-                                }
-                                else -> {
-                                    Toast.makeText(this@DetailActivity, "No Internet Detect", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
@@ -320,17 +315,13 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
                         messageErr?.let { Log.d("Error Body", it) }
-                    } catch (t: IOException) {
-                        val msgErr = t.localizedMessage
-                        Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
+                    } catch (t: Throwable) {
+                        Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
                     binding.progressBar.visibility = View.GONE
                     Log.d("addFavorite", "Empty Data")
-                }
-                else -> {
-                    Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -381,17 +372,13 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
                         messageErr?.let { Log.d("Error Body", it) }
-                    } catch (t: IOException) {
-                        val msgErr = t.localizedMessage
-                        Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
+                    } catch (t: Throwable) {
+                        Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
                     binding.progressBar.visibility = View.GONE
                     Log.d("unFavorite", "Empty Data")
-                }
-                else -> {
-                    Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -469,9 +456,8 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             AlertDialog.Builder(this).setTitle("Failed")
                                 .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                 }.show()
-                        } catch (e: Exception) {
-                            val err = data.errorCode
-                            Log.d("ErrorCode", "$err")
+                        } catch (t: Throwable) {
+                            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                         }
                     }
                     is Resource.Empty -> {
@@ -481,9 +467,6 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             tvTittleSticky2.visibility = View.GONE
                             rvHistoryProduct.visibility = View.GONE
                         }
-                    }
-                    else -> {
-                        Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -520,9 +503,8 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             AlertDialog.Builder(this).setTitle("Failed")
                                 .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                 }.show()
-                        } catch (t: IOException) {
-                            val msgErr = t.localizedMessage
-                            Toast.makeText(this, msgErr, Toast.LENGTH_SHORT).show()
+                        } catch (t: Throwable) {
+                            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                         }
                     }
                     is Resource.Empty -> {

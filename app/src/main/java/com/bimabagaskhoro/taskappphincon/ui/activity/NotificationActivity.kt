@@ -36,16 +36,19 @@ class NotificationActivity : AppCompatActivity() {
 
         setupToolbar()
         initObserver()
-        initAdapter()
     }
 
     private fun initAdapter() {
-        adapter = NotificationAdapter(
-            context = this@NotificationActivity,
-            isMultipleSelect = isMultipleSelect,
-            onItemClicked = { onNotificationItemClicked(it) },
-            onCheckboxChecked = { onCheckboxChecked(it) }
-        )
+        binding.apply {
+            adapter = NotificationAdapter(
+                context = this@NotificationActivity,
+                isMultipleSelect = isMultipleSelect,
+                onItemClicked = { onNotificationItemClicked(it) },
+                onCheckboxChecked = { onCheckboxChecked(it) }
+            )
+            rvNotification.adapter = adapter
+            rvNotification.setHasFixedSize(true)
+        }
     }
 
     private fun setupToolbar() {
@@ -111,15 +114,12 @@ class NotificationActivity : AppCompatActivity() {
 
 
     private fun initObserver() {
+        initAdapter()
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 roomViewModel.getAllNotification().collectLatest { result ->
                     if (result.isNotEmpty()) {
-                        initAdapter()
-                        binding.rvNotification.adapter = adapter
-                        binding.rvNotification.setHasFixedSize(true)
                         adapter.setData(result)
-
                         binding.rvNotification.visibility = View.VISIBLE
                         binding.emptyData.visibility = View.GONE
                     } else {

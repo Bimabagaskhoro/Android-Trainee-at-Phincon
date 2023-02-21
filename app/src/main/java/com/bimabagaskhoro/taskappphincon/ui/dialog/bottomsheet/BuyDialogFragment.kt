@@ -222,16 +222,12 @@ class BuyDialogFragment(
                             gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse.error.message
                         Toast.makeText(requireActivity(), messageErr, Toast.LENGTH_SHORT).show()
-                    } catch (t: IOException) {
-                        val msgErr = t.localizedMessage
-                        Toast.makeText(requireActivity(), msgErr, Toast.LENGTH_SHORT).show()
+                    } catch (t: Throwable) {
+                        Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Empty -> {
                     Log.d("unFavorite", "Empty Data")
-                }
-                else -> {
-                    Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
                 }
             }
         }

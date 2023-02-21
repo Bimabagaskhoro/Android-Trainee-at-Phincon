@@ -76,9 +76,6 @@ class PaymentActivity : AppCompatActivity() {
                 is Resource.Empty -> {
                     Log.d("observeData", "observeData: Empty Data")
                 }
-                else -> {
-                    Toast.makeText(this, "No Internet Detect", Toast.LENGTH_SHORT).show()
-                }
             }
         }
     }

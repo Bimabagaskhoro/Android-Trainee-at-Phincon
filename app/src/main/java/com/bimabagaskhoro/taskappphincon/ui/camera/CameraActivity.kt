@@ -14,7 +14,7 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCameraBinding
-import com.bimabagaskhoro.taskappphincon.ui.auth.RegisterFragment.Companion.CAMERA_X_RESULT
+import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CAMERA_X_RESULT
 import com.bimabagaskhoro.taskappphincon.utils.createFile
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
