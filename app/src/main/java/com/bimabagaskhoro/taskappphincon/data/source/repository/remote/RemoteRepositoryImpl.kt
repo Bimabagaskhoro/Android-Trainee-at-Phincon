@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okio.IOException
 import retrofit2.HttpException
 import javax.inject.Inject
 
@@ -55,13 +56,14 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
                         emit(Resource.Error(t.message, null, null))
                     }
                 }
@@ -86,14 +88,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }
@@ -116,14 +119,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }
@@ -143,14 +147,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }
@@ -167,14 +172,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }
@@ -191,14 +197,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }
@@ -217,14 +224,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }
@@ -241,14 +249,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }
@@ -265,14 +274,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }
@@ -297,14 +307,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }
@@ -326,14 +337,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }
@@ -355,14 +367,15 @@ class RemoteRepositoryImpl @Inject constructor(
                 when (t) {
                     is HttpException -> {
                         when (t.code()) {
-                            429 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
-                            408 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
                     is Exception -> {
                         emit(Resource.Error(t.message, null, null))
+                    }
+                    is IOException -> {
+                        emit(Resource.Error("No Internet Available", null, null))
                     }
                 }
             }

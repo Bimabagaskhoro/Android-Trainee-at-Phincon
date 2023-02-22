@@ -14,13 +14,11 @@ import com.bimabagaskhoro.taskappphincon.data.source.repository.remote.RemoteRep
 import com.bimabagaskhoro.taskappphincon.data.source.repository.remote.RemoteRepositoryImpl
 import com.bimabagaskhoro.taskappphincon.data.source.repository.firebase.FirebaseRepository
 import com.bimabagaskhoro.taskappphincon.data.source.repository.firebase.FirebaseRepositoryImpl
-import com.bimabagaskhoro.taskappphincon.utils.interceptor.AuthAuthenticator
-import com.bimabagaskhoro.taskappphincon.utils.interceptor.AuthBadResponse
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.BASE_URL
 import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CART_DATABASE
-import com.bimabagaskhoro.taskappphincon.utils.interceptor.NoInternetInterceptor
-import com.bimabagaskhoro.taskappphincon.utils.interceptor.HeaderInterceptor
+import com.bimabagaskhoro.taskappphincon.utils.interceptor.*
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -91,9 +89,8 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideNoInternetInterceptor(
-        @ApplicationContext context: Context
-    ): NoInternetInterceptor = NoInternetInterceptor(context)
+    fun provideNoInternetInterceptor(connectionManager: ConnectionManager
+    ): NoInternetInterceptor = NoInternetInterceptor(connectionManager)
 
     @Singleton
     @Provides

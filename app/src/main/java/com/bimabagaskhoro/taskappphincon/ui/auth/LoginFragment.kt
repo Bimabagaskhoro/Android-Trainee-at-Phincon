@@ -91,23 +91,39 @@ class LoginFragment : Fragment() {
                                         task.toString()
                                     }
                                     .addOnFailureListener {
-                                        when(it) {
+                                        when (it) {
                                             is FirebaseNetworkException -> {
-                                                Toast.makeText(requireActivity(), "Check your internet connection.", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    requireActivity(),
+                                                    "Check your internet connection.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                             is FirebaseTooManyRequestsException -> {
-                                                Toast.makeText(requireActivity(), "Too many request.", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    requireActivity(),
+                                                    "Too many request.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                             is FirebaseException -> {
-                                                Toast.makeText(requireActivity(), "An unknown error occurred.", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    requireActivity(),
+                                                    "An unknown error occurred.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
                                         }
                                     }.await()
                                 initData(email, password, firebaseToken)
                             } catch (io: IOException) {
                                 Log.d("IOException", "No Internet")
-                                Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
-                            } catch (e : Exception) {
+                                Toast.makeText(
+                                    requireActivity(),
+                                    "No Internet Connection",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } catch (e: Exception) {
                                 Log.d("Exception", "Test")
                             }
                         }
@@ -151,8 +167,10 @@ class LoginFragment : Fragment() {
                         val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
                         val messageErr = errorResponse?.error?.message
                         Toast.makeText(requireActivity(), messageErr, Toast.LENGTH_SHORT).show()
+//
                     } catch (t: Throwable) {
-                        Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireActivity(),  t.localizedMessage, Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
                 is Resource.Empty -> {

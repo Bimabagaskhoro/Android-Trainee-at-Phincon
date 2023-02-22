@@ -263,6 +263,8 @@ class CartActivity : AppCompatActivity() {
                         val messageErr = errorResponse.error.message
                         messageErr?.let { Log.d("Error Body", it) }
                     } catch (t: Throwable) {
+//                        Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
+                    } catch (io : IOException) {
                         Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }

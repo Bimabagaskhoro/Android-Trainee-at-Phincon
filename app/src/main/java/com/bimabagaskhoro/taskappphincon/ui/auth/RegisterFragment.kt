@@ -247,7 +247,7 @@ class RegisterFragment : Fragment() {
                                 val errCode = it.errorCode
                                 Log.d("errorCode", "$errCode")
                             } catch (t: Throwable) {
-                                Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireActivity(), t.localizedMessage, Toast.LENGTH_SHORT).show()
                             }
                         }
                         is Resource.Empty -> {
