@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/card_custom"
-    tools:context=".ui.dialog.bottomsheet.BuyDialogFragment">
+    tools:context=".feature.dialog.bottomsheet.BuyDialogFragment">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_image_fragment_dialog"
