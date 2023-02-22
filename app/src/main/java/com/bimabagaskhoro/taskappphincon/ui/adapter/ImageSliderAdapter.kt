@@ -8,8 +8,8 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.detail.ImageProductItem
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.ImageProductItem
 import com.bumptech.glide.Glide
 import java.util.*
 

@@ -14,14 +14,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.auth.SuccessLogin
+import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.SuccessLogin
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentLoginBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.MainActivity
-import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
-import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -139,12 +138,12 @@ class LoginFragment : Fragment() {
     private fun initData(email: String, password: String, tokenFcm: String) {
         viewModel.login(email, password, tokenFcm).observe(viewLifecycleOwner) {
             when (it) {
-                is Resource.Loading -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                     binding?.progressbar?.visibility = View.VISIBLE
                     binding?.cardProgressbar?.visibility = View.VISIBLE
                     binding?.tvWaiting?.visibility = View.VISIBLE
                 }
-                is Resource.Success -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                     binding?.progressbar?.visibility = View.GONE
                     binding?.cardProgressbar?.visibility = View.GONE
                     binding?.tvWaiting?.visibility = View.GONE
@@ -156,7 +155,7 @@ class LoginFragment : Fragment() {
                         requireActivity().finish()
                     }
                 }
-                is Resource.Error -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                     try {
                         binding?.progressbar?.visibility = View.GONE
                         binding?.cardProgressbar?.visibility = View.GONE
@@ -173,7 +172,7 @@ class LoginFragment : Fragment() {
                             .show()
                     }
                 }
-                is Resource.Empty -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                     Log.d("Empty Data", "Empty")
                 }
             }

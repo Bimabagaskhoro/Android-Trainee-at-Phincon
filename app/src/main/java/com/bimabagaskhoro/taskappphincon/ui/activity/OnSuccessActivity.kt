@@ -2,25 +2,23 @@ package com.bimabagaskhoro.taskappphincon.ui.activity
 
 import android.app.AlertDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.RequestRating
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.phincon.core.utils.formatterIdr
+import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.RequestRating
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityOnSuccessBinding
-import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
-import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
-import java.io.IOException
 
 @AndroidEntryPoint
 class OnSuccessActivity : AppCompatActivity() {
@@ -53,10 +51,10 @@ class OnSuccessActivity : AppCompatActivity() {
                 viewModel.updateRating(productId, RequestRating(rating.toString()))
                     .observe(this@OnSuccessActivity) { result ->
                         when (result) {
-                            is Resource.Loading -> {
+                            is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                                 binding.progressbar.visibility = View.VISIBLE
                             }
-                            is Resource.Success -> {
+                            is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                                 binding.progressbar.visibility = View.GONE
                                 Toast.makeText(
                                     this@OnSuccessActivity,
@@ -67,7 +65,7 @@ class OnSuccessActivity : AppCompatActivity() {
                                 startActivity(intent)
                                 finishAffinity()
                             }
-                            is Resource.Error -> {
+                            is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                                 try {
                                     binding.progressbar.visibility = View.GONE
                                     val err =
@@ -85,7 +83,7 @@ class OnSuccessActivity : AppCompatActivity() {
                                     Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                                 }
                             }
-                            is Resource.Empty -> {
+                            is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                                 binding.progressbar.visibility = View.GONE
                                 Log.d("DetailActivity", "Empty Data")
                             }
@@ -99,10 +97,10 @@ class OnSuccessActivity : AppCompatActivity() {
                     )
                         .observe(this@OnSuccessActivity) { result ->
                             when (result) {
-                                is Resource.Loading -> {
+                                is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                                     binding.progressbar.visibility = View.VISIBLE
                                 }
-                                is Resource.Success -> {
+                                is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                                     binding.progressbar.visibility = View.GONE
                                     Toast.makeText(
                                         this@OnSuccessActivity,
@@ -113,7 +111,7 @@ class OnSuccessActivity : AppCompatActivity() {
                                     startActivity(intent)
                                     finishAffinity()
                                 }
-                                is Resource.Error -> {
+                                is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                                     binding.progressbar.visibility = View.GONE
                                     try {
                                         val err =
@@ -133,7 +131,7 @@ class OnSuccessActivity : AppCompatActivity() {
                                         Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                                     }
                                 }
-                                is Resource.Empty -> {
+                                is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                                     binding.progressbar.visibility = View.GONE
                                     Log.d("DetailActivity", "Empty Data")
                                 }

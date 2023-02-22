@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.DataItem
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.PaymentModel
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ItemPaymentHeaderBinding
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataItem
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.PaymentModel
 
 @Suppress("DEPRECATION")
 class PaymentHeaderAdapter(

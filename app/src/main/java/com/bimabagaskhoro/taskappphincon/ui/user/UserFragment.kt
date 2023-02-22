@@ -14,7 +14,6 @@ import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,24 +23,21 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.auth.SuccessImage
+import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.CAMERA_X_RESULT
+import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.REQUEST_CODE_PERMISSIONS
+import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.auth.SuccessImage
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentUserBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.PasswordActivity
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CustomSpinnerAdapter
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
-import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CAMERA_X_RESULT
-import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.REQUEST_CODE_PERMISSIONS
-import com.bimabagaskhoro.taskappphincon.utils.reduceFileImage
-import com.bimabagaskhoro.taskappphincon.utils.rotateBitmap
-import com.bimabagaskhoro.taskappphincon.utils.uriToFile
-import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
-import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -52,7 +48,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
 import java.io.File
-import java.io.IOException
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -77,7 +72,7 @@ class UserFragment : Fragment() {
             val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
 
             getFile = myFile
-            result = rotateBitmap(
+            result = com.bimabagaskhoro.phincon.core.utils.rotateBitmap(
                 BitmapFactory.decodeFile(myFile.absolutePath),
                 isBackCamera
             )
@@ -95,7 +90,7 @@ class UserFragment : Fragment() {
     ) {
         if (it.resultCode == Activity.RESULT_OK) {
             val uri = it.data?.data as Uri
-            val file = uriToFile(uri, requireContext())
+            val file = com.bimabagaskhoro.phincon.core.utils.uriToFile(uri, requireContext())
             getFile = file
 
             binding?.apply {
@@ -262,7 +257,7 @@ class UserFragment : Fragment() {
             }
         }
         if (getFile != null) {
-            val file = reduceFileImage(getFile as File)
+            val file = com.bimabagaskhoro.phincon.core.utils.reduceFileImage(getFile as File)
             val reqBodyImage = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
             val multipartImage: MultipartBody.Part = MultipartBody.Part.createFormData(
                 "image",
@@ -275,14 +270,14 @@ class UserFragment : Fragment() {
             )
                 .observe(viewLifecycleOwner) { result ->
                     when (result) {
-                        is Resource.Loading -> {
+                        is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                             binding?.apply {
                                 progressbar.visibility = View.VISIBLE
                                 cardProgressbar.visibility = View.VISIBLE
                                 tvWaiting.visibility = View.VISIBLE
                             }
                         }
-                        is Resource.Success -> {
+                        is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                             binding?.apply {
                                 progressbar.visibility = View.GONE
                                 cardProgressbar.visibility = View.GONE
@@ -297,7 +292,7 @@ class UserFragment : Fragment() {
                                     .show()
                             }
                         }
-                        is Resource.Error -> {
+                        is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                             try {
                                 binding?.apply {
                                     progressbar.visibility = View.GONE
@@ -322,7 +317,7 @@ class UserFragment : Fragment() {
                             }
 
                         }
-                        is Resource.Empty -> {
+                        is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                             binding?.apply {
                                 progressbar.visibility = View.GONE
                                 cardProgressbar.visibility = View.GONE

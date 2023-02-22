@@ -3,38 +3,34 @@ package com.bimabagaskhoro.taskappphincon.ui.fav
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.favorite.ResponseFavorite
+import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.LocalViewModel
+import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.favorite.ResponseFavorite
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentFavoriteBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.CartActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.NotificationActivity
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductFavAdapter
-import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.utils.hideKeyboard
-import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
-import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
-import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import org.json.JSONObject
-import java.io.IOException
 
 @AndroidEntryPoint
 class FavoriteFragment : Fragment() {
@@ -127,7 +123,7 @@ class FavoriteFragment : Fragment() {
         idUser?.let { setData(null, it, 0) }
         binding?.edtSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                hideKeyboard(requireActivity())
+                com.bimabagaskhoro.phincon.core.utils.hideKeyboard(requireActivity())
                 return false
             }
 
@@ -157,7 +153,7 @@ class FavoriteFragment : Fragment() {
         if (q.toString().isNotEmpty()) {
             viewModel.getFavProduct(idUser, q).observe(viewLifecycleOwner) { data ->
                 when (data) {
-                    is Resource.Loading -> {
+                    is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                         binding?.apply {
                             progressBar.visibility = View.VISIBLE
                             fabShorting.visibility = View.GONE
@@ -165,7 +161,7 @@ class FavoriteFragment : Fragment() {
                             viewEmptyData.root.visibility = View.GONE
                         }
                     }
-                    is Resource.Success -> {
+                    is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                         if (data.data?.success?.data?.isNotEmpty() == true) {
                             binding?.apply {
                                 rvProduct.visibility = View.VISIBLE
@@ -174,7 +170,9 @@ class FavoriteFragment : Fragment() {
                                 progressBar.visibility = View.GONE
                                 viewEmptyData.root.visibility = View.GONE
                                 fabShorting.visibility = View.VISIBLE
-                                setProductRv(data.data, i)
+                                data.data?.let { result ->
+                                    setProductRv(result, i)
+                                }
                             }
                         } else {
                             binding?.apply {
@@ -183,7 +181,7 @@ class FavoriteFragment : Fragment() {
                             }
                         }
                     }
-                    is Resource.Error -> {
+                    is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                         try {
                             binding?.apply {
                                 swipeRefresh.isRefreshing = false
@@ -203,7 +201,7 @@ class FavoriteFragment : Fragment() {
                             Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
                         }
                     }
-                    is Resource.Empty -> {
+                    is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                         binding?.apply {
                             swipeRefresh.isRefreshing = false
                             progressBar.visibility = View.GONE
@@ -219,7 +217,7 @@ class FavoriteFragment : Fragment() {
         } else {
             viewModel.getFavProduct(idUser, null).observe(viewLifecycleOwner) { data ->
                 when (data) {
-                    is Resource.Loading -> {
+                    is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                         binding?.apply {
                             progressBar.visibility = View.VISIBLE
                             fabShorting.visibility = View.GONE
@@ -227,7 +225,7 @@ class FavoriteFragment : Fragment() {
                             viewEmptyData.root.visibility = View.GONE
                         }
                     }
-                    is Resource.Success -> {
+                    is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                         if (data.data?.success?.data?.isNotEmpty() == true) {
                             binding?.apply {
                                 rvProduct.visibility = View.VISIBLE
@@ -235,14 +233,16 @@ class FavoriteFragment : Fragment() {
                                 viewEmptyData.root.visibility = View.GONE
                                 progressBar.visibility = View.GONE
                                 fabShorting.visibility = View.VISIBLE
-                                setProductRv(data.data, i)
+                                data.data?.let { result ->
+                                    setProductRv(result, i)
+                                }
                             }
                         } else {
                             binding?.rvProduct?.visibility = View.GONE
                         }
 
                     }
-                    is Resource.Error -> {
+                    is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                         try {
                             binding?.apply {
                                 progressBar.visibility = View.GONE
@@ -261,7 +261,7 @@ class FavoriteFragment : Fragment() {
                             Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
                         }
                     }
-                    is Resource.Empty -> {
+                    is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                         binding?.apply {
                             progressBar.visibility = View.GONE
                             viewEmptyData.root.visibility = View.VISIBLE

@@ -9,18 +9,18 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.DataStockItem
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.detail.DataDetail
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.DataDetail
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentBuyDialogBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.PaymentActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.PaymentActivity.Companion.EXTRA_DATA_PAYMENT
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity
-import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
-import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
-import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.utils.Resource
+import com.bimabagaskhoro.phincon.core.utils.formatterIdr
+import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
@@ -197,9 +197,9 @@ class BuyDialogFragment(
             (listOf(DataStockItem(idProduct, stockProduct))), idUser
         ).observe(viewLifecycleOwner) { results ->
             when (results) {
-                is Resource.Loading -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                 }
-                is Resource.Success -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                     viewModel.price.observe(requireActivity()) {
                         val totalPrice = it.toString()
                         val intent6 = Intent(context, OnSuccessActivity::class.java)
@@ -211,7 +211,7 @@ class BuyDialogFragment(
                     }
 
                 }
-                is Resource.Error -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                     try {
                         val err =
                             results.errorBody?.string()
@@ -226,7 +226,7 @@ class BuyDialogFragment(
                         Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }
-                is Resource.Empty -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                     Log.d("unFavorite", "Empty Data")
                 }
             }

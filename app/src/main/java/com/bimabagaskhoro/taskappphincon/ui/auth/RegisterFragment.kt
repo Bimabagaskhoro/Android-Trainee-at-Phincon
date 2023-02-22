@@ -14,7 +14,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,16 +23,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.CAMERA_X_RESULT
+import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.REQUEST_CODE_PERMISSIONS
+import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentRegisterBinding
 import com.bimabagaskhoro.taskappphincon.ui.camera.CameraActivity
-import com.bimabagaskhoro.taskappphincon.utils.*
-import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.CAMERA_X_RESULT
-import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.REQUEST_CODE_PERMISSIONS
-import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +43,6 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.File
-import java.io.IOException
 
 @AndroidEntryPoint
 class RegisterFragment : Fragment() {
@@ -62,7 +60,7 @@ class RegisterFragment : Fragment() {
             val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
 
             getFile = myFile
-            result = rotateBitmap(
+            result = com.bimabagaskhoro.phincon.core.utils.rotateBitmap(
                 BitmapFactory.decodeFile(myFile.absolutePath),
                 isBackCamera
             )
@@ -79,7 +77,7 @@ class RegisterFragment : Fragment() {
     ) {
         if (it.resultCode == Activity.RESULT_OK) {
             val uri = it.data?.data as Uri
-            val file = uriToFile(uri, requireContext())
+            val file = com.bimabagaskhoro.phincon.core.utils.uriToFile(uri, requireContext())
             getFile = file
 
             binding?.apply {
@@ -192,7 +190,7 @@ class RegisterFragment : Fragment() {
         gender: Int
     ) {
         if (getFile != null) {
-            val file = reduceFileImage(getFile as File)
+            val file = com.bimabagaskhoro.phincon.core.utils.reduceFileImage(getFile as File)
             val reqBodyImage = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
             val multipartImage: MultipartBody.Part = MultipartBody.Part.createFormData(
                 "image",
@@ -209,12 +207,12 @@ class RegisterFragment : Fragment() {
             viewModel.register(multipartImage, emailBody, passwordBody, nameBody, phoneBody, gender)
                 .observe(viewLifecycleOwner) {
                     when (it) {
-                        is Resource.Loading -> {
+                        is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                             binding?.progressbar?.visibility = View.VISIBLE
                             binding?.cardProgressbar?.visibility = View.VISIBLE
                             binding?.tvWaiting?.visibility = View.VISIBLE
                         }
-                        is Resource.Success -> {
+                        is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                             binding?.progressbar?.visibility = View.GONE
                             binding?.cardProgressbar?.visibility = View.GONE
                             binding?.tvWaiting?.visibility = View.GONE
@@ -227,7 +225,7 @@ class RegisterFragment : Fragment() {
                                 .show()
                             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
                         }
-                        is Resource.Error -> {
+                        is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                             try {
                                 binding?.progressbar?.visibility = View.GONE
                                 binding?.cardProgressbar?.visibility = View.GONE
@@ -250,7 +248,7 @@ class RegisterFragment : Fragment() {
                                 Toast.makeText(requireActivity(), t.localizedMessage, Toast.LENGTH_SHORT).show()
                             }
                         }
-                        is Resource.Empty -> {
+                        is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                             Log.d("Empty Data", "Empty")
                         }
                     }

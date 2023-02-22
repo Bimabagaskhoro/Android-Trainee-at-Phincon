@@ -11,21 +11,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bimabagaskhoro.phincon.core.data.source.local.model.CartEntity
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.DataStockItem
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.phincon.core.utils.formatterIdr
+import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.LocalViewModel
+import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataStockItem
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityCartBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_PRICE_TROLLEY
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_ID
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_ID_PAYMENT
 import com.bimabagaskhoro.taskappphincon.ui.activity.OnSuccessActivity.Companion.EXTRA_DATA_SUCCESS_NAME
 import com.bimabagaskhoro.taskappphincon.ui.adapter.CartAdapter
-import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
-import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
-import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
-import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -33,7 +32,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.io.IOException
-import java.util.ArrayList
 
 @Suppress("UnusedEquals", "UNUSED_EXPRESSION")
 @AndroidEntryPoint
@@ -225,13 +223,13 @@ class CartActivity : AppCompatActivity() {
     ) {
         viewModel.updateStock(requestBody, idUser).observe(this@CartActivity) { todo ->
             when (todo) {
-                is Resource.Loading -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                     binding.progressbar.visibility = View.VISIBLE
                     binding.cardProgressbar.visibility = View.VISIBLE
                     binding.tvWaiting.visibility = View.VISIBLE
                 }
 
-                is Resource.Success -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                     binding.progressbar.visibility = View.GONE
                     binding.cardProgressbar.visibility = View.GONE
                     binding.tvWaiting.visibility = View.GONE
@@ -248,7 +246,7 @@ class CartActivity : AppCompatActivity() {
                     intent.putExtra(EXTRA_DATA_PRICE_TROLLEY, resultPrice)
                     startActivity(intent)
                 }
-                is Resource.Error -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                     try {
                         binding.progressbar.visibility = View.GONE
                         binding.cardProgressbar.visibility = View.GONE
@@ -268,7 +266,7 @@ class CartActivity : AppCompatActivity() {
                         Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }
-                is Resource.Empty -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                     Log.d("Empty Data", "Empty")
                 }
             }

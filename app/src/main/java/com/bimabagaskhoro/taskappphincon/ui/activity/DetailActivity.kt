@@ -5,27 +5,27 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import com.bimabagaskhoro.phincon.core.data.source.local.model.CartEntity
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.detail.DataDetail
+import com.bimabagaskhoro.phincon.core.utils.Resource
+import com.bimabagaskhoro.phincon.core.utils.formatterIdr
+import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.LocalViewModel
+import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.detail.DataDetail
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityDetailBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ImageSliderAdapter
 import com.bimabagaskhoro.taskappphincon.ui.adapter.ProductHistoryAdapter
 import com.bimabagaskhoro.taskappphincon.ui.dialog.bottomsheet.BuyDialogFragment
 import com.bimabagaskhoro.taskappphincon.ui.dialog.photoview.PhotoViewFragment
-import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
-import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
-import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
-import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.squareup.picasso.Picasso
@@ -189,7 +189,11 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                                             .setPositiveButton("Ok") { _, _ ->
                                             }.show()
                                     } catch (t: Throwable) {
-                                        Toast.makeText(this@DetailActivity, "No Internet Connection", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            this@DetailActivity,
+                                            "No Internet Connection",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
                                 is Resource.Empty -> {
@@ -431,7 +435,9 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                     }
                     is Resource.Success -> {
                         if (data.data?.success?.data?.isNotEmpty() == true) {
-                            adapter.setData(data.data.success.data.sortedBy { it1 -> it1.name_product })
+                            data.data?.let { result ->
+                                adapter.setData(result.success.data.sortedBy { it1 -> it1.name_product })
+                            }
                             initRecyclerViewHistory()
                         }
                         /**
@@ -457,7 +463,8 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                                 .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                 }.show()
                         } catch (t: Throwable) {
-                            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                     is Resource.Empty -> {
@@ -482,7 +489,9 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                     }
                     is Resource.Success -> {
                         if (data.data?.success?.data?.isNotEmpty() == true) {
-                            adapter.setData(data.data.success.data.sortedBy { it1 -> it1.name_product })
+                            data.data?.let { result ->
+                                adapter.setData(result.success.data.sortedBy { it1 -> it1.name_product })
+                            }
                             initRecyclerViewOther()
                         } else if (data.data?.success?.data?.isEmpty() == true) {
                             binding.apply {
@@ -504,7 +513,8 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                                 .setMessage(messageErr).setPositiveButton("Ok") { _, _ ->
                                 }.show()
                         } catch (t: Throwable) {
-                            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                     is Resource.Empty -> {

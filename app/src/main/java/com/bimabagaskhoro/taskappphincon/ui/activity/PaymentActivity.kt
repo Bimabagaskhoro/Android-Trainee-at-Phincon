@@ -2,13 +2,14 @@ package com.bimabagaskhoro.taskappphincon.ui.activity
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.PaymentModel
+import androidx.appcompat.app.AppCompatActivity
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.PaymentModel
+import com.bimabagaskhoro.phincon.core.vm.FRCViewModel
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityPaymentBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.CartActivity.Companion.EXTRA_DATA_CART
 import com.bimabagaskhoro.taskappphincon.ui.activity.CartActivity.Companion.EXTRA_DATA_CART_NAME
@@ -16,8 +17,6 @@ import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity.Companion.EX
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity.Companion.EXTRA_DATA_PAYMENT_TO_BTN
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity.Companion.EXTRA_NAME_PAYMENT_TO_BTN
 import com.bimabagaskhoro.taskappphincon.ui.adapter.payment.PaymentHeaderAdapter
-import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.vm.FRCViewModel
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -51,11 +50,11 @@ class PaymentActivity : AppCompatActivity() {
     private fun observeData() {
         viewModel.state.observe(this@PaymentActivity) { response ->
             when (response) {
-                is Resource.Loading -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.rvHeaderPayment.visibility = View.INVISIBLE
                 }
-                is Resource.Success -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.rvHeaderPayment.visibility = View.VISIBLE
                     try {
@@ -68,12 +67,12 @@ class PaymentActivity : AppCompatActivity() {
                         Toast.makeText(this, "dataRemoteConfig null", Toast.LENGTH_SHORT).show()
                     }
                 }
-                is Resource.Error -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                     binding.progressBar.visibility = View.INVISIBLE
                     binding.rvHeaderPayment.visibility = View.INVISIBLE
                     Toast.makeText(this@PaymentActivity, "Error Data", Toast.LENGTH_SHORT).show()
                 }
-                is Resource.Empty -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                     Log.d("observeData", "observeData: Empty Data")
                 }
             }

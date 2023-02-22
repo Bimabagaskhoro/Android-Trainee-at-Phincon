@@ -1,23 +1,21 @@
 package com.bimabagaskhoro.taskappphincon.ui.activity
 
 import android.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityPasswordBinding
-import com.bimabagaskhoro.taskappphincon.utils.Resource
-import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
-import com.bimabagaskhoro.taskappphincon.vm.DataStoreViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
-import java.io.IOException
 
 @AndroidEntryPoint
 class PasswordActivity : AppCompatActivity() {
@@ -97,10 +95,10 @@ class PasswordActivity : AppCompatActivity() {
             confirmPassword
         ).observe(this) { result ->
             when (result) {
-                is Resource.Loading -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Loading -> {
                     binding.cardProgressbar.visibility = View.VISIBLE
                 }
-                is Resource.Success -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Success -> {
                     binding.cardProgressbar.visibility = View.GONE
                     val dataMessages = result.data!!.success.message
                     AlertDialog.Builder(this)
@@ -111,7 +109,7 @@ class PasswordActivity : AppCompatActivity() {
                         }
                         .show()
                 }
-                is Resource.Error -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                     try {
                         binding.cardProgressbar.visibility = View.GONE
                         val err =
@@ -129,7 +127,7 @@ class PasswordActivity : AppCompatActivity() {
                         Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }
-                is Resource.Empty -> {
+                is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
                     binding.cardProgressbar.visibility = View.GONE
                     Log.d("Empty Data", "Empty")
                 }

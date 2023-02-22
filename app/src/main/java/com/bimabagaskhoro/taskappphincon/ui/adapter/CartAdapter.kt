@@ -4,13 +4,12 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bimabagaskhoro.phincon.core.data.source.local.model.CartEntity
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.CartEntity
 import com.bimabagaskhoro.taskappphincon.databinding.ItemCartBinding
-import com.bimabagaskhoro.taskappphincon.utils.formatterIdr
+import com.bimabagaskhoro.phincon.core.utils.formatterIdr
 import com.bumptech.glide.Glide
 
 @SuppressLint("NotifyDataSetChanged")

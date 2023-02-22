@@ -68,4 +68,20 @@
     <string name="try_again">Coba Lagi</string>
     <string name="other_product">Produk Lainnya</string>
     <string name="history_product">Riwayat</string>
+    <string name="tittle">Tittle</string>
+    <string name="notification">Notification</string>
+    <string name="multiple_select">Multiple Select</string>
+    <string name="payment_methode">Payment Methode</string>
+    <string name="bca_virtual_account">BCA Virtual Account</string>
+    <string name="choose_payment_methode">Choose Payment Methode</string>
+
+
+    <!--    Firebase gms-->
+    <string name="default_web_client_id" translatable="false">1037486014292-ugjuav872pt9tp2a70nl0k0bjce3pio9.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">1037486014292</string>
+    <string name="google_api_key" translatable="false">AIzaSyD5F91jl0oBRMHAVUeCoPwXlleCsgv-rAg</string>
+    <string name="google_app_id" translatable="false">1:1037486014292:android:a77a62f3b5d5b3683dd2c1</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyD5F91jl0oBRMHAVUeCoPwXlleCsgv-rAg</string>
+    <string name="google_storage_bucket" translatable="false">trainingphincon.appspot.com</string>
+    <string name="project_id" translatable="false">trainingphincon</string>
 </resources>

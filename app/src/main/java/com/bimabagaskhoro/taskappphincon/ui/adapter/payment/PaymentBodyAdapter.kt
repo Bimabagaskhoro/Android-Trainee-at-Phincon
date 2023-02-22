@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.DataItem
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ItemPaymentBinding
-import com.bimabagaskhoro.taskappphincon.data.source.remote.response.DataItem
 import com.bumptech.glide.Glide
 
 class PaymentBodyAdapter(

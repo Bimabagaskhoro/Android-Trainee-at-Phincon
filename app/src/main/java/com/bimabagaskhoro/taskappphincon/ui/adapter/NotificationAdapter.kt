@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bimabagaskhoro.phincon.core.data.source.local.model.NotificationEntity
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
 import com.bimabagaskhoro.taskappphincon.databinding.ItemNotificationBinding
 
 @Suppress("DEPRECATION")

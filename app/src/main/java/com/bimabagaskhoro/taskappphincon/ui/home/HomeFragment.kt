@@ -2,29 +2,25 @@ package com.bimabagaskhoro.taskappphincon.ui.home
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
+import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.INITIAL_INDEX
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentHomeBinding
 import com.bimabagaskhoro.taskappphincon.ui.activity.CartActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.DetailActivity
 import com.bimabagaskhoro.taskappphincon.ui.activity.NotificationActivity
 import com.bimabagaskhoro.taskappphincon.ui.adapter.paging.LoadPagingAdapter
 import com.bimabagaskhoro.taskappphincon.ui.adapter.paging.ProductAdapter
-import com.bimabagaskhoro.taskappphincon.utils.Constant.Companion.INITIAL_INDEX
-import com.bimabagaskhoro.taskappphincon.utils.hideKeyboard
-import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
-import com.bimabagaskhoro.taskappphincon.vm.RemoteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -33,8 +29,8 @@ import kotlinx.coroutines.flow.collectLatest
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding
-    private val viewModel: RemoteViewModel by viewModels()
-    private val roomViewModel: LocalViewModel by viewModels()
+    private val viewModel: com.bimabagaskhoro.phincon.core.vm.RemoteViewModel by viewModels()
+    private val roomViewModel: com.bimabagaskhoro.phincon.core.vm.LocalViewModel by viewModels()
     private lateinit var adapterProduct: ProductAdapter
 
     override fun onCreateView(
@@ -99,7 +95,7 @@ class HomeFragment : Fragment() {
     private fun initSearchingKey() {
         binding?.edtSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                hideKeyboard(requireActivity())
+                com.bimabagaskhoro.phincon.core.utils.hideKeyboard(requireActivity())
                 return false
             }
 

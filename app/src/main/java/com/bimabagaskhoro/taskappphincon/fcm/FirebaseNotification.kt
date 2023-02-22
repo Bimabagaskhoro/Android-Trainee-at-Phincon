@@ -9,12 +9,10 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.bimabagaskhoro.phincon.core.data.source.local.db.dao.NotificationDao
+import com.bimabagaskhoro.phincon.core.data.source.local.model.NotificationEntity
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.local.db.dao.NotificationDao
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
 import com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity
-import com.bimabagaskhoro.taskappphincon.ui.auth.LoginFragment
-import com.bimabagaskhoro.taskappphincon.utils.timeStamp
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint

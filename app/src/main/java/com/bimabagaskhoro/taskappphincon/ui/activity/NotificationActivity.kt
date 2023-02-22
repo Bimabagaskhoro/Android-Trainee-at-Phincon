@@ -1,22 +1,21 @@
 package com.bimabagaskhoro.taskappphincon.ui.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bimabagaskhoro.phincon.core.data.source.local.model.NotificationEntity
+import com.bimabagaskhoro.phincon.core.vm.LocalViewModel
 import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.data.source.local.model.NotificationEntity
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityNotificationBinding
 import com.bimabagaskhoro.taskappphincon.ui.adapter.NotificationAdapter
-import com.bimabagaskhoro.taskappphincon.vm.LocalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
