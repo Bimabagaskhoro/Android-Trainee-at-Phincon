@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bimabagaskhoro.phincon.core.data.source.local.model.NotificationEntity
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.LocalViewModel
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityNotificationBinding
@@ -20,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class NotificationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificationBinding
@@ -27,6 +29,7 @@ class NotificationActivity : AppCompatActivity() {
     private val roomViewModel: LocalViewModel by viewModels()
     private var isMultipleSelect = false
     private lateinit var menuNotification: Menu
+    private val analyticViewModel: FGAViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +63,15 @@ class NotificationActivity : AppCompatActivity() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.notification_menu, menu)
                 menuNotification = menu
+                lifecycleScope.launch {
+                    lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        roomViewModel.getAllNotification().collectLatest { result ->
+                            if (result.isEmpty()) {
+                                isEmpty()
+                            }
+                        }
+                    }
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -69,6 +81,7 @@ class NotificationActivity : AppCompatActivity() {
                     }
                     R.id.menu_check_notification -> {
                         showMultipleSelect()
+                        analyticViewModel.onClickMultipleSelectIconNotification()
                     }
                     R.id.menu_read_notification -> {
                         readNotification()
@@ -80,6 +93,12 @@ class NotificationActivity : AppCompatActivity() {
                 return true
             }
         })
+    }
+
+    private fun isEmpty() {
+        menuNotification.findItem(R.id.menu_read_notification)?.isVisible = false
+        menuNotification.findItem(R.id.menu_delete_notification)?.isVisible = false
+        menuNotification.findItem(R.id.menu_check_notification)?.isVisible = false
     }
 
     private fun showMultipleSelect() {
@@ -103,11 +122,15 @@ class NotificationActivity : AppCompatActivity() {
 
     private fun readNotification() {
         roomViewModel.setAllReadNotification(true)
+        val dummyRead = 2
+        analyticViewModel.onClickReadIconNotification(dummyRead)
         onBackPressed()
     }
 
     private fun deleteNotification() {
         roomViewModel.deleteNotification(true)
+        val dummyDelete = 2
+        analyticViewModel.onClickDeleteIconNotification(dummyDelete)
         onBackPressed()
     }
 
@@ -131,13 +154,21 @@ class NotificationActivity : AppCompatActivity() {
     }
 
 
-
     private fun onNotificationItemClicked(data: NotificationEntity) {
         roomViewModel.updateReadNotification(true, data.id)
         androidx.appcompat.app.AlertDialog.Builder(this@NotificationActivity)
             .setTitle(data.notificationTitle)
             .setMessage(data.notificationBody)
-            .setPositiveButton("Ok") { _, _ -> }
+            .setPositiveButton("Ok") { _, _ ->
+                data.notificationTitle?.let { dataTittle ->
+                    data.notificationBody?.let { dataBody ->
+                        analyticViewModel.onClickItemNotification(
+                            dataTittle,
+                            dataBody
+                        )
+                    }
+                }
+            }
             .show()
     }
 
@@ -145,6 +176,14 @@ class NotificationActivity : AppCompatActivity() {
         val productId = data.id
         val isChecked = !data.isChecked
         roomViewModel.updateCheckedNotification(isChecked, productId)
+        data.notificationTitle?.let { dataTittle ->
+            data.notificationBody?.let { dataBody ->
+                analyticViewModel.onSelectCheckBoxNotification(
+                    dataTittle,
+                    dataBody
+                )
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -152,6 +191,7 @@ class NotificationActivity : AppCompatActivity() {
             showMultipleSelect()
         } else {
             onBackPressedDispatcher.onBackPressed()
+            analyticViewModel.onClickBackNotification()
         }
         roomViewModel.setAllUncheckedNotification()
         return true
@@ -162,7 +202,14 @@ class NotificationActivity : AppCompatActivity() {
             showMultipleSelect()
         } else {
             onBackPressedDispatcher.onBackPressed()
+            analyticViewModel.onClickBackNotification()
         }
         roomViewModel.setAllUncheckedNotification()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameScreen = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenNotification(nameScreen)
     }
 }

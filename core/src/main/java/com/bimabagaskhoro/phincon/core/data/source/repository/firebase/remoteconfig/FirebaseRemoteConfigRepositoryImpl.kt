@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.phincon.core.data.source.repository.firebase
+package com.bimabagaskhoro.phincon.core.data.source.repository.firebase.remoteconfig
 
 import com.bimabagaskhoro.phincon.core.utils.Resource
 import com.google.firebase.FirebaseException
@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
-class FirebaseRepositoryImpl @Inject constructor(
+class FirebaseRemoteConfigRepositoryImpl @Inject constructor(
     private val frc: FirebaseRemoteConfig
-) : FirebaseRepository {
+) : FirebaseRemoteConfigRepository {
 
     override fun getPaymentMethod(): Flow<Resource<String>> = callbackFlow {
         trySend(Resource.Loading())
@@ -57,8 +57,6 @@ class FirebaseRepositoryImpl @Inject constructor(
                 }
             }
         awaitClose()
-
-
     }
 
 }

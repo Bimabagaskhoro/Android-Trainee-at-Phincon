@@ -8,8 +8,10 @@ import com.bimabagaskhoro.phincon.core.data.source.local.db.AppRoomDatabase
 import com.bimabagaskhoro.phincon.core.data.source.local.db.dao.CartDao
 import com.bimabagaskhoro.phincon.core.data.source.local.db.dao.NotificationDao
 import com.bimabagaskhoro.phincon.core.data.source.remote.network.ApiService
-import com.bimabagaskhoro.phincon.core.data.source.repository.firebase.FirebaseRepository
-import com.bimabagaskhoro.phincon.core.data.source.repository.firebase.FirebaseRepositoryImpl
+import com.bimabagaskhoro.phincon.core.data.source.repository.firebase.analytic.FirebaseAnalyticRepository
+import com.bimabagaskhoro.phincon.core.data.source.repository.firebase.analytic.FirebaseAnalyticRepositoryImpl
+import com.bimabagaskhoro.phincon.core.data.source.repository.firebase.remoteconfig.FirebaseRemoteConfigRepository
+import com.bimabagaskhoro.phincon.core.data.source.repository.firebase.remoteconfig.FirebaseRemoteConfigRepositoryImpl
 import com.bimabagaskhoro.phincon.core.data.source.repository.local.LocalDataSource
 import com.bimabagaskhoro.phincon.core.data.source.repository.local.LocalDataSourceImpl
 import com.bimabagaskhoro.phincon.core.data.source.repository.remote.RemoteRepository
@@ -17,6 +19,7 @@ import com.bimabagaskhoro.phincon.core.data.source.repository.remote.RemoteRepos
 import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.BASE_URL
 import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.CART_DATABASE
 import com.bimabagaskhoro.phincon.core.utils.interceptor.*
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import dagger.Module
 import dagger.Provides
@@ -173,6 +176,22 @@ object AppModule {
     @Singleton
     fun providesFirebaseRepository(
         fcm: FirebaseRemoteConfig
-    ): FirebaseRepository = FirebaseRepositoryImpl(fcm)
+    ): FirebaseRemoteConfigRepository = FirebaseRemoteConfigRepositoryImpl(fcm)
+
+    /**
+     * firebase analytic
+     */
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics {
+        return FirebaseAnalytics.getInstance(context)
+    }
+
+    @Provides
+    @Singleton
+    fun providesFirebaseAnalyticRepository(
+        fga: FirebaseAnalytics
+    ): FirebaseAnalyticRepository = FirebaseAnalyticRepositoryImpl(fga)
 
 }

@@ -17,6 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.favorite.ResponseFavorite
 import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.LocalViewModel
 import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
@@ -40,6 +41,7 @@ class FavoriteFragment : Fragment() {
     private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val roomViewModel: LocalViewModel by viewModels()
+    private val analyticViewModel: FGAViewModel by viewModels()
     private lateinit var adapter: ProductFavAdapter
 
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main)
@@ -89,6 +91,7 @@ class FavoriteFragment : Fragment() {
                             }
                             icCart.setOnClickListener {
                                 startActivity(Intent(requireActivity(), CartActivity::class.java))
+                                analyticViewModel.onClickTrolleyToolbarFavorite()
                             }
                         }
                     }
@@ -111,6 +114,7 @@ class FavoriteFragment : Fragment() {
                                         NotificationActivity::class.java
                                     )
                                 )
+                                analyticViewModel.onClickNotificationToolbarFavorite()
                             }
                         }
                     }
@@ -138,6 +142,7 @@ class FavoriteFragment : Fragment() {
                             idUser?.let { it1 -> setData(q, it1, 0) }
                         }
                     }
+                    q?.let { analyticViewModel.onSearchFavorite(it) }
                 }
                 return false
             }
@@ -302,9 +307,11 @@ class FavoriteFragment : Fragment() {
                 when (selectedOption) {
                     options[0] -> {
                         setData(null, idUser, 1)
+                        analyticViewModel.onClickSortByFavorite(options[0])
                     }
                     options[1] -> {
                         setData(null, idUser, 2)
+                        analyticViewModel.onClickSortByFavorite(options[1])
                     }
                     else -> {
                         setData(null, idUser, 0)
@@ -326,6 +333,21 @@ class FavoriteFragment : Fragment() {
                 val intent = Intent(context, DetailActivity::class.java)
                 intent.putExtra(DetailActivity.EXTRA_DATA_DETAIL, it.id)
                 startActivity(intent)
+                val name = it.name_product
+                val price = it.harga
+                val rate = it.rate
+                val id = it.id
+                name?.let { nameLet ->
+                    price?.toDouble()?.let { priceLet ->
+                        rate?.let { rateLet ->
+                            id?.let { idLet ->
+                                analyticViewModel.onClickProductFavorite(
+                                    nameLet, priceLet, rateLet, idLet
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -336,6 +358,8 @@ class FavoriteFragment : Fragment() {
             val idUser = it
             setData(null, idUser, 0)
         }
+        val nameScreen = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenFavorite(nameScreen)
     }
 
     override fun onDestroyView() {

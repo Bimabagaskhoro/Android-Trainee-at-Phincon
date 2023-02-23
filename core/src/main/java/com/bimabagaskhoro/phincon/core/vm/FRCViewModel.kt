@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bimabagaskhoro.phincon.core.data.source.repository.firebase.FirebaseRepository
+import com.bimabagaskhoro.phincon.core.data.source.repository.firebase.remoteconfig.FirebaseRemoteConfigRepository
 import com.bimabagaskhoro.phincon.core.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FRCViewModel @Inject constructor(
-    private val firebaseRepository: FirebaseRepository
+    private val firebaseRemoteConfigRepository: FirebaseRemoteConfigRepository
 ) : ViewModel() {
 
     private val _state = MutableLiveData<Resource<String>>()
@@ -24,7 +24,7 @@ class FRCViewModel @Inject constructor(
     }
 
     private fun getPaymentMethod() {
-        firebaseRepository.getPaymentMethod().onEach { response ->
+        firebaseRemoteConfigRepository.getPaymentMethod().onEach { response ->
             when (response) {
                 is Resource.Loading -> {
                     _state.value = Resource.Loading()

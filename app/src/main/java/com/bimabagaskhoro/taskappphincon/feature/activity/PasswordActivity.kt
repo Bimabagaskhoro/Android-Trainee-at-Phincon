@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityPasswordBinding
@@ -22,6 +23,7 @@ class PasswordActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPasswordBinding
     private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    private val analyticViewModel: FGAViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +33,10 @@ class PasswordActivity : AppCompatActivity() {
         val reqActivity = this@PasswordActivity
         reqActivity.title = getString(R.string.change_language)
 //        reqActivity.binding.btnBack
-        binding.btnBack.setOnClickListener { finish() }
+        binding.btnBack.setOnClickListener {
+            finish()
+            analyticViewModel.onClickBackPassword()
+        }
         reqActivity.setSupportActionBar(binding.toolbar)
 
         binding.apply {
@@ -106,6 +111,7 @@ class PasswordActivity : AppCompatActivity() {
                         .setMessage(dataMessages)
                         .setPositiveButton("Ok") { _, _ ->
                             onBackPressed()
+                            analyticViewModel.onClickSavePassword()
                         }
                         .show()
                 }
@@ -136,6 +142,11 @@ class PasswordActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val nameScreen = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenPassword(nameScreen)
+    }
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true

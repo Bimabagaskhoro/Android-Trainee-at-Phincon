@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.phincon.core.utils.formatterIdr
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityOnSuccessBinding
@@ -24,6 +25,7 @@ import org.json.JSONObject
 class OnSuccessActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOnSuccessBinding
     private val viewModel: RemoteViewModel by viewModels()
+    private val analyticViewModel: FGAViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,6 +111,8 @@ class OnSuccessActivity : AppCompatActivity() {
                                     ).show()
                                     val intent = Intent(this, MainActivity::class.java)
                                     startActivity(intent)
+                                    val ratingAnly = binding.ratingBar.rating.toInt()
+                                    analyticViewModel.onClickBtnSuccessPage(ratingAnly)
                                     finishAffinity()
                                 }
                                 is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
@@ -140,8 +144,6 @@ class OnSuccessActivity : AppCompatActivity() {
                 }
             }
         }
-
-
     }
 
     private fun initDataPaymentFromBottomCard() {
@@ -232,6 +234,12 @@ class OnSuccessActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameScreen = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenSuccessPage(nameScreen)
     }
 
     companion object {

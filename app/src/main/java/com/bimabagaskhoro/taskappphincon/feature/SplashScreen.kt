@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.animation.AnimationUtils
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asLiveData
 import com.bimabagaskhoro.phincon.core.data.pref.AuthPreferences
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.ActivitySplashScreenBinding
 import com.bimabagaskhoro.taskappphincon.feature.activity.AuthActivity
@@ -20,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class SplashScreen : AppCompatActivity() {
     private lateinit var binding: ActivitySplashScreenBinding
     private lateinit var authPreferences: AuthPreferences
-
+    private val analyticViewModel: FGAViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,5 +48,11 @@ class SplashScreen : AppCompatActivity() {
                 }
             }
         }, 3500)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameScreen = this.javaClass.simpleName
+        analyticViewModel.onLoadSplashScreen(nameScreen)
     }
 }

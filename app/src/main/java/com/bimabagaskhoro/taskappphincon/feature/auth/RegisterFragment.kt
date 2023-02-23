@@ -29,6 +29,7 @@ import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.CAMERA_X_RESULT
 import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.REQUEST_CODE_PERMISSIONS
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentRegisterBinding
@@ -51,6 +52,8 @@ class RegisterFragment : Fragment() {
     private var getFile: File? = null
     private lateinit var result: Bitmap
     private val viewModel: RemoteViewModel by viewModels()
+    private val analyticViewModel: FGAViewModel by viewModels()
+    private var isCamera = false
 
     private val launcherIntentCameraX = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -115,9 +118,11 @@ class RegisterFragment : Fragment() {
             btnRegister.setOnClickListener { onButtonPressed() }
             btnLogin.setOnClickListener {
                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                analyticViewModel.onClickButtonRegisterToLogin()
             }
             floatingActionButton.setOnClickListener {
                 initDialog()
+                analyticViewModel.onClickCameraIcon()
             }
         }
     }
@@ -155,7 +160,8 @@ class RegisterFragment : Fragment() {
                             binding?.edtPassword?.requestFocus()
                         }
                         matchPassword.isEmpty() -> {
-                            binding?.edtConfirmPassword?.error = "Masukan konfirmasi password terlebih dahulu"
+                            binding?.edtConfirmPassword?.error =
+                                "Masukan konfirmasi password terlebih dahulu"
                             binding?.edtConfirmPassword?.requestFocus()
                         }
                         name.isEmpty() -> {
@@ -224,6 +230,13 @@ class RegisterFragment : Fragment() {
                                 }
                                 .show()
                             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                            analyticViewModel.onClickButtonRegister(
+                                "p_test",
+                                email,
+                                name,
+                                phone,
+                                gender.toString()
+                            )
                         }
                         is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
                             try {
@@ -231,10 +244,12 @@ class RegisterFragment : Fragment() {
                                 binding?.cardProgressbar?.visibility = View.GONE
                                 binding?.tvWaiting?.visibility = View.GONE
                                 val err =
-                                    it.errorBody?.string()?.let { it1 -> JSONObject(it1).toString() }
+                                    it.errorBody?.string()
+                                        ?.let { it1 -> JSONObject(it1).toString() }
                                 val gson = Gson()
                                 val jsonObject = gson.fromJson(err, JsonObject::class.java)
-                                val errorResponse = gson.fromJson(jsonObject, ResponseError::class.java)
+                                val errorResponse =
+                                    gson.fromJson(jsonObject, ResponseError::class.java)
                                 val messageErr = errorResponse.error.message
                                 AlertDialog.Builder(requireActivity())
                                     .setTitle("Gagal")
@@ -245,7 +260,11 @@ class RegisterFragment : Fragment() {
                                 val errCode = it.errorCode
                                 Log.d("errorCode", "$errCode")
                             } catch (t: Throwable) {
-                                Toast.makeText(requireActivity(), t.localizedMessage, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireActivity(),
+                                    t.localizedMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                         is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
@@ -268,13 +287,17 @@ class RegisterFragment : Fragment() {
 
         val btnCam = dialogBinding.findViewById<TextView>(R.id.tv_camera)
         val btnGal = dialogBinding.findViewById<TextView>(R.id.tv_galery)
+
         btnCam.setOnClickListener {
+            isCamera = true
             openCameraX()
             mDialog.dismiss()
+            analyticViewModel.onChangeImage("camera")
         }
         btnGal.setOnClickListener {
             openGallery()
             mDialog.dismiss()
+            analyticViewModel.onChangeImage("gallery")
         }
     }
 
@@ -302,6 +325,12 @@ class RegisterFragment : Fragment() {
 
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameScreen = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenRegister(nameScreen)
     }
 
     override fun onDestroyView() {

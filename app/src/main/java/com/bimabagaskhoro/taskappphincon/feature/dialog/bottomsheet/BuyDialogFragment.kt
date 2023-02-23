@@ -12,14 +12,15 @@ import androidx.fragment.app.viewModels
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.detail.DataDetail
-import com.bimabagaskhoro.taskappphincon.R
-import com.bimabagaskhoro.taskappphincon.databinding.FragmentBuyDialogBinding
-import com.bimabagaskhoro.taskappphincon.feature.activity.PaymentActivity
-import com.bimabagaskhoro.taskappphincon.feature.activity.PaymentActivity.Companion.EXTRA_DATA_PAYMENT
-import com.bimabagaskhoro.taskappphincon.feature.activity.OnSuccessActivity
 import com.bimabagaskhoro.phincon.core.utils.formatterIdr
 import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
+import com.bimabagaskhoro.taskappphincon.R
+import com.bimabagaskhoro.taskappphincon.databinding.FragmentBuyDialogBinding
+import com.bimabagaskhoro.taskappphincon.feature.activity.OnSuccessActivity
+import com.bimabagaskhoro.taskappphincon.feature.activity.PaymentActivity
+import com.bimabagaskhoro.taskappphincon.feature.activity.PaymentActivity.Companion.EXTRA_DATA_PAYMENT
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.gson.Gson
@@ -38,6 +39,7 @@ class BuyDialogFragment(
     private val viewModel: BuyDialogViewModel by viewModels()
     private val viewModelStock: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    private val analyticViewModel: FGAViewModel by viewModels()
 
     override fun getTheme(): Int {
         return R.style.NoBackgroundDialogTheme
@@ -64,16 +66,16 @@ class BuyDialogFragment(
 
     private fun postDataProduct() {
         binding?.apply {
-            val stock = tvStockFragmentDialog.text
-            val buy = tvTotalNumber.text
-            if (stock == buy) {
+            val stock = tvStockFragmentDialog.text.toString()
+            if (stock.toInt() == 0) {
                 cardBuy.isClickable = false
                 cardBuy.setOnClickListener {
                     Toast.makeText(requireActivity(), R.string.out_stock, Toast.LENGTH_SHORT).show()
                 }
-            } else if (stock != buy) {
+            } else if (stock.toInt() != 0) {
                 cardBuy.isClickable = true
-
+                val totalResults = binding?.tvTotalPrice?.text.toString()
+                analyticViewModel.onClickButtonBuyBottom("Buy Now – $totalResults")
                 if (dataPayment != null && namePayment != null) {
                     tvPaymentMethode.visibility = View.VISIBLE
                     tvPaymentMethode.setOnClickListener {
@@ -81,6 +83,7 @@ class BuyDialogFragment(
                         val intent2 = Intent(context, PaymentActivity::class.java)
                         intent2.putExtra(EXTRA_DATA_PAYMENT, idProduct.toInt())
                         startActivity(intent2)
+                        analyticViewModel.onClickIconBankBottom(namePayment)
                     }
                     imgPaymentMethode.visibility = View.VISIBLE
                     imgPaymentMethode.setOnClickListener {
@@ -88,6 +91,7 @@ class BuyDialogFragment(
                         val intentOsaas = Intent(context, PaymentActivity::class.java)
                         intentOsaas.putExtra(EXTRA_DATA_PAYMENT, idProduct.toInt())
                         startActivity(intentOsaas)
+                        analyticViewModel.onClickIconBankBottom(namePayment)
 
                     }
                     cardBuy.setOnClickListener {
@@ -103,6 +107,21 @@ class BuyDialogFragment(
                                 dataPayment,
                                 namePayment
                             )
+                        }
+                        val totalForPush = binding?.tvTotalPrice?.text.toString()
+                        val totalQtyForPush = binding?.tvTotalNumber?.text.toString()
+                        data.name_product?.let { dataName ->
+                            data.harga?.let { dataHarga ->
+                                analyticViewModel.onClickButtonBuyWithBankBottom(
+                                    "Buy Now – $totalForPush",
+                                    idProduct.toInt(),
+                                    dataName,
+                                    dataHarga.toInt(),
+                                    totalQtyForPush.toInt(),
+                                    totalResults.toDouble(),
+                                    namePayment
+                                )
+                            }
                         }
                     }
                     Log.d("cardBuy", "to on success")
@@ -148,7 +167,7 @@ class BuyDialogFragment(
                     ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_black)
                 binding?.minFragmentDialog?.background =
                     ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_lightgrey)
-            } else if (results != 1) {
+            } else if (results != 0) {
                 binding?.addFragmentDialog?.background =
                     ContextCompat.getDrawable(requireContext(), R.drawable.bg_rounded_black)
                 binding?.minFragmentDialog?.background =
@@ -156,16 +175,40 @@ class BuyDialogFragment(
             }
         }
 
-        data.harga?.toInt()?.let { viewModel.setPrice(it) }
+        data.harga?.toInt()?.let {
+            viewModel.setPrice(it)
+        }
 
         viewModel.price.observe(requireActivity()) { data ->
             binding?.tvTotalPrice?.text = data.toString().formatterIdr()
         }
         binding?.addFragmentDialog?.setOnClickListener {
             viewModel.addQuantity(data.stock)
+            val totalQty = binding?.tvTotalNumber?.text.toString().trim()
+            val dataId = data.id
+            val dataName = data.name_product
+            dataId?.let { dataIdLet ->
+                dataName?.let { dataNameLet ->
+                    analyticViewModel.onClickButtonQtyBottom(
+                        "+", totalQty.toInt(),
+                        dataIdLet, dataNameLet
+                    )
+                }
+            }
         }
         binding?.minFragmentDialog?.setOnClickListener {
             viewModel.minQuantity()
+            val totalQty = binding?.tvTotalNumber?.text.toString().trim()
+            val dataId = data.id
+            val dataName = data.name_product
+            dataId?.let { dataIdLet ->
+                dataName?.let { dataNameLet ->
+                    analyticViewModel.onClickButtonQtyBottom(
+                        "-", totalQty.toInt(),
+                        dataIdLet, dataNameLet
+                    )
+                }
+            }
         }
     }
 
@@ -178,7 +221,7 @@ class BuyDialogFragment(
             tvPriceFragmentDialog.text = data.harga?.formatterIdr()
             tvStockFragmentDialog.text = data.stock.toString()
 
-            if (data.stock == 1) {
+            if (data.stock == 0) {
                 tvStockFragmentDialog.text = getString(R.string.out_stock)
             }
         }
@@ -221,7 +264,11 @@ class BuyDialogFragment(
                         val messageErr = errorResponse.error.message
                         Toast.makeText(requireActivity(), messageErr, Toast.LENGTH_SHORT).show()
                     } catch (t: Throwable) {
-                        Toast.makeText(requireActivity(), "No Internet Connection", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireActivity(),
+                            "No Internet Connection",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
                 is com.bimabagaskhoro.phincon.core.utils.Resource.Empty -> {
@@ -239,7 +286,6 @@ class BuyDialogFragment(
             binding?.tvPaymentMethode?.text = namePayment
         }
     }
-
 
     private fun initImagePayment(dataPayment: String) {
         binding?.apply {

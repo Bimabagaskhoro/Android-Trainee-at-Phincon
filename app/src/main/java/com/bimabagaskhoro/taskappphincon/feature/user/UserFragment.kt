@@ -31,6 +31,7 @@ import com.bimabagaskhoro.phincon.core.data.source.remote.response.auth.SuccessI
 import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.CAMERA_X_RESULT
 import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.REQUEST_CODE_PERMISSIONS
 import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentUserBinding
@@ -62,7 +63,7 @@ class UserFragment : Fragment() {
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val dataLanguage = arrayOf("en", "id")
     private val dataImgLanguage = intArrayOf(R.drawable.unitedstates, R.drawable.indonesia)
-
+    private val analyticViewModel: FGAViewModel by viewModels()
 
     private val launcherIntentCameraX = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -132,15 +133,18 @@ class UserFragment : Fragment() {
             card2.setOnClickListener {
                 val intent = Intent(requireActivity(), PasswordActivity::class.java)
                 startActivity(intent)
+                analyticViewModel.onClickChangePasswordProfile()
             }
             floatingActionButton.setOnClickListener {
                 initDialog()
+                analyticViewModel.onClickCameraProfile()
             }
             btnLogout.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     dataStoreViewModel.clear()
                     startActivity(Intent(requireActivity(), AuthActivity::class.java))
                     requireActivity().finish()
+                    analyticViewModel.onClickLogoutProfile()
                 }
             }
         }
@@ -168,10 +172,12 @@ class UserFragment : Fragment() {
                                 0 -> {
                                     setLocate("en")
                                     setDialogChangeLanguage()
+                                    analyticViewModel.onChangeLanguageProfile("EN")
                                 }
                                 1 -> {
                                     setLocate("in")
                                     setDialogChangeLanguage()
+                                    analyticViewModel.onChangeLanguageProfile("ID")
                                 }
                             }
                         } else {
@@ -352,10 +358,12 @@ class UserFragment : Fragment() {
         btnCam.setOnClickListener {
             openCameraX()
             mDialog.dismiss()
+            analyticViewModel.onChangeImageProfile("camera")
         }
         btnGal.setOnClickListener {
             openGallery()
             mDialog.dismiss()
+            analyticViewModel.onChangeImageProfile("gallery")
         }
     }
 
@@ -378,6 +386,12 @@ class UserFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameScreen = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenProfile(nameScreen)
     }
 
 }

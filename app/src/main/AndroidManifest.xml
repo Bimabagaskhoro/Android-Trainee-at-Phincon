@@ -24,6 +24,9 @@
         android:theme="@style/Theme.TaskAppPhincon"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <!-- disable firebase analytics for current screen-->
+        <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="false" />
+
         <activity
             android:name=".feature.activity.NotificationActivity"
             android:exported="false"

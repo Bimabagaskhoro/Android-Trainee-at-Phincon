@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.PaymentModel
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.FRCViewModel
 import com.bimabagaskhoro.taskappphincon.databinding.ActivityPaymentBinding
 import com.bimabagaskhoro.taskappphincon.feature.activity.CartActivity.Companion.EXTRA_DATA_CART
@@ -32,6 +33,7 @@ class PaymentActivity : AppCompatActivity() {
     private var idProduct: Int? = 0
 
     private val viewModel by viewModels<FRCViewModel>()
+    private val analyticViewModel: FGAViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,6 +100,7 @@ class PaymentActivity : AppCompatActivity() {
                 intent.putExtra(EXTRA_DATA_CART_NAME, dataItem.name)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 startActivity(intent)
+                dataItem.name?.let { analyticViewModel.onClickBankPayment("", it) }
                 finish()
             }
         } else {
@@ -107,6 +110,7 @@ class PaymentActivity : AppCompatActivity() {
                 intent.putExtra(EXTRA_DATA_PAYMENT_TO_BTN, dataItem.id)
                 intent.putExtra(EXTRA_NAME_PAYMENT_TO_BTN, dataItem.name)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                dataItem.name?.let { analyticViewModel.onClickBankPayment("", it) }
                 startActivity(intent)
                 finish()
             }
@@ -127,11 +131,13 @@ class PaymentActivity : AppCompatActivity() {
                 val intent = Intent(this@PaymentActivity, DetailActivity::class.java)
                 intent.putExtra(EXTRA_DATA_DETAIL, productId)
                 startActivity(intent)
+                analyticViewModel.onClickBackPayment()
                 finish()
             }
         } else if (!fromDetail) {
             binding.btnBack.setOnClickListener {
                 val intent = Intent(this@PaymentActivity, CartActivity::class.java)
+                analyticViewModel.onClickBackPayment()
                 startActivity(intent)
                 finish()
             }
@@ -140,6 +146,12 @@ class PaymentActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_DATA_PAYMENT = "extra_data_payment"
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameSpace = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenPayment(nameSpace)
     }
 
     override fun onSupportNavigateUp(): Boolean {

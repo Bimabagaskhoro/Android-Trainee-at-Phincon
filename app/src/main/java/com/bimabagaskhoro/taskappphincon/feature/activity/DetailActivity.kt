@@ -18,6 +18,7 @@ import com.bimabagaskhoro.phincon.core.data.source.remote.response.detail.DataDe
 import com.bimabagaskhoro.phincon.core.utils.Resource
 import com.bimabagaskhoro.phincon.core.utils.formatterIdr
 import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.LocalViewModel
 import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
@@ -41,6 +42,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
     private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val roomViewModel: LocalViewModel by viewModels()
+    private val analyticViewModel: FGAViewModel by viewModels()
     private var idProduct: Int? = null
     private lateinit var adapter: ProductHistoryAdapter
     private lateinit var seePhoto: PhotoViewFragment
@@ -55,9 +57,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         initDataDetail()
         binding.apply {
             btnBack.setOnClickListener {
-                val intent = Intent(this@DetailActivity, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                startActivity(intent)
+                analyticViewModel.onClickBackDetail()
                 finish()
             }
         }
@@ -137,23 +137,29 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
 
                                         imgFavorite.isChecked = data.isFavorite
 
-                                        if (data.stock == 1) {
+                                        if (data.stock == 0) {
                                             tvStock.text = getString(R.string.out_stock)
                                         }
 
                                         btnShare.setOnClickListener {
-                                            data.image?.let { it2 ->
-                                                data.name_product?.let { it3 ->
-                                                    data.weight?.let { it4 ->
-                                                        data.size?.let { it5 ->
-                                                            shareDeepLink(
-                                                                it2,
-                                                                it3,
-                                                                data.stock.toString(),
-                                                                it4,
-                                                                it5,
-                                                                "https://bimabk.com/deeplink?id=${data.id}"
-                                                            )
+                                            data.image?.let { dataImage ->
+                                                data.name_product?.let { dataName ->
+                                                    data.weight?.let { dataWeight ->
+                                                        data.size?.let { dataSize ->
+                                                            data.harga?.let { dataHarga ->
+                                                                data.id?.let { dataId ->
+                                                                    shareDeepLink(
+                                                                        dataImage,
+                                                                        dataName,
+                                                                        data.stock.toString(),
+                                                                        dataWeight,
+                                                                        dataSize,
+                                                                        dataHarga,
+                                                                        dataId.toString(),
+                                                                        "https://bimabk.com/deeplink?id=${data.id}"
+                                                                    )
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -161,16 +167,20 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                                         }
                                     }
                                     binding.btnCart.setOnClickListener {
-                                        results.data?.success?.data?.let { it2 -> doActionCart(it2) }
+                                        results.data?.success?.data?.let { btnCartData ->
+                                            doActionCart(
+                                                btnCartData
+                                            )
+                                        }
                                     }
-                                    results.data?.success?.data?.let { it2 ->
+                                    results.data?.success?.data?.let { dataToFav ->
                                         initFavorite(
                                             userId,
-                                            it2, productId
+                                            dataToFav, productId
                                         )
                                     }
-                                    results.data?.success?.data?.let { it2 ->
-                                        setActionDialog(it2, dataPayment, namePayment)
+                                    results.data?.success?.data?.let { dataToBottom ->
+                                        setActionDialog(dataToBottom, dataPayment, namePayment)
                                     }
                                 }
                                 is Resource.Error -> {
@@ -213,6 +223,8 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         stock: String,
         weight: String,
         size: String,
+        dataHargas: String,
+        dataIdToAnly: String,
         link: String
     ) {
 
@@ -230,7 +242,11 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                 )
                 intent.putExtra(Intent.EXTRA_STREAM, getBitmapFromView(bitmap))
                 startActivity(Intent.createChooser(intent, "Share To"))
-
+                analyticViewModel.onClickShareOnDetail(
+                    name,
+                    dataHargas.toDouble(),
+                    dataIdToAnly.toInt()
+                )
             }
 
             override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
@@ -248,12 +264,13 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
      * herrrrre
      */
     private fun initFavorite(userId: Int, data: DataDetail, productId: Int) {
+        val nameToAnly = data.name_product
         binding.imgFavorite.setOnClickListener {
             if (!data.isFavorite) {
-                addFavorite(userId, productId)
+                nameToAnly?.let { dataName -> addFavorite(userId, productId, dataName) }
                 binding.swipeRefresh.isRefreshing = true
             } else if (data.isFavorite) {
-                unFavorite(userId, productId)
+                nameToAnly?.let { dataName -> unFavorite(userId, productId, dataName) }
                 binding.swipeRefresh.isRefreshing = true
             }
         }
@@ -274,7 +291,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         return bmpUri
     }
 
-    private fun addFavorite(userId: Int, productId: Int) {
+    private fun addFavorite(userId: Int, productId: Int,nameToAnly: String) {
         viewModel.addFavorite(userId, productId).observe(this@DetailActivity) { results ->
             when (results) {
                 is Resource.Loading -> {
@@ -298,6 +315,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             R.string.succes_favorite,
                             Toast.LENGTH_SHORT
                         ).show()
+                        analyticViewModel.onClickLoveDetail(productId, nameToAnly, "true")
                         initDataDetail()
                     }
                 }
@@ -331,7 +349,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         }
     }
 
-    private fun unFavorite(userId: Int, productId: Int) {
+    private fun unFavorite(userId: Int, productId: Int, dataName: String) {
         viewModel.unFavorite(userId, productId).observe(this@DetailActivity) { results ->
             when (results) {
                 is Resource.Loading -> {
@@ -355,6 +373,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
                             R.string.delete_favorite,
                             Toast.LENGTH_SHORT
                         ).show()
+                        analyticViewModel.onClickLoveDetail(productId, dataName, "false")
                         initDataDetail()
                     }
                 }
@@ -400,8 +419,9 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
             isChecked = false
         )
 
-        if (data.stock != 1) {
+        if (data.stock != 0) {
             roomViewModel.insertCart(cart)
+            analyticViewModel.onClickBtnTrolleyDetail()
             Toast.makeText(this, R.string.succes_trolley, Toast.LENGTH_SHORT).show()
             startActivity(Intent(this@DetailActivity, MainActivity::class.java))
             finish()
@@ -414,11 +434,16 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         if (dataPayment != null && namePayment !== null) {
             val showData = BuyDialogFragment(data, dataPayment, namePayment)
             showData.show(supportFragmentManager, DetailActivity::class.java.simpleName)
+            analyticViewModel.onClickBtnBuyDetail()
+
+            val idAnly = data.id
+            idAnly?.let { analyticViewModel.onShowPopupBottom(it) }
         } else {
             binding.btnBuy.setOnClickListener {
-                if (data.stock == 1) {
+                if (data.stock == 0) {
                     Toast.makeText(this, R.string.failed_trolley, Toast.LENGTH_SHORT).show()
                 } else {
+                    analyticViewModel.onClickBtnBuyDetail()
                     val showData = BuyDialogFragment(data, dataPayment, namePayment)
                     showData.show(supportFragmentManager, DetailActivity::class.java.simpleName)
                 }
@@ -564,6 +589,12 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameScreen = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenDetail(nameScreen)
     }
 
     companion object {

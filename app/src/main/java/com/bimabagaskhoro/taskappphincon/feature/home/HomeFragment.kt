@@ -15,6 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import com.bimabagaskhoro.phincon.core.utils.Constant.Companion.INITIAL_INDEX
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
+import com.bimabagaskhoro.phincon.core.vm.LocalViewModel
+import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentHomeBinding
 import com.bimabagaskhoro.taskappphincon.feature.activity.CartActivity
 import com.bimabagaskhoro.taskappphincon.feature.activity.DetailActivity
@@ -22,15 +25,16 @@ import com.bimabagaskhoro.taskappphincon.feature.activity.NotificationActivity
 import com.bimabagaskhoro.taskappphincon.feature.adapter.paging.LoadPagingAdapter
 import com.bimabagaskhoro.taskappphincon.feature.adapter.paging.ProductAdapter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding
-    private val viewModel: com.bimabagaskhoro.phincon.core.vm.RemoteViewModel by viewModels()
-    private val roomViewModel: com.bimabagaskhoro.phincon.core.vm.LocalViewModel by viewModels()
+    private val viewModel: RemoteViewModel by viewModels()
+    private val roomViewModel: LocalViewModel by viewModels()
+    private val analyticViewModel: FGAViewModel by viewModels()
     private lateinit var adapterProduct: ProductAdapter
 
     override fun onCreateView(
@@ -67,6 +71,7 @@ class HomeFragment : Fragment() {
                             }
                             icCart.setOnClickListener {
                                 startActivity(Intent(requireActivity(), CartActivity::class.java))
+                                analyticViewModel.onClickTrolleyToolbar()
                             }
                         }
                     }
@@ -84,6 +89,7 @@ class HomeFragment : Fragment() {
                             }
                             icNotification.setOnClickListener {
                                 startActivity(Intent(requireActivity(), NotificationActivity::class.java))
+                                analyticViewModel.onClickNotificationToolbar()
                             }
                         }
                     }
@@ -102,6 +108,7 @@ class HomeFragment : Fragment() {
             override fun onQueryTextChange(q: String): Boolean {
                 viewModel.onSearch(q)
                 setViewModel(q)
+                analyticViewModel.onSearchHome(q)
                 return true
             }
         })
@@ -113,6 +120,22 @@ class HomeFragment : Fragment() {
             val intent = Intent(context, DetailActivity::class.java)
             intent.putExtra(DetailActivity.EXTRA_DATA_DETAIL, it.id)
             startActivity(intent)
+
+            val name = it.name_product
+            val price = it.harga
+            val rate = it.rate
+            val id = it.id
+            name?.let { nameLet ->
+                price?.toDouble()?.let { priceLet ->
+                    rate?.let { rateLet ->
+                        id?.let { idLet ->
+                            analyticViewModel.onClickProductHome(
+                                nameLet, priceLet, rateLet, idLet
+                            )
+                        }
+                    }
+                }
+            }
         }
 
         binding?.rvProduct?.apply {
@@ -150,6 +173,7 @@ class HomeFragment : Fragment() {
                                         rvProduct.visibility = View.VISIBLE
                                         binding?.swipeRefresh?.isRefreshing = false
                                         viewEmptyDatas?.root?.visibility = View.GONE
+                                        analyticViewModel.onPagingScrollHome(it.toString())
                                     }
                                 }
                                 is LoadState.Error -> {
@@ -163,7 +187,11 @@ class HomeFragment : Fragment() {
                                 }
 
                                 else -> {
-                                    Toast.makeText(context, "No Internet Detect", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "No Internet Detect",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }
@@ -183,6 +211,12 @@ class HomeFragment : Fragment() {
                 edtSearch.clearFocus()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameClass = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenHome(nameClass)
     }
 
     override fun onDestroyView() {

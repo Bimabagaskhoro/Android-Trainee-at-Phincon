@@ -17,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.auth.SuccessLogin
 import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
 import com.bimabagaskhoro.taskappphincon.databinding.FragmentLoginBinding
@@ -39,6 +40,7 @@ class LoginFragment : Fragment() {
     private val binding get() = _binding
     private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    private val analyticViewModel: FGAViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,6 +60,8 @@ class LoginFragment : Fragment() {
             }
             btnSignup.setOnClickListener {
                 findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+                // login page slide 5
+                analyticViewModel.onClickButtonLoginToRegister()
             }
         }
 
@@ -153,6 +157,8 @@ class LoginFragment : Fragment() {
                     Intent(requireContext(), MainActivity::class.java).also { intent ->
                         startActivity(intent)
                         requireActivity().finish()
+                        // login page slide 5
+                        analyticViewModel.onClickButtonLogin(email)
                     }
                 }
                 is com.bimabagaskhoro.phincon.core.utils.Resource.Error -> {
@@ -203,6 +209,13 @@ class LoginFragment : Fragment() {
             path?.let { saveUserPath(it) }
             image?.let { saveUserPhoto(it) }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameScreen = this.javaClass.simpleName
+        // login page slide 5
+        analyticViewModel.onLoadScreenLogin(nameScreen)
     }
 
     override fun onDestroyView() {

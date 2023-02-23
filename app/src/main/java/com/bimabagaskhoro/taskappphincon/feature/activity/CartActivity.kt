@@ -16,6 +16,7 @@ import com.bimabagaskhoro.phincon.core.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.phincon.core.utils.formatterIdr
 import com.bimabagaskhoro.phincon.core.vm.DataStoreViewModel
+import com.bimabagaskhoro.phincon.core.vm.FGAViewModel
 import com.bimabagaskhoro.phincon.core.vm.LocalViewModel
 import com.bimabagaskhoro.phincon.core.vm.RemoteViewModel
 import com.bimabagaskhoro.taskappphincon.R
@@ -43,6 +44,7 @@ class CartActivity : AppCompatActivity() {
     private val roomViewModel: LocalViewModel by viewModels()
     private val viewModel: RemoteViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    private val analyticViewModel: FGAViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,7 +105,14 @@ class CartActivity : AppCompatActivity() {
     private fun initRecyclerView() {
         binding.apply {
             trolleyAdapter = CartAdapter(
-                onDeleteItem = { setDialogDeleteItem(it) },
+                onDeleteItem = {
+                    setDialogDeleteItem(it)
+                    it.id?.let { dataId ->
+                        it.nameProduct?.let { dataName ->
+                            analyticViewModel.onClickDeleteTrolley(dataId, dataName)
+                        }
+                    }
+                },
                 onAddQuantity = {
                     val productId = it.id
                     val quantity = it.quantity
@@ -113,6 +122,17 @@ class CartActivity : AppCompatActivity() {
                         itemTotalPrice = price?.toInt()?.times(quantity.toString().toInt().plus(1)),
                         id = productId
                     )
+
+                    it.id?.let { dataId ->
+                        it.nameProduct?.let { dataName ->
+                            quantity?.let { dataQty ->
+                                analyticViewModel.onClickAddQtyTrolley(
+                                    "-",
+                                    dataQty, dataId, dataName
+                                )
+                            }
+                        }
+                    }
                 },
                 onMinQuantity = {
                     val productId = it.id
@@ -124,12 +144,28 @@ class CartActivity : AppCompatActivity() {
                             ?.times(quantity.toString().toInt().minus(1)),
                         id = productId
                     )
+                    it.id?.let { dataId ->
+                        it.nameProduct?.let { dataName ->
+                            quantity?.let { dataQty ->
+                                analyticViewModel.onClickAddQtyTrolley(
+                                    "-",
+                                    dataQty, dataId, dataName
+                                )
+                            }
+                        }
+                    }
                 },
                 onCheckedItem = {
                     val productId = it.id
                     val isChecked = !it.isChecked
                     binding.btnBuy.isClickable = true
                     roomViewModel.updateProductIsCheckedById(isChecked, productId)
+
+                    it.id?.let { dataId ->
+                        it.nameProduct?.let { dataName ->
+                            analyticViewModel.onClickSelectTrolley(dataId, dataName)
+                        }
+                    }
                 },
             )
             rvCart.adapter = trolleyAdapter
@@ -153,11 +189,17 @@ class CartActivity : AppCompatActivity() {
             binding.btnBuy.setOnClickListener {
                 val intent = Intent(this@CartActivity, PaymentActivity::class.java)
                 startActivity(intent)
+                analyticViewModel.onClickBuyOnTrolley()
             }
         } else {
             binding.layBtnPayment.setOnClickListener {
                 val intent = Intent(this@CartActivity, PaymentActivity::class.java)
                 startActivity(intent)
+                dataName?.let { dataNameAnly ->
+                    analyticViewModel.onClickIconBankTrolley(
+                        dataNameAnly
+                    )
+                }
             }
             binding.tvPaymentMethode.text = dataName
             dataPayment?.let { initImagePayment(it) }
@@ -208,6 +250,12 @@ class CartActivity : AppCompatActivity() {
                             dataPayment,
                             dataName,
                         )
+                        val totalPriceAnly = binding.tvAllPrice.text.toString()
+                        dataName?.let { paymentMethodeAnly ->
+                            analyticViewModel.onClickBuyScsTrolley(totalPriceAnly.toDouble(),
+                                paymentMethodeAnly
+                            )
+                        }
                     }
                 }
             }
@@ -262,7 +310,7 @@ class CartActivity : AppCompatActivity() {
                         messageErr?.let { Log.d("Error Body", it) }
                     } catch (t: Throwable) {
 //                        Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
-                    } catch (io : IOException) {
+                    } catch (io: IOException) {
                         Toast.makeText(this, "No Internet Connection", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -275,11 +323,13 @@ class CartActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
+        analyticViewModel.onClickBackTrolley()
         return true
     }
 
     override fun onBackPressed() {
         onBackPressedDispatcher.onBackPressed()
+        analyticViewModel.onClickBackTrolley()
     }
 
     private fun initImagePayment(dataPayment: String) {
@@ -352,6 +402,12 @@ class CartActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel") { _, _ -> }
             .show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val nameScreen = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenTrolley(nameScreen)
     }
 
     companion object {
