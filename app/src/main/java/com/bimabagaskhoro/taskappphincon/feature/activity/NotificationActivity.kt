@@ -30,6 +30,8 @@ class NotificationActivity : AppCompatActivity() {
     private var isMultipleSelect = false
     private lateinit var menuNotification: Menu
     private val analyticViewModel: FGAViewModel by viewModels()
+    private var checkRead = 2
+    private var checkDelete = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,15 +124,13 @@ class NotificationActivity : AppCompatActivity() {
 
     private fun readNotification() {
         roomViewModel.setAllReadNotification(true)
-        val dummyRead = 2
-        analyticViewModel.onClickReadIconNotification(dummyRead)
+        analyticViewModel.onClickReadIconNotification(checkRead)
         onBackPressed()
     }
 
     private fun deleteNotification() {
         roomViewModel.deleteNotification(true)
-        val dummyDelete = 2
-        analyticViewModel.onClickDeleteIconNotification(dummyDelete)
+        analyticViewModel.onClickDeleteIconNotification(checkDelete)
         onBackPressed()
     }
 

@@ -102,13 +102,13 @@ class HomeFragment : Fragment() {
         binding?.edtSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 com.bimabagaskhoro.phincon.core.utils.hideKeyboard(requireActivity())
+                query?.let { analyticViewModel.onSearchHome(it) }
                 return false
             }
 
             override fun onQueryTextChange(q: String): Boolean {
                 viewModel.onSearch(q)
                 setViewModel(q)
-                analyticViewModel.onSearchHome(q)
                 return true
             }
         })
@@ -173,7 +173,8 @@ class HomeFragment : Fragment() {
                                         rvProduct.visibility = View.VISIBLE
                                         binding?.swipeRefresh?.isRefreshing = false
                                         viewEmptyDatas?.root?.visibility = View.GONE
-                                        analyticViewModel.onPagingScrollHome(it.toString())
+                                        val page = adapterProduct.itemCount
+                                        analyticViewModel.onPagingScrollHome(page.toString())
                                     }
                                 }
                                 is LoadState.Error -> {

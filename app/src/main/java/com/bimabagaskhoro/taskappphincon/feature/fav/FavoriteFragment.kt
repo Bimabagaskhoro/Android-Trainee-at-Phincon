@@ -128,6 +128,7 @@ class FavoriteFragment : Fragment() {
         binding?.edtSearch?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 com.bimabagaskhoro.phincon.core.utils.hideKeyboard(requireActivity())
+                query?.let { analyticViewModel.onSearchFavorite(it) }
                 return false
             }
 
@@ -142,7 +143,6 @@ class FavoriteFragment : Fragment() {
                             idUser?.let { it1 -> setData(q, it1, 0) }
                         }
                     }
-                    q?.let { analyticViewModel.onSearchFavorite(it) }
                 }
                 return false
             }

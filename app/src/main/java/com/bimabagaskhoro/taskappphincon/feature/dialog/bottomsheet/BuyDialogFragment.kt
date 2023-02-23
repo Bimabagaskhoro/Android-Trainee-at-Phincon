@@ -109,18 +109,22 @@ class BuyDialogFragment(
                             )
                         }
                         val totalForPush = binding?.tvTotalPrice?.text.toString()
-                        val totalQtyForPush = binding?.tvTotalNumber?.text.toString()
-                        data.name_product?.let { dataName ->
-                            data.harga?.let { dataHarga ->
-                                analyticViewModel.onClickButtonBuyWithBankBottom(
-                                    "Buy Now – $totalForPush",
-                                    idProduct.toInt(),
-                                    dataName,
-                                    dataHarga.toInt(),
-                                    totalQtyForPush.toInt(),
-                                    totalResults.toDouble(),
-                                    namePayment
-                                )
+
+                        viewModel.price.observe(requireActivity()) {
+                            val totalQtyForPush = binding?.tvTotalNumber?.text.toString()
+                            val totalPrice = it.toString()
+                            data.name_product?.let { dataName ->
+                                data.harga?.let { dataHarga ->
+                                    analyticViewModel.onClickButtonBuyWithBankBottom(
+                                        "Buy Now – $totalForPush",
+                                        idProduct.toInt(),
+                                        dataName,
+                                        dataHarga.toInt(),
+                                        totalQtyForPush.toInt(),
+                                        totalPrice.toDouble(),
+                                        namePayment
+                                    )
+                                }
                             }
                         }
                     }

@@ -13,7 +13,7 @@ import com.bimabagaskhoro.taskappphincon.databinding.ItemPaymentHeaderBinding
 
 @Suppress("DEPRECATION")
 class PaymentHeaderAdapter(
-    private val onItemClick: (DataItem) -> Unit
+    private val onItemClicked: (DataItem, PaymentModel) -> Unit,
 ) : RecyclerView.Adapter<PaymentHeaderAdapter.ViewHolder>() {
     private val listDataHeader = ArrayList<PaymentModel>()
 
@@ -45,7 +45,7 @@ class PaymentHeaderAdapter(
             binding.apply {
                 tvPaymentItemHeader.text = data.type.toString()
                 val paymentAdapter = PaymentBodyAdapter { dataItem ->
-                    onItemClick.invoke(dataItem)
+                    onItemClicked.invoke(dataItem, data)
                 }
                 if (isExpand) {
                     rvItemBodyPayment.visibility = View.VISIBLE

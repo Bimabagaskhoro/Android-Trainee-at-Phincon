@@ -230,8 +230,9 @@ class RegisterFragment : Fragment() {
                                 }
                                 .show()
                             findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                            val isfrom = if (isCamera) CAMERA else GALLERY
                             analyticViewModel.onClickButtonRegister(
-                                "p_test",
+                                isfrom,
                                 email,
                                 name,
                                 phone,
@@ -292,12 +293,12 @@ class RegisterFragment : Fragment() {
             isCamera = true
             openCameraX()
             mDialog.dismiss()
-            analyticViewModel.onChangeImage("camera")
+            analyticViewModel.onChangeImage(CAMERA)
         }
         btnGal.setOnClickListener {
             openGallery()
             mDialog.dismiss()
-            analyticViewModel.onChangeImage("gallery")
+            analyticViewModel.onChangeImage(GALLERY)
         }
     }
 
@@ -325,6 +326,8 @@ class RegisterFragment : Fragment() {
 
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        private const val CAMERA = "camera"
+        private const val GALLERY = "gallery"
     }
 
     override fun onResume() {
@@ -337,6 +340,8 @@ class RegisterFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }
 
 //

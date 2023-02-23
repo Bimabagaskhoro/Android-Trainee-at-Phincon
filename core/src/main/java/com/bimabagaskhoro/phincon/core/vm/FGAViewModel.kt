@@ -197,22 +197,10 @@ class FGAViewModel @Inject constructor(
     }
 
     fun onClickButtonBuyWithBankBottom(
-        param: String,
-        id: Int,
-        name: String,
-        priceProd: Int,
-        total: Int,
-        totalPrice: Double,
-        paymentMethode: String
-    ) {
-        repository.onClickButtonBuyWithBankBottom(
-            param,
-            id,
-            name,
-            priceProd,
-            total,
-            totalPrice,
-            paymentMethode
+        param: String, id: Int, name: String,
+        priceProd: Int, total: Int, totalPrice: Double,
+        paymentMethode: String) { repository.onClickButtonBuyWithBankBottom(
+            param, id, name, priceProd, total, totalPrice, paymentMethode
         )
     }
 

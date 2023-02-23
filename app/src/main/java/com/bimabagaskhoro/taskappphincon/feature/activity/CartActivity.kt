@@ -250,9 +250,15 @@ class CartActivity : AppCompatActivity() {
                             dataPayment,
                             dataName,
                         )
-                        val totalPriceAnly = binding.tvAllPrice.text.toString()
+                        val filterResult = result.filter { it.isChecked }
+                        var priceTotalForAnly = 0
+                        filterResult.forEach {
+                            priceTotalForAnly = priceTotalForAnly.plus(it.itemTotalPrice!!)
+                        }
+
                         dataName?.let { paymentMethodeAnly ->
-                            analyticViewModel.onClickBuyScsTrolley(totalPriceAnly.toDouble(),
+                            analyticViewModel.onClickBuyScsTrolley(
+                                priceTotalForAnly.toDouble(),
                                 paymentMethodeAnly
                             )
                         }

@@ -94,25 +94,44 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun initAdapter(productId: Int) {
         adapter = if (productId == 0) {
-            PaymentHeaderAdapter { dataItem ->
+            PaymentHeaderAdapter { dataItem, paymentModel ->
                 val intent = Intent(this@PaymentActivity, CartActivity::class.java)
                 intent.putExtra(EXTRA_DATA_CART, dataItem.id)
                 intent.putExtra(EXTRA_DATA_CART_NAME, dataItem.name)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+                val paymentMethod = paymentModel.type
+                dataItem.name?.let { dataAnly ->
+                    paymentMethod?.let { paymentAnly ->
+                        analyticViewModel.onClickBankPayment(
+                            paymentAnly, dataAnly
+                        )
+                    }
+                }
+
                 startActivity(intent)
-                dataItem.name?.let { analyticViewModel.onClickBankPayment("", it) }
                 finish()
             }
         } else {
-            PaymentHeaderAdapter { dataItem ->
+            PaymentHeaderAdapter { dataItem, paymentModel ->
                 val intent = Intent(this@PaymentActivity, DetailActivity::class.java)
                 intent.putExtra(EXTRA_DATA_DETAIL, productId)
                 intent.putExtra(EXTRA_DATA_PAYMENT_TO_BTN, dataItem.id)
                 intent.putExtra(EXTRA_NAME_PAYMENT_TO_BTN, dataItem.name)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                dataItem.name?.let { analyticViewModel.onClickBankPayment("", it) }
+
+                val paymentMethod = paymentModel.type
+                dataItem.name?.let { dataAnly ->
+                    paymentMethod?.let { paymentAnly ->
+                        analyticViewModel.onClickBankPayment(
+                            paymentAnly, dataAnly
+                        )
+                    }
+                }
+
                 startActivity(intent)
                 finish()
+
             }
         }
     }
