@@ -27,4 +27,8 @@ interface CartDao {
 
     @Query("DELETE FROM $CART_TABLE WHERE id = :id")
     suspend fun deleteProductByIdFromTrolley(id: Int?)
+
+    @Query("SELECT COUNT(*) FROM $CART_TABLE WHERE is_state = 1")
+    fun countTrolley(): Int
+
 }

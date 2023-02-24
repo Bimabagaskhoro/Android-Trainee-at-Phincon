@@ -58,6 +58,10 @@ class LocalViewModel @Inject constructor(
         }
     }
 
+    fun countTrolley() : Int {
+        return localDataSource.countTrolley()
+    }
+
     /**
      * notification
      */
@@ -93,5 +97,9 @@ class LocalViewModel @Inject constructor(
         viewModelScope.launch {
             localDataSource.deleteNotification(isChecked)
         }
+    }
+
+    fun countNotification(): Int {
+        return localDataSource.countNotification()
     }
 }

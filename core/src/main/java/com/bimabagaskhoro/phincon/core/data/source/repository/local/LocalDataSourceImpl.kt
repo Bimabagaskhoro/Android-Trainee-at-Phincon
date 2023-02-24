@@ -43,6 +43,10 @@ class LocalDataSourceImpl(
         cartDao.deleteProductByIdFromTrolley(id = id)
     }
 
+    override fun countTrolley(): Int{
+        return cartDao.countTrolley()
+    }
+
     /**
      * notification
      */
@@ -72,5 +76,9 @@ class LocalDataSourceImpl(
 
     override suspend fun deleteNotification(isChecked: Boolean) {
         notificationDao.deleteNotification(isChecked = isChecked)
+    }
+
+    override fun countNotification(): Int {
+        return notificationDao.countNotification()
     }
 }

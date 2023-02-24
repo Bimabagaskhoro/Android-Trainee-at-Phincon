@@ -383,15 +383,16 @@ class UserFragment : Fragment() {
     companion object {
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onResume() {
         super.onResume()
         val nameScreen = this.javaClass.simpleName
         analyticViewModel.onLoadScreenProfile(nameScreen)
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+
 
 }

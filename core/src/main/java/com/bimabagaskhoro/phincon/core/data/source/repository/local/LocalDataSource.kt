@@ -15,6 +15,7 @@ interface LocalDataSource {
     suspend fun updateProductIsCheckedAll(isChecked: Boolean)
     suspend fun updateProductIsCheckedById(isChecked: Boolean, id: Int?)
     suspend fun deleteProductByIdFromTrolley(id: Int?)
+    fun countTrolley(): Int
 
     /**
      * notification
@@ -26,4 +27,5 @@ interface LocalDataSource {
     suspend fun updateCheckedNotification(isChecked: Boolean, id: Int?)
     suspend fun setAllUncheckedNotification(isChecked: Boolean)
     suspend fun deleteNotification(isChecked: Boolean)
+    fun countNotification(): Int
 }

@@ -1,6 +1,7 @@
 package com.bimabagaskhoro.taskappphincon.feature.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -30,8 +31,6 @@ class NotificationActivity : AppCompatActivity() {
     private var isMultipleSelect = false
     private lateinit var menuNotification: Menu
     private val analyticViewModel: FGAViewModel by viewModels()
-    private var checkRead = 2
-    private var checkDelete = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,13 +123,17 @@ class NotificationActivity : AppCompatActivity() {
 
     private fun readNotification() {
         roomViewModel.setAllReadNotification(true)
-        analyticViewModel.onClickReadIconNotification(checkRead)
+        val countRead = roomViewModel.countNotification()
+        Log.d("countReadNotification", "$countRead")
+        analyticViewModel.onClickReadIconNotification(countRead)
         onBackPressed()
     }
 
     private fun deleteNotification() {
         roomViewModel.deleteNotification(true)
-        analyticViewModel.onClickDeleteIconNotification(checkDelete)
+        val countRead = roomViewModel.countNotification()
+        Log.d("countReadNotification", "$countRead")
+        analyticViewModel.onClickDeleteIconNotification(countRead)
         onBackPressed()
     }
 

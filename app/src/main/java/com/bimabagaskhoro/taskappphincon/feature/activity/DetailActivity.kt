@@ -557,7 +557,11 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
             }
         }
     }
-
+    override fun onResume() {
+        super.onResume()
+        val nameScreen = this.javaClass.simpleName
+        analyticViewModel.onLoadScreenDetail(nameScreen)
+    }
     private fun initRecyclerViewHistory() {
         binding.apply {
             rvHistoryProduct.adapter = adapter
@@ -591,11 +595,7 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         return true
     }
 
-    override fun onResume() {
-        super.onResume()
-        val nameScreen = this.javaClass.simpleName
-        analyticViewModel.onLoadScreenDetail(nameScreen)
-    }
+
 
     companion object {
         const val EXTRA_DATA_DETAIL = "extra_data_detail"

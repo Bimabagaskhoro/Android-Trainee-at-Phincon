@@ -32,6 +32,9 @@ data class CartEntity(
 
     @ColumnInfo(name = "is_checked")
     val isChecked: Boolean = false,
+
+    @ColumnInfo(name = "is_state")
+    val isState: Int? = null,
 )
 
 @Parcelize

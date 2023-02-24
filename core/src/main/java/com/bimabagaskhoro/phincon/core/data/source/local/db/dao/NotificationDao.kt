@@ -30,4 +30,8 @@ interface NotificationDao {
 
     @Query("DELETE FROM $NOTIFICATION_TABLE WHERE is_checked = :isChecked")
     suspend fun deleteNotification(isChecked: Boolean)
+
+    @Query("SELECT COUNT(*) FROM $NOTIFICATION_TABLE WHERE is_state = 1")
+    fun countNotification(): Int
+
 }

@@ -18,9 +18,6 @@ import com.bimabagaskhoro.taskappphincon.feature.activity.DetailActivity.Compani
 import com.bimabagaskhoro.taskappphincon.feature.activity.DetailActivity.Companion.EXTRA_DATA_PAYMENT_TO_BTN
 import com.bimabagaskhoro.taskappphincon.feature.activity.DetailActivity.Companion.EXTRA_NAME_PAYMENT_TO_BTN
 import com.bimabagaskhoro.taskappphincon.feature.adapter.payment.PaymentHeaderAdapter
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,7 +26,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class PaymentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPaymentBinding
     private lateinit var adapter: PaymentHeaderAdapter
-    private val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
     private var idProduct: Int? = 0
 
     private val viewModel by viewModels<FRCViewModel>()
@@ -101,10 +97,10 @@ class PaymentActivity : AppCompatActivity() {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
                 val paymentMethod = paymentModel.type
-                dataItem.name?.let { dataAnly ->
-                    paymentMethod?.let { paymentAnly ->
+                dataItem.name?.let { dataAnalytic ->
+                    paymentMethod?.let { paymentAnalytic ->
                         analyticViewModel.onClickBankPayment(
-                            paymentAnly, dataAnly
+                            paymentAnalytic, dataAnalytic
                         )
                     }
                 }
@@ -121,10 +117,10 @@ class PaymentActivity : AppCompatActivity() {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
                 val paymentMethod = paymentModel.type
-                dataItem.name?.let { dataAnly ->
-                    paymentMethod?.let { paymentAnly ->
+                dataItem.name?.let { dataAnalytic ->
+                    paymentMethod?.let { paymentAnalytic ->
                         analyticViewModel.onClickBankPayment(
-                            paymentAnly, dataAnly
+                            paymentAnalytic, dataAnalytic
                         )
                     }
                 }
