@@ -10,6 +10,7 @@ import com.bimabagaskhoro.phincon.core.data.source.remote.network.ApiService
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.RequestStock
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.auth.ResponseLogin
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.product.DataItemProduct
 import com.bimabagaskhoro.phincon.core.data.source.repository.remote.RemoteRepositoryImpl
 import com.bimabagaskhoro.phincon.core.utils.CoroutinesTestRule
@@ -23,6 +24,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -85,34 +87,29 @@ class RemoteRepositoryTest {
         val resultFlow = remoteRepository.login(emailDummy, passwordDummy, tokenFcmDummy)
         resultFlow.test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+            val dataActual = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, dataActual.data)
             awaitComplete()
         }
     }
 
-//    @Test
-//    fun `Login Network Error`(): Unit = runTest {
-//        val expectedErrorMessage = "Bad Request"
-//        val expectedErrorCode = 400
-//        val errorResponseBody: ResponseBody = mock()
-//
-//        val emailDummy = "emailDummy@gmail.com"
-//        val passwordDummy = "passwordDummy"
-//        val tokenFcmDummy = "tokenFcmDummy"
-//
-//        Mockito.`when`(apiService.login(emailDummy, passwordDummy, tokenFcmDummy))
-//            .thenThrow(ioException)
-//
-//        val resultFlow = remoteRepository.login(emailDummy, passwordDummy, tokenFcmDummy)
-//        resultFlow.test {
-//            Assert.assertEquals(true, Resource.Error)
-//            Assert.assertTrue(awaitItem() is Resource.Success)
-//            awaitComplete()
-//        }
-//
-//        val expected = listOf(Resource.Loading(), Resource.Error(ioException.message, null, null))
-//        assertEquals(expected, resultFlow)
-//    }
+    @Test
+    fun `Login User Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val emailDummy = "emailDummy@gmail.com"
+        val passwordDummy = "passwordDummy"
+        val tokenFcmDummy = "tokenFcmDummy"
+
+        Mockito.`when`(apiService.login(emailDummy, passwordDummy, tokenFcmDummy))
+            .thenThrow(HttpException(response))
+
+        val resultFlow = remoteRepository.login(emailDummy, passwordDummy, tokenFcmDummy)
+        resultFlow.test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
+            awaitComplete()
+        }
+    }
 
     @Test
     fun `Register User`(): Unit = runTest {
@@ -152,6 +149,41 @@ class RemoteRepositoryTest {
     }
 
     @Test
+    fun `Register User Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val imageDummy = MultipartBody.Part.create("text".toRequestBody())
+        val emailDummy = "emailDummy@gmail.com".toRequestBody()
+        val passwordDummy = "passwordDummy".toRequestBody()
+        val nameDummy = "nameDummy".toRequestBody()
+        val phoneDummy = "phoneDummy".toRequestBody()
+        val genderDummy = 0
+
+        Mockito.`when`(
+            apiService.register(
+                imageDummy,
+                emailDummy,
+                passwordDummy,
+                nameDummy,
+                phoneDummy,
+                genderDummy
+            )
+        ).thenThrow(HttpException(response))
+
+        remoteRepository.register(
+            imageDummy,
+            emailDummy,
+            passwordDummy,
+            nameDummy,
+            phoneDummy,
+            genderDummy
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
+            awaitComplete()
+        }
+    }
+
+    @Test
     fun `Change Password User`(): Unit = runTest {
         val dataDummy = DataDummy.generateDummyChangePassword()
         val idDummy = 0
@@ -175,7 +207,37 @@ class RemoteRepositoryTest {
             confirmPasswordDummy
         ).test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+            val data = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, data.data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `Change Password User Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val idDummy = 0
+        val passwordDummy = "passwordDummy"
+        val newPasswordDummy = "newPasswordDummy"
+        val confirmPasswordDummy = "confirmPasswordDummy"
+
+        Mockito.`when`(
+            apiService.changePassword(
+                idDummy,
+                passwordDummy,
+                newPasswordDummy,
+                confirmPasswordDummy
+            )
+        ).thenThrow(HttpException(response))
+
+        remoteRepository.changePassword(
+            idDummy,
+            passwordDummy,
+            newPasswordDummy,
+            confirmPasswordDummy
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
@@ -197,7 +259,31 @@ class RemoteRepositoryTest {
             imageDummy
         ).test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+//            Assert.assertTrue(awaitItem() is Resource.Success)
+            val data = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, data.data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `Change Image User Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val idDummy = 0
+        val imageDummy = MultipartBody.Part.create("text".toRequestBody())
+        Mockito.`when`(
+            apiService.changeImage(
+                idDummy,
+                imageDummy
+            )
+        ).thenThrow(HttpException(response))
+
+        remoteRepository.changeImage(
+            idDummy,
+            imageDummy
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
@@ -219,7 +305,31 @@ class RemoteRepositoryTest {
             idDummy
         ).test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+//            Assert.assertTrue(awaitItem() is Resource.Success)
+            val data = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, data.data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `Add Favorite Product Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val userIdDummy = 0
+        val idDummy = 0
+
+        Mockito.`when`(
+            apiService.addFavorite(
+                userIdDummy,
+                idDummy
+            )
+        ).thenThrow(HttpException(response))
+        remoteRepository.addFavorite(
+            userIdDummy,
+            idDummy
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
@@ -241,7 +351,30 @@ class RemoteRepositoryTest {
             idDummy
         ).test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+            val data = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, data.data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `Get Detail Product Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val userIdDummy = 0
+        val idDummy = 0
+
+        Mockito.`when`(
+            apiService.getDetail(
+                userIdDummy,
+                idDummy
+            )
+        ).thenThrow(HttpException(response))
+        remoteRepository.getDetailProduct(
+            userIdDummy,
+            idDummy
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
@@ -262,7 +395,29 @@ class RemoteRepositoryTest {
             data
         ).test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+            val dataActual = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, dataActual.data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `Update Stock Product Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val userIdDummy = "0"
+        val dataStock = DataStockItem()
+        val data = RequestStock(userIdDummy, listOf(dataStock))
+        Mockito.`when`(
+            apiService.updateStock(
+                data
+            )
+        ).thenThrow(HttpException(response))
+
+        remoteRepository.updateStock(
+            data
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
@@ -284,7 +439,31 @@ class RemoteRepositoryTest {
             idDummy
         ).test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+
+            val dataActual = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, dataActual.data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `Un Favorite Product Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val userIdDummy = 0
+        val idDummy = 0
+
+        Mockito.`when`(
+            apiService.unFavorite(
+                userIdDummy,
+                idDummy
+            )
+        ).thenThrow(HttpException(response))
+        remoteRepository.unFavorite(
+            userIdDummy,
+            idDummy
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
@@ -307,7 +486,31 @@ class RemoteRepositoryTest {
             rate
         ).test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+            val dataActual = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, dataActual.data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `Update Rate Product Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val userIdDummy = 0
+        val rate = RequestRating()
+
+        Mockito.`when`(
+            apiService.updateRating(
+                userIdDummy,
+                rate
+            )
+        ).thenThrow(HttpException(response))
+
+        remoteRepository.updateRate(
+            userIdDummy,
+            rate
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
@@ -329,7 +532,30 @@ class RemoteRepositoryTest {
             searchDummy
         ).test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+            val dataActual = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, dataActual.data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `Get Data Favorite Product Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val userIdDummy = 0
+        val searchDummy = "searchDummy"
+
+        Mockito.`when`(
+            apiService.getListFav(
+                userIdDummy,
+                searchDummy
+            )
+        ).thenThrow(HttpException(response))
+        remoteRepository.getDataFavProduct(
+            userIdDummy,
+            searchDummy
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
@@ -347,7 +573,26 @@ class RemoteRepositoryTest {
             userIdDummy
         ).test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+            val dataActual = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, dataActual.data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `Get Data Other Product Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val userIdDummy = 0
+        Mockito.`when`(
+            apiService.getOtherProduct(
+                userIdDummy
+            )
+        ).thenThrow(HttpException(response))
+        remoteRepository.getOtherProduct(
+            userIdDummy
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
@@ -365,7 +610,26 @@ class RemoteRepositoryTest {
             userIdDummy
         ).test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
-            Assert.assertTrue(awaitItem() is Resource.Success)
+            val dataActual = awaitItem() as Resource.Success
+            Assert.assertEquals(dataDummy, dataActual.data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun `Get Data History Product Error`(): Unit = runTest {
+        val response = Response.error<ResponseLogin>(400, "".toResponseBody(null))
+        val userIdDummy = 0
+        Mockito.`when`(
+            apiService.getHistoryProduct(
+                userIdDummy
+            )
+        ).thenThrow(HttpException(response))
+        remoteRepository.getHistoryProduct(
+            userIdDummy
+        ).test {
+            Assert.assertTrue(awaitItem() is Resource.Loading)
+            Assert.assertTrue(awaitItem() is Resource.Error)
             awaitComplete()
         }
     }
