@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.phincon.core.utils
+package com.bimabagaskhoro.taskappphincon
 
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.auth.*
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.detail.DataDetail
@@ -8,8 +8,30 @@ import com.bimabagaskhoro.phincon.core.data.source.remote.response.detail.Succes
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.favorite.*
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.product.DataItemProduct
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.product.ResponseProduct
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.product.Success
 
 object DataDummy {
+    fun generateDummyPaging(): List<DataItemProduct> {
+        val items: MutableList<DataItemProduct> = arrayListOf()
+        for (i in 0..100) {
+            val feed = DataItemProduct(
+                id = i,
+                date = "date",
+                image = "image",
+                name_product = "name_product",
+                harga = "harga",
+                size = "size",
+                rate = 0,
+                weight = "weight",
+                stock = 0,
+                type = "type",
+                desc = "desc"
+            )
+            items.add(feed)
+        }
+        return items
+    }
+
     fun generateDummyLogin(): ResponseLogin {
         val getDataUser = DataUser(
             image = "image",
@@ -178,7 +200,7 @@ object DataDummy {
             desc = "desc"
         )
         return ResponseProduct(
-            success = com.bimabagaskhoro.phincon.core.data.source.remote.response.product.Success(
+            success = Success(
                 data = listOf(dataItemProduct),
                 message = "message",
                 status = null
@@ -201,7 +223,7 @@ object DataDummy {
             desc = "desc"
         )
         return ResponseProduct(
-            success = com.bimabagaskhoro.phincon.core.data.source.remote.response.product.Success(
+            success = Success(
                 data = listOf(dataItemProduct),
                 message = "message",
                 status = null

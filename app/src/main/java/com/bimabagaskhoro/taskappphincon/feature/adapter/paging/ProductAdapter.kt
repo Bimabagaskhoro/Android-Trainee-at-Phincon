@@ -62,7 +62,7 @@ class ProductAdapter :
     }
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DataItemProduct>() {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<DataItemProduct>() {
             override fun areItemsTheSame(
                 oldItem: DataItemProduct,
                 newItem: DataItemProduct

@@ -1,18 +1,26 @@
-package com.bimabagaskhoro.phincon.core.repository
+package com.bimabagaskhoro.taskappphincon
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.paging.*
+import androidx.recyclerview.widget.ListUpdateCallback
 import app.cash.turbine.test
 import com.bimabagaskhoro.phincon.core.data.source.remote.network.ApiService
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.DataStockItem
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.RequestRating
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.RequestStock
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
+import com.bimabagaskhoro.phincon.core.data.source.remote.response.product.DataItemProduct
 import com.bimabagaskhoro.phincon.core.data.source.repository.remote.RemoteRepositoryImpl
-import com.bimabagaskhoro.phincon.core.utils.CoroutinesTestRule
-import com.bimabagaskhoro.phincon.core.utils.DataDummy
 import com.bimabagaskhoro.phincon.core.utils.Resource
+import com.bimabagaskhoro.phincon.core.utils.getOrAwaitValue
+import com.bimabagaskhoro.taskappphincon.feature.adapter.paging.ProductAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -31,7 +39,7 @@ import retrofit2.Response
 @ExperimentalPagingApi
 @ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner.Silent::class)
-class RemoteRepositoryTest {
+class RemoteRepositoryImplTest {
 
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
@@ -48,6 +56,54 @@ class RemoteRepositoryTest {
     @Before
     fun setUp() = runTest {
         remoteRepository = RemoteRepositoryImpl(apiService)
+    }
+
+
+    @Test
+    fun `Get Paging Data`(): Unit = runTest {
+        val data = ProductPagingSource.snapshot(DataDummy.generateDummyPaging())
+        val expectedProduct = MutableLiveData<PagingData<DataItemProduct>>()
+        expectedProduct.value = data
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val actualData: PagingData<DataItemProduct> =
+                remoteRepository.getDataProduct(null).asLiveData().getOrAwaitValue()
+            val differ = AsyncPagingDataDiffer(
+                diffCallback = ProductAdapter.DIFF_CALLBACK,
+                updateCallback = noopListUpdateCallback,
+                workerDispatcher = Dispatchers.Main
+            )
+
+            differ.submitData(actualData)
+
+            Assert.assertNotNull(differ.snapshot())
+            Assert.assertEquals(DataDummy.generateDummyPaging().size, differ.snapshot().size)
+            Assert.assertEquals(DataDummy.generateDummyPaging()[0].name_product, differ.snapshot()[0]?.name_product)
+        }
+
+    }
+
+    class ProductPagingSource : PagingSource<Int, LiveData<List<DataItemProduct>>>() {
+        companion object {
+            fun snapshot(items: List<DataItemProduct>): PagingData<DataItemProduct> {
+                return PagingData.from(items)
+            }
+        }
+        override fun getRefreshKey(state: PagingState<Int, LiveData<List<DataItemProduct>>>): Int? {
+            return 0
+        }
+
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, LiveData<List<DataItemProduct>>> {
+            return PagingSource.LoadResult.Page(emptyList(), 0, 1)
+        }
+
+    }
+
+    val noopListUpdateCallback = object : ListUpdateCallback {
+        override fun onInserted(position: Int, count: Int) {}
+        override fun onRemoved(position: Int, count: Int) {}
+        override fun onMoved(fromPosition: Int, toPosition: Int) {}
+        override fun onChanged(position: Int, count: Int, payload: Any?) {}
     }
 
     @Test
@@ -1139,4 +1195,5 @@ class RemoteRepositoryTest {
             awaitComplete()
         }
     }
+
 }

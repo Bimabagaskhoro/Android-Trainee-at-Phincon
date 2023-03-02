@@ -60,6 +60,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
             }
         }
@@ -86,6 +89,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
             }
         }
@@ -111,6 +117,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
             }
         }
@@ -133,6 +142,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
             }
         }
@@ -152,6 +164,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
             }
         }
@@ -170,6 +185,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
                     }
                 }
             }
@@ -192,6 +210,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
             }
         }
@@ -210,6 +231,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
                     }
                 }
             }
@@ -230,6 +254,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
                     }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
+                    }
                 }
             }
         }
@@ -243,12 +270,7 @@ class RemoteRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             try {
                 val response = apiService.getListFav(userId, search)
-                val data = response.success.data
-                if (data.isNotEmpty()) {
-                    emit(Resource.Success(response))
-                } else {
-                    emit(Resource.Empty())
-                }
+                emit(Resource.Success(response))
             } catch (t: Throwable) {
                 when (t) {
                     is HttpException -> {
@@ -256,6 +278,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
                     }
                 }
             }
@@ -267,12 +292,7 @@ class RemoteRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             try {
                 val response = apiService.getOtherProduct(userId)
-                val data = response.success.data
-                if (data.isNotEmpty()) {
-                    emit(Resource.Success(response))
-                } else {
-                    emit(Resource.Empty())
-                }
+                emit(Resource.Success(response))
             } catch (t: Throwable) {
                 when (t) {
                     is HttpException -> {
@@ -280,6 +300,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
                     }
                 }
             }
@@ -291,12 +314,7 @@ class RemoteRepositoryImpl @Inject constructor(
             emit(Resource.Loading())
             try {
                 val response = apiService.getHistoryProduct(userId)
-                val data = response.success.data
-                if (data.isNotEmpty()) {
-                    emit(Resource.Success(response))
-                } else {
-                    emit(Resource.Empty())
-                }
+                emit(Resource.Success(response))
             } catch (t: Throwable) {
                 when (t) {
                     is HttpException -> {
@@ -304,6 +322,9 @@ class RemoteRepositoryImpl @Inject constructor(
                             400 -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                             else -> emit(Resource.Error(t.message, t.code(), t.response()?.errorBody()))
                         }
+                    }
+                    is Exception -> {
+                        emit(Resource.Error(t.message, null, null))
                     }
                 }
             }

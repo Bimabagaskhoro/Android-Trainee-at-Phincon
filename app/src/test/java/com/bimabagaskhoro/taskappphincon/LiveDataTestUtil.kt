@@ -1,4 +1,4 @@
-package com.dapascript.memogram.utils
+package com.bimabagaskhoro.phincon.core.utils
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
