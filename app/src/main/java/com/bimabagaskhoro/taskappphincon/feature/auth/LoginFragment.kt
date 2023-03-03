@@ -55,7 +55,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.apply {
-            btnLogin.setOnClickListener {
+            btnLoginFragment.setOnClickListener {
                 onButtonPressed()
             }
             btnSignup.setOnClickListener {
@@ -69,22 +69,22 @@ class LoginFragment : Fragment() {
     }
 
     private fun onButtonPressed() {
-        val email = binding?.edtEmail?.text.toString().trim()
-        val password = binding?.edtPassword?.text.toString().trim()
+        val email = binding?.edtEmailLogin?.text.toString().trim()
+        val password = binding?.edtPasswordLogin?.text.toString().trim()
         if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             binding?.tvCheckingEmail?.visibility = View.INVISIBLE
             when {
                 email.isEmpty() -> {
-                    binding?.edtEmail?.error = "Masukan email terlebih dahulu"
-                    binding?.edtEmail?.requestFocus()
+                    binding?.edtEmailLogin?.error = "Masukan email terlebih dahulu"
+                    binding?.edtEmailLogin?.requestFocus()
                 }
                 password.isEmpty() -> {
-                    binding?.edtPassword?.error = "Masukan password terlebih dahulu"
-                    binding?.edtPassword?.requestFocus()
+                    binding?.edtPasswordLogin?.error = "Masukan password terlebih dahulu"
+                    binding?.edtPasswordLogin?.requestFocus()
                 }
                 else -> {
-                    binding?.edtEmail?.error = null
-                    binding?.edtPassword?.error = null
+                    binding?.edtEmailLogin?.error = null
+                    binding?.edtPasswordLogin?.error = null
 
                     lifecycleScope.launch {
                         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -135,7 +135,7 @@ class LoginFragment : Fragment() {
             }
         } else {
             binding?.tvCheckingEmail?.visibility = View.VISIBLE
-            binding?.edtEmail?.requestFocus()
+            binding?.edtEmailLogin?.requestFocus()
         }
     }
 

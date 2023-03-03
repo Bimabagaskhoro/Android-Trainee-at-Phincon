@@ -15,8 +15,10 @@ import com.bimabagaskhoro.phincon.core.data.source.remote.response.ResponseError
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.product.DataItemProduct
 import com.bimabagaskhoro.phincon.core.data.source.repository.remote.RemoteRepositoryImpl
 import com.bimabagaskhoro.phincon.core.utils.Resource
-import com.bimabagaskhoro.phincon.core.utils.getOrAwaitValue
+import com.bimabagaskhoro.taskappphincon.utils.getOrAwaitValue
 import com.bimabagaskhoro.taskappphincon.feature.adapter.paging.ProductAdapter
+import com.bimabagaskhoro.taskappphincon.utils.CoroutinesTestRule
+import com.bimabagaskhoro.taskappphincon.utils.DataDummy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -58,7 +60,6 @@ class RemoteRepositoryImplTest {
         remoteRepository = RemoteRepositoryImpl(apiService)
     }
 
-
     @Test
     fun `Get Paging Data`(): Unit = runTest {
         val data = ProductPagingSource.snapshot(DataDummy.generateDummyPaging())
@@ -76,11 +77,10 @@ class RemoteRepositoryImplTest {
 
             differ.submitData(actualData)
 
-            Assert.assertNotNull(differ.snapshot())
+//            Assert.assertNotNull(differ.snapshot())
             Assert.assertEquals(DataDummy.generateDummyPaging().size, differ.snapshot().size)
-            Assert.assertEquals(DataDummy.generateDummyPaging()[0].name_product, differ.snapshot()[0]?.name_product)
+            Assert.assertEquals(DataDummy.generateDummyPaging(), differ.snapshot())
         }
-
     }
 
     class ProductPagingSource : PagingSource<Int, LiveData<List<DataItemProduct>>>() {
@@ -99,7 +99,7 @@ class RemoteRepositoryImplTest {
 
     }
 
-    val noopListUpdateCallback = object : ListUpdateCallback {
+    private val noopListUpdateCallback = object : ListUpdateCallback {
         override fun onInserted(position: Int, count: Int) {}
         override fun onRemoved(position: Int, count: Int) {}
         override fun onMoved(fromPosition: Int, toPosition: Int) {}
@@ -115,9 +115,11 @@ class RemoteRepositoryImplTest {
 
         Mockito.`when`(apiService.login(emailDummy, passwordDummy, tokenFcmDummy))
             .thenReturn(dataDummy)
+
         val resultFlow = remoteRepository.login(emailDummy, passwordDummy, tokenFcmDummy)
         resultFlow.test {
             Assert.assertTrue(awaitItem() is Resource.Loading)
+
             val dataActual = awaitItem() as Resource.Success
             Assert.assertEquals(dataDummy, dataActual.data)
             awaitComplete()
@@ -216,6 +218,7 @@ class RemoteRepositoryImplTest {
     @Test
     fun `Register User Error`(): Unit = runTest {
         val response = Response.error<ResponseError>(400, "".toResponseBody(null))
+
         val imageDummy = MultipartBody.Part.create("text".toRequestBody())
         val emailDummy = "emailDummy@gmail.com".toRequestBody()
         val passwordDummy = "passwordDummy".toRequestBody()
@@ -320,6 +323,7 @@ class RemoteRepositoryImplTest {
     @Test
     fun `Change Password User`(): Unit = runTest {
         val dataDummy = DataDummy.generateDummyChangePassword()
+
         val idDummy = 0
         val passwordDummy = "passwordDummy"
         val newPasswordDummy = "newPasswordDummy"
@@ -534,6 +538,7 @@ class RemoteRepositoryImplTest {
                 idDummy
             )
         ).thenReturn(dataDummy)
+
         remoteRepository.addFavorite(
             userIdDummy,
             idDummy
@@ -623,6 +628,7 @@ class RemoteRepositoryImplTest {
                 idDummy
             )
         ).thenReturn(dataDummy)
+
         remoteRepository.getDetailProduct(
             userIdDummy,
             idDummy
@@ -646,6 +652,7 @@ class RemoteRepositoryImplTest {
                 idDummy
             )
         ).thenThrow(HttpException(response))
+
         remoteRepository.getDetailProduct(
             userIdDummy,
             idDummy
@@ -705,6 +712,7 @@ class RemoteRepositoryImplTest {
         val userIdDummy = "0"
         val dataStock = DataStockItem()
         val data = RequestStock(userIdDummy, listOf(dataStock))
+
         Mockito.`when`(
             apiService.updateStock(
                 data
@@ -968,7 +976,7 @@ class RemoteRepositoryImplTest {
     fun `Get Data Favorite Product`(): Unit = runTest {
         val dataDummy = DataDummy.generateDummyDataFavorite()
         val userIdDummy = 0
-        val searchDummy = "searchDummy"
+        val searchDummy = null
 
         Mockito.`when`(
             apiService.getListFav(
@@ -1061,6 +1069,7 @@ class RemoteRepositoryImplTest {
                 userIdDummy
             )
         ).thenReturn(dataDummy)
+
         remoteRepository.getOtherProduct(
             userIdDummy
         ).test {

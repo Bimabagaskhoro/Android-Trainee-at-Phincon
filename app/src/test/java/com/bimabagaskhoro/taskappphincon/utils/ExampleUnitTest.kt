@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon
+package com.bimabagaskhoro.taskappphincon.utils
 
 import org.junit.Test
 

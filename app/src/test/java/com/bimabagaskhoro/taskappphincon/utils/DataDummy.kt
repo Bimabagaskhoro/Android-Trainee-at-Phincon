@@ -1,4 +1,4 @@
-package com.bimabagaskhoro.taskappphincon
+package com.bimabagaskhoro.taskappphincon.utils
 
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.auth.*
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.detail.DataDetail
