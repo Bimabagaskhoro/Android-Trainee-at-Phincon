@@ -16,7 +16,7 @@ import com.bimabagaskhoro.phincon.core.data.source.remote.response.product.DataI
 import com.bimabagaskhoro.phincon.core.data.source.repository.remote.RemoteRepositoryImpl
 import com.bimabagaskhoro.phincon.core.utils.Resource
 import com.bimabagaskhoro.taskappphincon.utils.getOrAwaitValue
-import com.bimabagaskhoro.taskappphincon.feature.adapter.paging.ProductAdapter
+import com.bimabagaskhoro.phincon.core.adapter.paging.ProductAdapter
 import com.bimabagaskhoro.taskappphincon.utils.CoroutinesTestRule
 import com.bimabagaskhoro.taskappphincon.utils.DataDummy
 import kotlinx.coroutines.CoroutineScope

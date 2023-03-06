@@ -13,6 +13,18 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/features" />
+            <option value="$PROJECT_DIR$/features/auth" />
+            <option value="$PROJECT_DIR$/features/changepassword" />
+            <option value="$PROJECT_DIR$/features/detail" />
+            <option value="$PROJECT_DIR$/features/firebase" />
+            <option value="$PROJECT_DIR$/features/main" />
+            <option value="$PROJECT_DIR$/features/notification" />
+            <option value="$PROJECT_DIR$/features/payment" />
+            <option value="$PROJECT_DIR$/features/splashscreen" />
+            <option value="$PROJECT_DIR$/features/succespage" />
+            <option value="$PROJECT_DIR$/features/trolley" />
+            <option value="$PROJECT_DIR$/router" />
           </set>
         </option>
       </GradleProjectSettings>

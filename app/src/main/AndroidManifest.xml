@@ -28,7 +28,7 @@
         <meta-data android:name="google_analytics_automatic_screen_reporting_enabled" android:value="false" />
 
         <activity
-            android:name=".feature.activity.NotificationActivity"
+            android:name="com.bimabagaskhoro.phincon.features.notification.NotificationActivity"
             android:exported="false"
             android:theme="@style/Theme.SplashScreen">
             <meta-data
@@ -36,7 +36,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".feature.activity.CartActivity"
+            android:name="com.bimabagaskhoro.phincon.features.trolley.CartActivity"
             android:exported="false"
             android:theme="@style/Theme.SplashScreen">
             <meta-data
@@ -44,7 +44,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".feature.activity.OnSuccessActivity"
+            android:name="com.bimabagaskhoro.phincon.features.succespage.OnSuccessActivity"
             android:exported="false"
             android:theme="@style/Theme.SplashScreen">
             <meta-data
@@ -52,7 +52,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".feature.activity.PaymentActivity"
+            android:name="com.bimabagaskhoro.phincon.features.payment.PaymentActivity"
             android:exported="false"
             android:theme="@style/Theme.SplashScreen">
             <meta-data
@@ -60,7 +60,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".feature.activity.DetailActivity"
+            android:name="com.bimabagaskhoro.phincon.features.detail.DetailActivity"
             android:exported="true"
             android:theme="@style/Theme.SplashScreen">
             <meta-data
@@ -93,7 +93,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".feature.activity.PasswordActivity"
+            android:name="com.bimabagaskhoro.phincon.features.changepassword.PasswordActivity"
             android:exported="false"
             android:theme="@style/Theme.SplashScreen">
             <meta-data
@@ -101,14 +101,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".feature.camera.CameraActivity"
+            android:name="com.bimabagaskhoro.phincon.features.auth.CameraActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".feature.activity.MainActivity"
+            android:name="com.bimabagaskhoro.phincon.features.main.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.SplashScreen"
             android:windowSoftInputMode="adjustPan">
@@ -117,7 +117,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".feature.activity.AuthActivity"
+            android:name="com.bimabagaskhoro.phincon.features.auth.AuthActivity"
             android:exported="false"
             android:theme="@style/Theme.SplashScreen">
             <meta-data
@@ -125,7 +125,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".feature.SplashScreen"
+            android:name="com.bimabagaskhoro.phincon.features.splashscreen.SplashScreen"
             android:exported="true"
             android:theme="@style/Theme.SplashScreen">
             <intent-filter>
@@ -138,9 +138,8 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <service
-            android:name=".service.FirebaseNotification"
+            android:name="com.bimabagaskhoro.phincon.used.FirebaseNotification"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

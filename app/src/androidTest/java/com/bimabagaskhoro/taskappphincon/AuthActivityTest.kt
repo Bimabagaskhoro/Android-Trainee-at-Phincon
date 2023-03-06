@@ -16,9 +16,9 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.runner.AndroidJUnit4
-import com.bimabagaskhoro.taskappphincon.feature.activity.AuthActivity
-import com.bimabagaskhoro.taskappphincon.feature.activity.MainActivity
-import com.bimabagaskhoro.taskappphincon.feature.auth.LoginFragment
+import com.bimabagaskhoro.phincon.features.auth.AuthActivity
+import com.bimabagaskhoro.phincon.features.main.MainActivity
+import com.bimabagaskhoro.phincon.features.auth.auth.LoginFragment
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -28,7 +28,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class AuthActivityTest {
     @get:Rule
-    val activity = ActivityScenarioRule(AuthActivity::class.java)
+    val activity = ActivityScenarioRule(com.bimabagaskhoro.phincon.features.auth.AuthActivity::class.java)
 
     @Before
     fun setUp() {
@@ -50,7 +50,7 @@ class AuthActivityTest {
             .perform(typeText("123456"), ViewActions.closeSoftKeyboard())
         onView(withId(R.id.btn_login_fragment)).perform(click())
         SystemClock.sleep(6000)
-        Intents.intended(hasComponent(MainActivity::class.java.name))
+        Intents.intended(hasComponent(com.bimabagaskhoro.phincon.features.main.MainActivity::class.java.name))
         onView(withId(R.id.rv_product_home)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
