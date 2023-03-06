@@ -65,7 +65,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edt_email"
+                        android:id="@+id/edt_email_register_fragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/white"
@@ -99,7 +99,7 @@
                     app:passwordToggleEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edt_password"
+                        android:id="@+id/edt_password_register_fragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/white"
@@ -121,7 +121,7 @@
                     app:passwordToggleEnabled="true">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edt_confirm_password"
+                        android:id="@+id/edt_confirm_password_register_fragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/white"
@@ -142,7 +142,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edt_name"
+                        android:id="@+id/edt_name_register_fragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/white"
@@ -163,7 +163,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edt_phone"
+                        android:id="@+id/edt_phone_register_fragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/white"
@@ -194,14 +194,14 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView">
 
                     <RadioButton
-                        android:id="@+id/rd_male"
+                        android:id="@+id/rd_male_register_fragment"
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppinsbold"
                         android:text="@string/male" />
 
                     <RadioButton
-                        android:id="@+id/rd_female"
+                        android:id="@+id/rd_female_register_fragment"
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppinsbold"
@@ -209,7 +209,7 @@
                 </RadioGroup>
 
                 <Button
-                    android:id="@+id/btn_register"
+                    android:id="@+id/btn_register_register_fragment"
                     android:layout_width="279dp"
                     android:layout_height="52dp"
                     android:layout_marginTop="24dp"
@@ -265,7 +265,7 @@
         </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/btn_login"
+            android:id="@+id/btn_login_on_register_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_custom"

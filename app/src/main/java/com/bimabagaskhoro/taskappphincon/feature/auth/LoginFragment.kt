@@ -58,7 +58,7 @@ class LoginFragment : Fragment() {
             btnLoginFragment.setOnClickListener {
                 onButtonPressed()
             }
-            btnSignup.setOnClickListener {
+            btnSignupOnFragmentLogin.setOnClickListener {
                 findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
                 // login page slide 5
                 analyticViewModel.onClickButtonLoginToRegister()

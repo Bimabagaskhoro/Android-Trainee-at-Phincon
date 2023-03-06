@@ -115,8 +115,8 @@ class RegisterFragment : Fragment() {
         }
 
         binding?.apply {
-            btnRegister.setOnClickListener { onButtonPressed() }
-            btnLogin.setOnClickListener {
+            btnRegisterRegisterFragment.setOnClickListener { onButtonPressed() }
+            btnLoginOnRegisterFragment.setOnClickListener {
                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
                 analyticViewModel.onClickButtonRegisterToLogin()
             }
@@ -128,21 +128,21 @@ class RegisterFragment : Fragment() {
     }
 
     private fun onButtonPressed() {
-        val name = binding?.edtName?.text.toString().trim()
-        val email = binding?.edtEmail?.text.toString().trim()
-        val password = binding?.edtPassword?.text.toString().trim()
-        val matchPassword = binding?.edtConfirmPassword?.text.toString().trim()
-        val phone = binding?.edtPhone?.text.toString().trim()
+        val name = binding?.edtNameRegisterFragment?.text.toString().trim()
+        val email = binding?.edtEmailRegisterFragment?.text.toString().trim()
+        val password = binding?.edtPasswordRegisterFragment?.text.toString().trim()
+        val matchPassword = binding?.edtConfirmPasswordRegisterFragment?.text.toString().trim()
+        val phone = binding?.edtPhoneRegisterFragment?.text.toString().trim()
         val gender =
-            if (binding?.rdFemale?.isChecked == true) isGender(binding?.rdFemale?.isChecked!!) else isGender(
-                binding?.rdMale?.isChecked == true
+            if (binding?.rdFemaleRegisterFragment?.isChecked == true) isGender(binding?.rdFemaleRegisterFragment?.isChecked!!) else isGender(
+                binding?.rdMaleRegisterFragment?.isChecked == true
             )
 
-        val emailPattern = binding?.edtEmail?.text.toString().trim()
+        val emailPattern = binding?.edtEmailRegisterFragment?.text.toString().trim()
         if (Patterns.EMAIL_ADDRESS.matcher(emailPattern).matches()) { // using EMAIL_ADREES matcher
             binding?.tvCheckingEmail?.visibility = View.INVISIBLE
-            val passwordCheck = binding?.edtPassword?.text.toString().trim()
-            val matchPasswordCheck = binding?.edtConfirmPassword?.text.toString().trim()
+            val passwordCheck = binding?.edtPasswordRegisterFragment?.text.toString().trim()
+            val matchPasswordCheck = binding?.edtConfirmPasswordRegisterFragment?.text.toString().trim()
             if (passwordCheck != matchPasswordCheck) {
                 Toast.makeText(context, "Password tidak sama", Toast.LENGTH_LONG).show()
             } else {
@@ -152,32 +152,32 @@ class RegisterFragment : Fragment() {
                 } else {
                     when {
                         email.isEmpty() -> {
-                            binding?.edtEmail?.error = "Masukan email terlebih dahulu"
-                            binding?.edtEmail?.requestFocus()
+                            binding?.edtEmailRegisterFragment?.error = "Masukan email terlebih dahulu"
+                            binding?.edtEmailRegisterFragment?.requestFocus()
                         }
                         password.isEmpty() -> {
-                            binding?.edtPassword?.error = "Masukan password terlebih dahulu"
-                            binding?.edtPassword?.requestFocus()
+                            binding?.edtPasswordRegisterFragment?.error = "Masukan password terlebih dahulu"
+                            binding?.edtPasswordRegisterFragment?.requestFocus()
                         }
                         matchPassword.isEmpty() -> {
-                            binding?.edtConfirmPassword?.error =
+                            binding?.edtConfirmPasswordRegisterFragment?.error =
                                 "Masukan konfirmasi password terlebih dahulu"
-                            binding?.edtConfirmPassword?.requestFocus()
+                            binding?.edtConfirmPasswordRegisterFragment?.requestFocus()
                         }
                         name.isEmpty() -> {
-                            binding?.edtName?.error = "Masukan nama terlebih dahulu"
-                            binding?.edtName?.requestFocus()
+                            binding?.edtNameRegisterFragment?.error = "Masukan nama terlebih dahulu"
+                            binding?.edtNameRegisterFragment?.requestFocus()
                         }
                         phone.isEmpty() -> {
-                            binding?.edtPhone?.error = "Masukan nomer terlebih dahulu"
-                            binding?.edtPhone?.requestFocus()
+                            binding?.edtPhoneRegisterFragment?.error = "Masukan nomer terlebih dahulu"
+                            binding?.edtPhoneRegisterFragment?.requestFocus()
                         }
                         else -> {
-                            binding?.edtEmail?.error = null
-                            binding?.edtPassword?.error = null
-                            binding?.edtName?.error = null
-                            binding?.edtConfirmPassword?.error = null
-                            binding?.edtPhone?.error = null
+                            binding?.edtEmailRegisterFragment?.error = null
+                            binding?.edtPasswordRegisterFragment?.error = null
+                            binding?.edtNameRegisterFragment?.error = null
+                            binding?.edtConfirmPasswordRegisterFragment?.error = null
+                            binding?.edtPhoneRegisterFragment?.error = null
                             initData(name, email, password, phone, gender)
                         }
                     }
@@ -303,7 +303,7 @@ class RegisterFragment : Fragment() {
     }
 
     private fun isGender(isChecked: Boolean): Int {
-        val female = binding?.rdFemale?.isChecked
+        val female = binding?.rdFemaleRegisterFragment?.isChecked
         return if (isChecked == female) {
             1
         } else {

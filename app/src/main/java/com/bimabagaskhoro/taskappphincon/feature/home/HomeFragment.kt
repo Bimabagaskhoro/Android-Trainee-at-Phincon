@@ -138,7 +138,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        binding?.rvProduct?.apply {
+        binding?.rvProductHome?.apply {
             adapterProduct.addLoadStateListener { loadState ->
                 binding?.progressBar?.isVisible = loadState.source.refresh is LoadState.Loading
             }
@@ -162,7 +162,7 @@ class HomeFragment : Fragment() {
                             when (load.refresh) {
                                 is LoadState.Loading -> {
                                     progressBar?.visibility = View.VISIBLE
-                                    rvProduct.visibility = View.GONE
+                                    rvProductHome.visibility = View.GONE
                                     viewEmptyDatas?.root?.visibility = View.GONE
                                 }
                                 is LoadState.NotLoading -> {
@@ -170,7 +170,7 @@ class HomeFragment : Fragment() {
                                         viewEmptyDatas?.root?.visibility = View.VISIBLE
                                     } else {
                                         progressBar?.visibility = View.GONE
-                                        rvProduct.visibility = View.VISIBLE
+                                        rvProductHome.visibility = View.VISIBLE
                                         binding?.swipeRefresh?.isRefreshing = false
                                         viewEmptyDatas?.root?.visibility = View.GONE
                                         val page = adapterProduct.itemCount
