@@ -3,7 +3,9 @@ package com.bimabagaskhoro.phincon.core.utils.interceptor
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import com.bimabagaskhoro.phincon.core.data.pref.AuthPreferences
+import com.bimabagaskhoro.phincon.router.ActivityRouter
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -13,6 +15,8 @@ class AuthBadResponse @Inject constructor(
     private val tokenManager: AuthPreferences,
     private val context: Context
 ) : Interceptor {
+    @Inject
+    lateinit var router: ActivityRouter
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
         try {
@@ -20,8 +24,7 @@ class AuthBadResponse @Inject constructor(
                 runBlocking {
                     tokenManager.clear()
                 }
-                val intent = Intent(context, Class.forName("com.bimabagaskhoro.taskappphincon.ui.activity.AuthActivity"))
-//                val intent = Intent(context, AuthActivity::class.java)
+                val intent = Intent(router.toAuthActivity(context))
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
                 return response
