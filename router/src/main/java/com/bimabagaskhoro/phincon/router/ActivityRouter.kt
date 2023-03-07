@@ -24,7 +24,7 @@ interface ActivityRouter {
         idProduct: Int,
         dataName: String,
         dataPayment: String,
-        resultPrice: Int
+        resultPrice: String
     ): Intent
 
     fun toTrolleyFromPaymentActivity(

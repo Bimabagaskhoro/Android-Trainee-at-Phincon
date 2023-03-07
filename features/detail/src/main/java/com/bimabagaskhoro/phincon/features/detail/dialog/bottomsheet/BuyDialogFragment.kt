@@ -87,7 +87,9 @@ class BuyDialogFragment(
                             idProduct?.let { idProducts ->
                                 router.toPaymentFromDetailActivity(
                                     requireActivity(), idProducts
-                                )
+                                ).apply {
+                                    requireActivity().finish()
+                                }
                             }
                         )
                         analyticViewModel.onClickIconBankBottom(namePayment)
@@ -99,7 +101,9 @@ class BuyDialogFragment(
                             idProduct?.let { idProducts ->
                                 router.toPaymentFromDetailActivity(
                                     requireActivity(), idProducts
-                                )
+                                ).apply {
+                                    requireActivity().finish()
+                                }
                             }
                         )
                         analyticViewModel.onClickIconBankBottom(namePayment)
@@ -160,7 +164,7 @@ class BuyDialogFragment(
                             idProduct?.let { idProducts ->
                                 router.toPaymentFromDetailActivity(
                                     requireActivity(), idProducts
-                                )
+                                ).apply { requireActivity().finish() }
                             }
                         )
                     }
@@ -170,7 +174,9 @@ class BuyDialogFragment(
                             idProduct?.let { idProducts ->
                                 router.toPaymentFromDetailActivity(
                                     requireActivity(), idProducts
-                                )
+                                ).apply {
+                                    requireActivity().finish()
+                                }
                             }
                         )
 
@@ -274,11 +280,23 @@ class BuyDialogFragment(
                             dataPayment?.let { dataPayment ->
                                 data.id?.let { dataId ->
                                     router.toSuccessPageFromDetailActivity(
-                                        requireContext(), dataId, dataName, dataPayment, totalPrice.toInt()
-                                    )
+                                        requireContext(),
+                                        dataId,
+                                        dataName,
+                                        dataPayment,
+                                        totalPrice
+                                    ).apply {
+                                        requireActivity().finish()
+                                    }
                                 }
-                            }}
+                            }
+                        }
                         )
+
+//                        putExtra(EXTRA_ID_SUCCESS, dataPayment)
+//                        putExtra(EXTRA_NAME_SUCCESS, dataName)
+//                        putExtra(EXTRA_DATA_PRICE, resultPrice)
+//                        putExtra(EXTRA_DATA_SUCCESS, idProduct)
                         Log.d("toIntent", "${data.id}")
                     }
 

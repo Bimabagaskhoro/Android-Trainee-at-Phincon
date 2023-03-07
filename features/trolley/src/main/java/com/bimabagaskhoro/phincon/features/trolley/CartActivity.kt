@@ -190,16 +190,12 @@ class CartActivity : AppCompatActivity() {
         if (dataPayment == null && dataName == null) {
             binding.layBtnPayment.visibility = View.GONE
             binding.btnBuy.setOnClickListener {
-                startActivity(router.toPaymentFromTrolleyActivity(this).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                })
+                startActivity(router.toPaymentFromTrolleyActivity(this))
                 analyticViewModel.onClickBuyOnTrolley()
             }
         } else {
             binding.layBtnPayment.setOnClickListener {
-                startActivity(router.toPaymentFromTrolleyActivity(this).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                })
+                startActivity(router.toPaymentFromTrolleyActivity(this))
                 dataName?.let { dataNameAnly ->
                     analyticViewModel.onClickIconBankTrolley(
                         dataNameAnly

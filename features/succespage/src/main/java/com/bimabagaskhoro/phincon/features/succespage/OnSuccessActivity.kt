@@ -170,7 +170,7 @@ class OnSuccessActivity : AppCompatActivity() {
     }
 
     private fun initDataPaymentFromBottomCard() {
-        val dataPayment = intent.getStringExtra(EXTRA_DATA_NAME_FROM_TROLLEY)
+        val dataPayment = intent.getStringExtra(EXTRA_DATA_PAYMENT_FROM_TROLLEY)
         val dataName = intent.getStringExtra(EXTRA_DATA_NAME_FROM_TROLLEY)
 
         if (dataPayment == null && dataName == null) {
@@ -275,13 +275,13 @@ class OnSuccessActivity : AppCompatActivity() {
             idProduct: Int,
             dataName: String,
             dataPayment: String,
-            resultPrice: Int
+            resultPrice: String
         ): Intent {
             return Intent(context, OnSuccessActivity::class.java).apply {
-                putExtra(EXTRA_ID_SUCCESS, idProduct)
+                putExtra(EXTRA_ID_SUCCESS, dataPayment)
                 putExtra(EXTRA_NAME_SUCCESS, dataName)
-                putExtra(EXTRA_DATA_PRICE, dataPayment)
-                putExtra(EXTRA_DATA_SUCCESS, resultPrice)
+                putExtra(EXTRA_DATA_PRICE, resultPrice)
+                putExtra(EXTRA_DATA_SUCCESS, idProduct)
             }
         }
 

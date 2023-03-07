@@ -62,7 +62,7 @@ class ActivityRouterImpl : ActivityRouter {
         idProduct: Int,
         dataName: String,
         dataPayment: String,
-        resultPrice: Int
+        resultPrice: String
     ): Intent {
         return OnSuccessActivity.createIntentFromDetail(
             context, idProduct, dataName, dataPayment, resultPrice
