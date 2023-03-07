@@ -91,49 +91,47 @@ class LoginFragment : Fragment() {
                     binding?.edtEmailLogin?.error = null
                     binding?.edtPasswordLogin?.error = null
 
-                    lifecycleScope.launch {
-                        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                            try {
-                                val firebaseToken = FirebaseMessaging.getInstance().token
-                                    .addOnCompleteListener { task ->
-                                        task.toString()
-                                    }
-                                    .addOnFailureListener {
-                                        when (it) {
-                                            is FirebaseNetworkException -> {
-                                                Toast.makeText(
-                                                    requireActivity(),
-                                                    "Check your internet connection.",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                            is FirebaseTooManyRequestsException -> {
-                                                Toast.makeText(
-                                                    requireActivity(),
-                                                    "Too many request.",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
-                                            is FirebaseException -> {
-                                                Toast.makeText(
-                                                    requireActivity(),
-                                                    "An unknown error occurred.",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }
+                    lifecycleScope.launchWhenStarted {
+                        try {
+                            val firebaseToken = FirebaseMessaging.getInstance().token
+                                .addOnCompleteListener { task ->
+                                    task.toString()
+                                }
+                                .addOnFailureListener {
+                                    when (it) {
+                                        is FirebaseNetworkException -> {
+                                            Toast.makeText(
+                                                requireActivity(),
+                                                "Check your internet connection.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
-                                    }.await()
-                                initData(email, password, firebaseToken)
-                            } catch (io: IOException) {
-                                Log.d("IOException", "No Internet")
-                                Toast.makeText(
-                                    requireActivity(),
-                                    "No Internet Connection",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } catch (e: Exception) {
-                                Log.d("Exception", "Test")
-                            }
+                                        is FirebaseTooManyRequestsException -> {
+                                            Toast.makeText(
+                                                requireActivity(),
+                                                "Too many request.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                        is FirebaseException -> {
+                                            Toast.makeText(
+                                                requireActivity(),
+                                                "An unknown error occurred.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                                }.await()
+                            initData(email, password, firebaseToken)
+                        } catch (io: IOException) {
+                            Log.d("IOException", "No Internet")
+                            Toast.makeText(
+                                requireActivity(),
+                                "No Internet Connection",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } catch (e: Exception) {
+                            Log.d("Exception", "Test")
                         }
                     }
                 }

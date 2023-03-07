@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bimabagaskhoro.phincon.features.main.home.HomeFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/background_pink">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+                <ImageView
+                    android:layout_width="210dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/image_splash"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:id="@+id/ic_cart"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_cart" />
+
+                <ImageView
+                    android:id="@+id/img_badges"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_circle" />
+
+                <TextView
+                    android:id="@+id/tv_badges_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/poppinsbold"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_badges"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/img_badges"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="1" />
+
+                <ImageView
+                    android:id="@+id/ic_notification"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="12dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/ic_cart"
+                    app:layout_constraintEnd_toStartOf="@+id/ic_cart"
+                    app:layout_constraintTop_toTopOf="@+id/ic_cart"
+                    app:srcCompat="@drawable/ic_notifications" />
+
+
+                <ImageView
+                    android:id="@+id/img_badges_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    app:layout_constraintEnd_toEndOf="@+id/ic_notification"
+                    app:layout_constraintStart_toStartOf="@+id/ic_notification"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_circle" />
+
+                <TextView
+                    android:id="@+id/tv_badges_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/poppinsbold"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_badges_notification"
+                    app:layout_constraintEnd_toEndOf="@+id/img_badges_notification"
+                    app:layout_constraintStart_toStartOf="@+id/img_badges_notification"
+                    app:layout_constraintTop_toTopOf="@+id/img_badges_notification"
+                    tools:text="1" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/edt_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_search"
+        android:elevation="1.5dp"
+        android:inputType="text"
+        app:iconifiedByDefault="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:queryHint="@string/search"
+        tools:ignore="Autofill" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_search">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_product_home"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:spanCount="2"
+            tools:listitem="@layout/item_product" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_search"
+        app:shimmer_auto_start="true">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <include
+                    android:id="@+id/include1"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                    android:id="@+id/include2"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/include1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <include
+                    android:id="@+id/include3"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/include1"
+                    app:layout_constraintStart_toStartOf="@+id/include1"
+                    app:layout_constraintTop_toBottomOf="@+id/include1" />
+
+                <include
+                    android:id="@+id/include4"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/include2"
+                    app:layout_constraintStart_toStartOf="@+id/include2"
+                    app:layout_constraintTop_toBottomOf="@+id/include1" />
+
+                <include
+                    android:id="@+id/include5"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/include3"
+                    app:layout_constraintStart_toStartOf="@+id/include3"
+                    app:layout_constraintTop_toBottomOf="@+id/include3" />
+
+                <include
+                    android:id="@+id/include6"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/include4"
+                    app:layout_constraintStart_toStartOf="@+id/include4"
+                    app:layout_constraintTop_toTopOf="@+id/include5" />
+
+                <include
+                    android:id="@+id/include7"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/include5"
+                    app:layout_constraintStart_toStartOf="@+id/include5"
+                    app:layout_constraintTop_toBottomOf="@+id/include5" />
+
+                <include
+                    android:id="@+id/include8"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="@+id/include6"
+                    app:layout_constraintStart_toStartOf="@+id/include6"
+                    app:layout_constraintTop_toBottomOf="@+id/include6" />
+
+                <include
+                    android:id="@+id/include9"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="@+id/include7"
+                    app:layout_constraintTop_toBottomOf="@+id/include7" />
+
+
+                <include
+                    android:id="@+id/include10"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/include9"
+                    app:layout_constraintStart_toStartOf="@+id/include8"
+                    app:layout_constraintTop_toBottomOf="@+id/include8" />
+
+                <include
+                    android:id="@+id/include11"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintStart_toStartOf="@+id/include9"
+                    app:layout_constraintTop_toBottomOf="@+id/include9" />
+
+                <include
+                    android:id="@+id/include12"
+                    layout="@layout/item_product_placeholder"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@+id/include10"
+                    app:layout_constraintStart_toStartOf="@+id/include10"
+                    app:layout_constraintTop_toTopOf="@+id/include11" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <include
+        android:id="@+id/view_empty_datas"
+        layout="@layout/view_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible" />
+</androidx.constraintlayout.widget.ConstraintLayout>
