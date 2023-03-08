@@ -3,6 +3,7 @@ package com.bimabagaskhoro.phincon.core.utils.interceptor
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat.startActivity
 import com.bimabagaskhoro.phincon.core.data.pref.AuthPreferences
 import com.bimabagaskhoro.phincon.router.ActivityRouter
@@ -24,7 +25,7 @@ class AuthBadResponse @Inject constructor(
                 runBlocking {
                     tokenManager.clear()
                 }
-                val intent = Intent(router.toAuthActivity(context))
+                val intent = Intent(context, Class.forName("com.bimabagaskhoro.phincon.features.auth.AuthActivity"))
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
                 return response

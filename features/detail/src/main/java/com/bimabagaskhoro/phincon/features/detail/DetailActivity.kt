@@ -38,6 +38,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 
+@Suppress("DEPRECATION")
 @AndroidEntryPoint
 class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListener {
 
@@ -61,17 +62,21 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
 
         adapter = ProductHistoryAdapter()
 
+//            ini di log
+        Log.d("onCreate", "mana dulu nich")
         initDataDetail()
         binding.apply {
             btnBack.setOnClickListener {
                 analyticViewModel.onClickBackDetail()
-                finish()
+                onSupportNavigateUp()
             }
         }
+
         binding.swipeRefresh.setOnRefreshListener {
             initDataDetail()
             binding.progressBar.visibility = View.VISIBLE
         }
+
         val builder: StrictMode.VmPolicy.Builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
@@ -100,6 +105,8 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
         Log.d("Detail_dataPayment", "$dataPayment")
 
         dataStoreViewModel.apply {
+//            ini di log
+            Log.d("dataStoreViewModel", "mana dulu nich")
             getUserId.observe(this@DetailActivity) {
                 val userId = it
                 idProduct?.let { it1 ->
@@ -603,6 +610,10 @@ class DetailActivity : AppCompatActivity(), ImageSliderAdapter.OnPageClickListen
     override fun onSupportNavigateUp(): Boolean {
         onBackPressedDispatcher.onBackPressed()
         return true
+    }
+
+    override fun onBackPressed() {
+        onBackPressedDispatcher.onBackPressed()
     }
 
     companion object {

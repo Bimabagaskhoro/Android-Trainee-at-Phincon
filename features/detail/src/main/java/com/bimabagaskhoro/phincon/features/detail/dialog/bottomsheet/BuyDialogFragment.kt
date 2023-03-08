@@ -87,9 +87,7 @@ class BuyDialogFragment(
                             idProduct?.let { idProducts ->
                                 router.toPaymentFromDetailActivity(
                                     requireActivity(), idProducts
-                                ).apply {
-                                    requireActivity().finish()
-                                }
+                                )
                             }
                         )
                         analyticViewModel.onClickIconBankBottom(namePayment)
@@ -101,9 +99,7 @@ class BuyDialogFragment(
                             idProduct?.let { idProducts ->
                                 router.toPaymentFromDetailActivity(
                                     requireActivity(), idProducts
-                                ).apply {
-                                    requireActivity().finish()
-                                }
+                                )
                             }
                         )
                         analyticViewModel.onClickIconBankBottom(namePayment)
@@ -164,7 +160,7 @@ class BuyDialogFragment(
                             idProduct?.let { idProducts ->
                                 router.toPaymentFromDetailActivity(
                                     requireActivity(), idProducts
-                                ).apply { requireActivity().finish() }
+                                )
                             }
                         )
                     }
@@ -174,9 +170,7 @@ class BuyDialogFragment(
                             idProduct?.let { idProducts ->
                                 router.toPaymentFromDetailActivity(
                                     requireActivity(), idProducts
-                                ).apply {
-                                    requireActivity().finish()
-                                }
+                                )
                             }
                         )
 

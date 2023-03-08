@@ -99,8 +99,7 @@ class PaymentActivity : AppCompatActivity() {
                         router.toTrolleyFromPaymentActivity(
                             this, dataItemsId, dataItemsName
                         ).apply {
-                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                           finish()
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         }
                     }
                 })
@@ -123,8 +122,7 @@ class PaymentActivity : AppCompatActivity() {
                             router.toDetailFromPaymentActivity(
                                 this, productId, idPayment, namePayment
                             ).apply {
-                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                finish()
+                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                             }
                         }
                     }})
@@ -154,7 +152,6 @@ class PaymentActivity : AppCompatActivity() {
             binding.btnBack.setOnClickListener {
                 startActivity(productId?.let { productIds ->
                     router.toDetailActivity(this, productIds).apply {
-                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         finish()
                     }
                 })
@@ -165,7 +162,6 @@ class PaymentActivity : AppCompatActivity() {
             binding.btnBack.setOnClickListener {
                 analyticViewModel.onClickBackPayment()
                 startActivity(router.toTrolleyActivity(this).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     finish()
                 })
             }

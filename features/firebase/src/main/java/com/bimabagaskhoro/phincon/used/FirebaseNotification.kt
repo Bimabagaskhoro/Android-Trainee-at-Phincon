@@ -41,9 +41,7 @@ class FirebaseNotification : FirebaseMessagingService() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun sendNotification(title: String?, messageBody: String?) {
-        val contentIntent = Intent(router.toHomeActivity(applicationContext).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        })
+        val contentIntent = Intent(router.toHomeActivity(applicationContext))
         val contentPendingIntent = PendingIntent.getActivity(
             applicationContext,
             NOTIFICATION_ID,

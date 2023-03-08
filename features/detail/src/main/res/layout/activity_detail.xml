@@ -1,9 +1,9 @@
-<FrameLayout android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-<!-- p -->
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- p -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -64,10 +64,10 @@
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:layout_marginTop="?attr/actionBarSize"
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginBottom="60dp">
 
         <me.didik.component.StickyNestedScrollView
@@ -439,10 +439,12 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </me.didik.component.StickyNestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/lay_cons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <androidx.cardview.widget.CardView
             android:id="@+id/card_progressbar"
             android:layout_width="186dp"
