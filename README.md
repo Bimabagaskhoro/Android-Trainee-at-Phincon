@@ -1,6 +1,6 @@
 # My Stuff App
 
-  # Tech Stack :
+  ## Tech Stack :
   
   - MVVM 
   - Kotlin Coroutines
