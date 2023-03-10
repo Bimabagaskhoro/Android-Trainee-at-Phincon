@@ -63,8 +63,8 @@ object AppModule {
             .addInterceptor(httpLoggingInterceptor)
             .addInterceptor(headerInterceptor) //header
             .addInterceptor(authBadResponse) // 401 bad response
-            .authenticator(authAuthenticator) // get refresh token
             .addInterceptor(noInternetInterceptor) // time Out
+            .authenticator(authAuthenticator) // get refresh token
             .readTimeout(10, TimeUnit.SECONDS)
             .connectTimeout(10, TimeUnit.SECONDS)
             .writeTimeout(10, TimeUnit.SECONDS)

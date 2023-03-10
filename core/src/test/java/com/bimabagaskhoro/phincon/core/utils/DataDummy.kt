@@ -10,6 +10,26 @@ import com.bimabagaskhoro.phincon.core.data.source.remote.response.product.DataI
 import com.bimabagaskhoro.phincon.core.data.source.remote.response.product.ResponseProduct
 
 object DataDummy {
+    fun generateDummyPaging(): List<DataItemProduct> {
+        val items: MutableList<DataItemProduct> = arrayListOf()
+        for (i in 0..100) {
+            val feed = DataItemProduct(
+                id = i,
+                date = "date",
+                image = "image",
+                name_product = "name_product",
+                harga = "harga",
+                size = "size",
+                rate = 0,
+                weight = "weight",
+                stock = 0,
+                type = "type",
+                desc = "desc"
+            )
+            items.add(feed)
+        }
+        return items
+    }
     fun generateDummyLogin(): ResponseLogin {
         val getDataUser = DataUser(
             image = "image",
