@@ -507,57 +507,67 @@
         </com.facebook.shimmer.ShimmerFrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <LinearLayout
-        android:id="@+id/lay_btn"
+    <com.google.android.material.bottomappbar.BottomAppBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:minHeight="60dp"
+        app:elevation="40dp"
+        tools:ignore="BottomAppBar">
+        <LinearLayout
+            android:id="@+id/lay_btn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:elevation="20dp"
+            android:layout_gravity="bottom">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardView"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="wrap_content">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:cardElevation="12dp">
 
-                    <Button
-                        android:id="@+id/btn_buy"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:text="@string/buy"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/btn_cart"
-                        android:layout_width="100dp"
-                        android:layout_height="36dp"
-                        android:layout_marginEnd="24dp"
-                        android:background="@drawable/bg_trolley"
-                        android:fontFamily="@font/poppinsbold"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:text="@string/cart"
-                        android:textColor="@color/pinkz"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/btn_buy"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_buy"
-                        app:layout_constraintTop_toTopOf="@+id/btn_buy" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+                        <Button
+                            android:id="@+id/btn_buy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="24dp"
+                            android:text="@string/buy"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/btn_cart"
+                            android:layout_width="100dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="24dp"
+                            android:background="@drawable/bg_trolley"
+                            android:fontFamily="@font/poppinsbold"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:text="@string/cart"
+                            android:textColor="@color/pinkz"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/btn_buy"
+                            app:layout_constraintEnd_toStartOf="@+id/btn_buy"
+                            app:layout_constraintTop_toTopOf="@+id/btn_buy" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </com.google.android.material.bottomappbar.BottomAppBar>
 </FrameLayout>

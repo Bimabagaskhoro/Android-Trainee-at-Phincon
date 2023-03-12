@@ -198,10 +198,11 @@
                     android:id="@+id/tv_stock_helpers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
                     android:layout_marginTop="16dp"
                     android:text="@string/stock"
                     android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="@+id/tv_detail_product"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view2" />
 
                 <TextView
@@ -218,11 +219,12 @@
                     android:id="@+id/tv_weight_helpers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="50dp"
                     android:text="@string/weight"
                     android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="@+id/tv_size_helpers"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_size_helpers" />
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_stock_helpers"
+                    app:layout_constraintEnd_toStartOf="@+id/textView14"
+                    app:layout_constraintTop_toTopOf="@+id/tv_stock_helpers" />
 
                 <TextView
                     android:id="@+id/tv_type_helpers"
@@ -241,7 +243,7 @@
                     android:layout_marginTop="24dp"
                     android:text="@string/description"
                     android:textSize="12sp"
-                    app:layout_constraintStart_toStartOf="@+id/tv_type_helpers"
+                    app:layout_constraintStart_toStartOf="@+id/tv_size_helpers"
                     app:layout_constraintTop_toBottomOf="@+id/tv_type_helpers" />
 
                 <TextView
@@ -269,10 +271,11 @@
                     android:id="@+id/textView14"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/helpers"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_weight_helpers"
-                    app:layout_constraintStart_toStartOf="@+id/textView13"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_weight"
                     app:layout_constraintTop_toTopOf="@+id/tv_weight_helpers" />
 
                 <TextView
@@ -292,7 +295,7 @@
                     android:text="@string/helpers"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_desc_helpers"
-                    app:layout_constraintStart_toStartOf="@+id/textView14"
+                    app:layout_constraintStart_toStartOf="@+id/textView13"
                     app:layout_constraintTop_toTopOf="@+id/tv_desc_helpers" />
 
                 <TextView
@@ -320,9 +323,10 @@
                     android:id="@+id/tv_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="42dp"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="@+id/textView14"
-                    app:layout_constraintStart_toStartOf="@+id/tv_size"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/textView14"
                     tools:text="100 gram" />
 
@@ -505,57 +509,65 @@
         </com.facebook.shimmer.ShimmerFrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <LinearLayout
-        android:id="@+id/lay_btn"
+    <com.google.android.material.bottomappbar.BottomAppBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_gravity="bottom"
+        android:background="@color/white"
+        android:minHeight="60dp"
+        app:elevation="40dp"
+        tools:ignore="BottomAppBar">
+        <LinearLayout
+            android:id="@+id/lay_btn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardView"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="wrap_content">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                    <Button
-                        android:id="@+id/btn_buy"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:text="@string/buy"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-                    <TextView
-                        android:id="@+id/btn_cart"
-                        android:layout_width="100dp"
-                        android:layout_height="36dp"
-                        android:layout_marginEnd="24dp"
-                        android:background="@drawable/bg_trolley"
-                        android:fontFamily="@font/poppinsbold"
-                        android:gravity="center_horizontal|center_vertical"
-                        android:text="@string/cart"
-                        android:textColor="@color/pinkz"
-                        android:textSize="14sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/btn_buy"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_buy"
-                        app:layout_constraintTop_toTopOf="@+id/btn_buy" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
+                        <Button
+                            android:id="@+id/btn_buy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="24dp"
+                            android:text="@string/buy"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/btn_cart"
+                            android:layout_width="100dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="24dp"
+                            android:background="@drawable/bg_trolley"
+                            android:fontFamily="@font/poppinsbold"
+                            android:gravity="center_horizontal|center_vertical"
+                            android:text="@string/cart"
+                            android:textColor="@color/pinkz"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/btn_buy"
+                            app:layout_constraintEnd_toStartOf="@+id/btn_buy"
+                            app:layout_constraintTop_toTopOf="@+id/btn_buy" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </com.google.android.material.bottomappbar.BottomAppBar>
 </FrameLayout>

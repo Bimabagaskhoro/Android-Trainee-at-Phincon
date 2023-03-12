@@ -174,12 +174,12 @@ class UserFragment : Fragment() {
                             when (position) {
                                 0 -> {
                                     setLocate("en")
-                                    setDialogChangeLanguage()
+                                    activity?.recreate()
                                     analyticViewModel.onChangeLanguageProfile("EN")
                                 }
                                 1 -> {
                                     setLocate("in")
-                                    setDialogChangeLanguage()
+                                    activity?.recreate()
                                     analyticViewModel.onChangeLanguageProfile("ID")
                                 }
                             }

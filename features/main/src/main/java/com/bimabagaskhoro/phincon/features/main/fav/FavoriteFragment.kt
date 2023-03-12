@@ -296,7 +296,9 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun showFilterDialog(idUser: Int) {
-        val options = arrayOf("From A to Z", "From Z to A")
+        val stringAtoZ = getString(R.string.from_a_to_z)
+        val stringZtoA = getString(R.string.from_z_to_a)
+        val options = arrayOf(stringAtoZ, stringZtoA)
         var selectedOption = ""
         MaterialAlertDialogBuilder(requireActivity()).setTitle(resources.getString(R.string.sort_by))
             .setSingleChoiceItems(options, -1) { _, which ->
@@ -315,8 +317,6 @@ class FavoriteFragment : Fragment() {
                         setData(null, idUser, 0)
                     }
                 }
-            }.setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
-                dialog.dismiss()
             }.show()
     }
 
